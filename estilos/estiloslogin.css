@@ -1,0 +1,207 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-image: url("https://w.wallhaven.cc/full/j3/wallhaven-j3wqo5.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+/*Trabaja con el fondo del formulario*/
+section {
+    position: relative;
+    max-width: 400px;
+    background-color: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 30px;
+}
+
+/* Trabaja con los campos de texto */
+.inputbox input {
+    width: 100%;
+    height: 60px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    padding: 0 35px 0 5px;
+    color: #fff;
+}
+
+.inputbox ion-icon {
+    position: absolute;
+    right: 8px;
+    color: #fff;
+    font-size: 1.2rem;
+    top: 20px;
+}
+
+/* Trabaja con el checkbox */
+.forget {
+    margin: 35px 0;
+    font-size: 20px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+}
+
+/* Trabaja con todo lo que esta dentro del h1 */
+h1 {
+    font-size: 30px;
+    color: #fff;
+    text-align: center;
+}
+
+/* Se trabaja con los campos de textos de "correo" y "contraseña" */
+.inputbox {
+    position: relative;
+    margin: 30px 0;
+    max-width: 310px;
+    border-bottom: 2px solid #fff;
+}
+
+/* Se trabaja con el label de los campos de textos de "correo" y "contraseña" */
+.inputbox label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 15px;
+    pointer-events: none;
+    transition: all 0.5s ease-in-out;
+}
+
+/* Hace que el label de los campos de textos de "correo" y "contraseña" se mueva hacia arriba cuando el usuario escribe algo en el campo */
+input:focus ~ label,
+input:valid ~ label {
+    top: -10px;
+}
+
+.forget label {
+    display: flex;
+    align-items: center;
+}
+
+/* Genera el espaciado entre el checkbox y el texto de "recordar" */
+.forget label input {
+    margin-right: 5px;
+}
+
+/*Trabaja con el boton*/
+.button {
+    display: inline-block;
+    width: 70%;
+    height: 40px;
+    border-radius: 10px;
+    background-color: transparent;
+    border: 1px solid #fff;
+    outline: none;
+    cursor: pointer;
+    font-size: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    z-index: 1;
+}
+
+/* hace que el boton se vea con un fondo color */
+.button:hover {
+    background-color: rgb(255, 255, 255, 0.5);
+}
+
+/*Genera el efecto de pulsacion del boton*/
+.button::before,
+.button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 0;
+    height: 100%;
+    transform: skew(15deg);
+    transition: all 0.8s;
+    overflow: hidden;
+    z-index: -1;
+}
+
+/*Hace que el efecto de pulsacion del boton se vea desde el lado izquierdo*/
+.button::before {
+    left: -10%;
+    background: #4F4B31;
+}
+
+/*Hace que el efecto de pulsacion del boton se vea desde el lado derecho*/
+.button::after {
+    right: -10%;
+    background: #181D1B;
+}
+
+/*Hace que el efecto de pulsacion del boton se vea desde el lado izquierdo y derecho*/
+.button:hover::before,
+.button:hover::after {
+    width: 60%;
+}
+
+/*Hace que el efecto de pulsacion del boton se vea con un color*/
+.button:hover span {
+    color: #e0aaff;
+    transition: 0.3s;
+}
+
+/* Hace que el texto del boton se vea con un color */
+.button span {
+    color: #fff;
+    font-size: 18px;
+    transition: all 0.3s ease-in;
+}
+
+/* Estilos para el enlace de "Iniciar" y "Registrate" */
+a {
+    text-decoration: none;
+    padding: 10px;
+    color: #fff;
+}
+
+/* Estilos para el formulario */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Capa que cubre todo el viewport para "tapar" el fondo con transparencia */
+.fondo-transparente {
+    position: fixed;     /* Se fija a la ventana, no al scroll */
+    inset: 0;            /* top/right/bottom/left: 0; ocupa toda la pantalla */
+    background: transparent; /* Oscurece con transparencia (ajusta el 0.45 a gusto) */
+    backdrop-filter: blur(7px); /* Genera la transparencia con blur */
+    pointer-events: none;/* No intercepta clics ni foco; todo pasa "a través" */
+    z-index: 0;          /* Queda detrás del contenido que viene después */
+}
+
+/* Contenedor flexible para logo + título */
+.titulo-con-logo {
+    display: flex;
+    align-items: center;   /* centra verticalmente logo y texto */
+    justify-content: center; /* centra en horizontal dentro del form */
+    gap: 12px;             /* espacio entre logo y texto */
+}
+
+/* Estilo para el logo */
+.logo-cabecera {
+    width: 70px;   /* ajusta tamaño */
+    height: auto;  /* mantiene proporción */
+}

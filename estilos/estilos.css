@@ -1,0 +1,92 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: #003366;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+main {
+    flex: 1;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    transition: transform 1s ease; /* Transición suave */
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    text-align: center;
+    white-space: nowrap;
+}
+
+th {
+    background-color: #e0e0e0;
+}
+
+.piso {
+    background-color: #d0ebff;
+    font-weight: bold;
+    }
+
+.ocupado {
+    background-color: #ffc0cb;
+}
+
+.scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex: 1;
+    position: relative;
+    width: 100%;
+}
+
+.hora-actual {
+    background-color: #fff3cd !important;
+    }
+
+/* Fijar la primera columna (Aulas) */
+th:first-child, td:first-child {
+    position: sticky;
+    left: 0;
+    background-color: #f0f0f0;
+    z-index: 2;
+}
+
+thead th:first-child {
+    z-index: 3;
+}
+
+.aula-nombre {
+    font-weight: bold;
+}
+
+.aula-piso {
+    font-size: 0.8rem;
+    color: #555;
+}
