@@ -92,16 +92,6 @@ input:valid ~ label {
     top: -10px;
 }
 
-.forget label {
-    display: flex;
-    align-items: center;
-}
-
-/* Genera el espaciado entre el checkbox y el texto de "recordar" */
-.forget label input {
-    margin-right: 5px;
-}
-
 /*Trabaja con el boton*/
 .button {
     display: inline-block;

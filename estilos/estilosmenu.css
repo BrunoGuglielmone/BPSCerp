@@ -1,0 +1,210 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'poppins', sans-serif;
+}
+
+body {
+    background-image: url("https://w.wallhaven.cc/full/j3/wallhaven-j3wqo5.png"); /* Cambiar imagen */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+
+    backdrop-filter: blur(8px);            /* desenfoque */
+    -webkit-backdrop-filter: blur(8px);    /* soporte Safari */
+}
+
+/* Contenedor general para organizar en fila */
+.contenedor {
+    display: flex;
+    /* Alinea los bloques en fila */
+    gap: 20px;
+    /* Espacio entre bloques */
+    justify-content: center;
+    /* Centrado horizontal */
+    padding: 20px;
+    /* Espaciado interno */
+}
+
+/* Cada tarjeta (bloque clickeable) */
+.tarjeta {
+    flex: 1;
+    /* Que se ajusten al mismo ancho */
+    min-width: 200px;
+    /* Para que no se achiquen demasiado */
+    max-width: 800px;
+    /* Máximo tamaño de la tarjeta */
+    padding: 30px;
+    /* Espaciado interno */
+    border-radius: 10px;
+    /* Bordes redondeados */
+    color: black;
+    /* Texto negro */
+    font-family: Arial, sans-serif;
+    font-size: 1.2em;
+    /* Tamaño del texto */
+    font-weight: bold;
+    text-decoration: none;
+    /* Sacar subrayado de los enlaces */
+    display: flex;
+    /* Texto e icono en columna */
+    gap: 15px;
+    /* Espacio entre texto e icono */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* Animación suave */
+}
+
+/* Efecto al pasar el mouse */
+.tarjeta:hover {
+    transform: scale(1.05);
+    /* Aumenta un poco el tamaño */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    /* Sombra elegante */
+    cursor: pointer;
+}
+
+/* Colores específicos de cada tarjeta */
+.verde {
+    background-color: #a8dcd6;
+}
+
+.celeste {
+    background-color: #5ec9f3;
+}
+
+.amarillo {
+    background-color: #ffd400;
+}
+
+/* Iconos de ejemplo (podrías usar imágenes o emojis) */
+.icono {
+    font-size: 2em;     /* Tamaño grande */
+    display: flex;      /* Convierte el div en contenedor flex */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center;     /* Centra verticalmente */
+    width: 100%;        /* Que ocupe todo el ancho de su contenedor */
+}
+
+.encabezado, .piepagina{
+    height: 100px;
+    width: 100%;
+    padding: 0;
+    background-color: red;
+
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    padding: 35px;
+}
+
+/*Trabaja con el boton*/
+.button {
+    display: inline-block;
+    width: 70%;
+    height: 40px;
+    border-radius: 10px;
+    background-color: transparent;
+    border: 1px solid #fff;
+    outline: none;
+    cursor: pointer;
+    font-size: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    z-index: 1;
+}
+
+/* hace que el boton se vea con un fondo color */
+.button:hover {
+    background-color: rgb(255, 255, 255, 0.5);
+}
+
+/*Genera el efecto de pulsacion del boton*/
+.button::before,
+.button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 0;
+    height: 100%;
+    transform: skew(15deg);
+    transition: all 0.8s;
+    overflow: hidden;
+    z-index: -1;
+}
+
+/*Hace que el efecto de pulsacion del boton se vea desde el lado izquierdo*/
+.button::before {
+    left: -10%;
+    background: #4F4B31;
+}
+
+/*Hace que el efecto de pulsacion del boton se vea desde el lado derecho*/
+.button::after {
+    right: -10%;
+    background: #181D1B;
+}
+
+/*Hace que el efecto de pulsacion del boton se vea desde el lado izquierdo y derecho*/
+.button:hover::before,
+.button:hover::after {
+    width: 60%;
+}
+
+/*Hace que el efecto de pulsacion del boton se vea con un color*/
+.button:hover span {
+    color: #e0aaff;
+    transition: 0.3s;
+}
+
+/* Hace que el texto del boton se vea con un color */
+.button span {
+    color: #fff;
+    font-size: 18px;
+    transition: all 0.3s ease-in;
+}
+
+/* Estilos para el enlace de "Iniciar" y "Registrate" */
+a {
+    text-decoration: none;
+    padding: 10px;
+    color: #fff;
+}
+
+h1 {
+    font-size: 30px;
+    color: #fff;
+    text-align: center;
+}
+
+p {
+    font-size: 15px;
+    color: white;
+    text-align: left;
+}
+
+.redessociales {
+    display: flex;                 /* organiza los tres divs en fila */
+    gap: 5px;                     /* espacio entre cada div */
+    padding: 0px;                 /* margen interno */
+}
+
+/* Colores de prueba momentáneos para verlos */
+.redessociales .instagram {
+    width: 50px;
+    height: 50px;
+    background-color: pink;
+}
+
+.redessociales .correo {
+    width: 50px;
+    height: 50px;
+    background-color: lightblue;
+}
+
+.redessociales .contacto {
+    width: 50px;
+    height: 50px;
+    background-color: lightgreen;
+}
