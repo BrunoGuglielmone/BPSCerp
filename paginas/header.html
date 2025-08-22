@@ -1,0 +1,30 @@
+ <header class="header-docentes">
+        <div class="logo-container">
+            <img src="C:\xampp\htdocs\BPSCerp\imagenes\logo_cerp_3d.png" alt="Logo Institución" style="height: 70px;">
+        </div>
+        <div class="reloj-container">
+            <span id="reloj"></span> <!-- Aquí se actualizará la hora con JS -->
+        </div>
+        <span class="titulo-admin">Administrador de Docentes</span>
+    </header>
+
+    
+    <!-- Archivos JS al final para no bloquear la carga -->
+    <script src="../js/docentes.js"></script>
+    <script>
+        // --- Lógica del Reloj ---
+        function actualizarReloj() {
+            const relojEl = document.getElementById('reloj');
+            if (relojEl) {
+                const ahora = new Date();
+                // Formateo de horas, minutos y segundos con dos dígitos
+                const horas = String(ahora.getHours()).padStart(2, '0');
+                const minutos = String(ahora.getMinutes()).padStart(2, '0');
+                const segundos = String(ahora.getSeconds()).padStart(2, '0');
+                // Mostrar hora actual en el span del header
+                relojEl.textContent = `${horas}:${minutos}:${segundos}`;
+            }
+        }
+        // Actualizar cada segundo
+        setInterval(actualizarReloj, 1000);
+        actualizarReloj();
