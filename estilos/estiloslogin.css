@@ -7,13 +7,55 @@
 
 body {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column; /* Igual que docentes */
     min-height: 100vh;
     background-image: url("https://w.wallhaven.cc/full/j3/wallhaven-j3wqo5.png");
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     background-position: center;
     background-size: cover;
+    color: #fff;
+    font-size: 0.7rem; /* Reduce tipografía igual que docentes */
+}
+
+/* Fondo desenfocado solo detrás del header, login y footer */
+.header-docentes,
+.footer-docentes,
+section {
+    position: relative;
+    z-index: 1;
+}
+
+.header-docentes::before,
+.footer-docentes::before,
+
+section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 25, 51, 0.3);
+    border-radius: 12px;
+}
+
+/* Ajusta el header y footer para que el desenfoque no sobresalga */
+.header-docentes {
+    overflow: hidden;
+}
+
+.footer-docentes {
+    overflow: hidden;
+}
+
+/* Ajusta el section (ventana de login) para que el desenfoque solo esté detrás */
+section {
+    margin: 40px auto;
+    max-width: 400px;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    overflow: hidden;
+    background: rgba(255,255,255,0.05);
 }
 
 /*Trabaja con el fondo del formulario*/
@@ -195,3 +237,77 @@ form {
     width: 70px;   /* ajusta tamaño */
     height: auto;  /* mantiene proporción */
 }
+
+/* HEADER Y FOOTER - IGUAL QUE DOCENTES */
+.header-docentes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 25, 51, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 10px 20px;
+    position: relative;
+}
+
+.header-docentes .logo-container img {
+    height: 28px;
+}
+
+.header-docentes .titulo-admin {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    pointer-events: none;
+}
+
+.reloj-container {
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Apply this to all your CSS files for a unified footer style */
+.footer-docentes {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: rgba(0, 25, 51, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 20px;
+    color: #fff;
+    flex-wrap: wrap;
+}
+
+/* Para que el footer quede al fondo si el contenido es corto */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-bottom: 0; /* Elimina el espacio extra del footer fijo */
+}
+
+
+.footer-info {
+    max-width: 60%;
+    font-size: 0.8rem;
+}
+
+.footer-contacto a {
+    margin-left: 10px;
+    color: #fff;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+.footer-contacto a:hover {
+    color: #1da1f2;
+}
+
+main {
+    flex: 1;
+}
+

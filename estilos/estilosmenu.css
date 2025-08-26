@@ -208,3 +208,66 @@ p {
     height: 50px;
     background-color: lightgreen;
 }
+
+/* HEADER Y FOOTER - IGUAL QUE DOCENTES */
+.header-docentes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 25, 51, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 10px 20px;
+    position: relative;
+}
+
+.header-docentes .logo-container img {
+    height: 28px;
+}
+
+.header-docentes .titulo-admin {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    pointer-events: none;
+}
+
+.reloj-container {
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* --- Footer --- */
+.footer-docentes {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: rgba(0, 25, 51, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 20px;
+    color: #fff;
+    flex-wrap: wrap;
+    width: 100%;
+    font-size: 0.8rem;
+    position: static;
+    left: unset;
+    right: unset;
+    bottom: unset;
+}
+
+/* Para que el footer quede al fondo si el contenido es corto */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-bottom: 0;
+}
+
+main {
+    flex: 1;
+}
