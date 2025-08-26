@@ -1,19 +1,14 @@
+<?php include_once("../Php/header.php"); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <title>Administración de Salones</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="../estilos/estilosalonario.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
-<header>
-  <div class="logo">
-    <img src="Cerp.png" alt="Logo Cerp" style="height:40px; vertical-align:middle; margin-right:6px;" />
-    <!-- Puedes ajustar el tamaño y margen según tu preferencia -->
-  </div>
-  <div class="hora" id="horaActual"></div>
-</header>
 
 <main>
   <section class="formulario">
@@ -70,7 +65,8 @@
   </div>
 </div>
 
+<script src="../js/salonario.js"></script>
+<?php include_once("../Php/footer.php"); ?>
 
-<script src="main.js"></script>
 </body>
 </html>

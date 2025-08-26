@@ -1,3 +1,4 @@
+<?php include_once("../Php/header.php"); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,17 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-
-    <!-- Encabezado con logo, reloj y título -->
-    <header class="header-docentes">
-        <div class="logo-container">
-            <img src="C:\xampp\htdocs\BPSCerp\imagenes\logo_cerp_3d.png" alt="Logo Institución" style="height: 70px;">
-        </div>
-        <div class="reloj-container">
-            <span id="reloj"></span> <!-- Aquí se actualizará la hora con JS -->
-        </div>
-        <span class="titulo-admin">Administrador de Docentes</span>
-    </header>
 
     <!-- Contenedor principal: formulario a la izquierda y lista de docentes a la derecha -->
     <main class="main-container">
@@ -132,41 +122,10 @@
 
     </main>
 
-    <!-- Pie de página con logo y enlaces de contacto -->
-    <footer class="footer-docentes">
-        <div class="footer-logo">
-            <img src="C:\xampp\htdocs\BPSCerp\imagenes\logo_cerp_3d.png" alt="Logo Institución" style="height: 50px;">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.</p>
-        </div>
-        <div class="footer-contacto">
-            <!-- Enlaces a redes sociales -->
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fas fa-envelope"></i></a>
-        </div>
-    </footer>
 
     <!-- Archivos JS al final para no bloquear la carga -->
     <script src="../js/docentes.js"></script>
     <script>
-        // --- Lógica del Reloj ---
-        function actualizarReloj() {
-            const relojEl = document.getElementById('reloj');
-            if (relojEl) {
-                const ahora = new Date();
-                // Formateo de horas, minutos y segundos con dos dígitos
-                const horas = String(ahora.getHours()).padStart(2, '0');
-                const minutos = String(ahora.getMinutes()).padStart(2, '0');
-                const segundos = String(ahora.getSeconds()).padStart(2, '0');
-                // Mostrar hora actual en el span del header
-                relojEl.textContent = `${horas}:${minutos}:${segundos}`;
-            }
-        }
-        // Actualizar cada segundo
-        setInterval(actualizarReloj, 1000);
-        actualizarReloj();
-
         // --- Lógica para abrir/cerrar el formulario ---
         const toggleBtn = document.querySelector('.toggle-form-btn');
         const formContent = document.querySelector('.formulario-content');
@@ -186,5 +145,7 @@
             });
         }
     </script>
+    
+    <?php include_once("../Php/footer.php"); ?>
 </body>
 </html>

@@ -308,17 +308,84 @@ archivoCSV.addEventListener("change", (e) => {
   reader.readAsText(file);
 });
 
-// Actualiza la hora cada segundo
+// Actualiza la hora en el header
 function actualizarHora() {
-  document.getElementById("horaActual").textContent = new Date().toLocaleTimeString();
+    const el = document.getElementById('horaActual');
+    if (el) {
+        const ahora = new Date();
+        el.textContent = ahora.toLocaleTimeString();
+    }
 }
-
 setInterval(actualizarHora, 1000);
 actualizarHora();
 
-renderTabla();
+// Ejemplo: agregar profesor a una lista interna y actualizar la tabla
+document.getElementById('agregarProfesor').onclick = function() {
+    const nombre = document.getElementById('nombre').value.trim();
+    const asignatura = document.getElementById('asignatura').value.trim();
+    const anio = document.getElementById('anio').value;
+    if (nombre && asignatura && anio) {
+        profesores.push({ nombre, asignatura, anio });
+        document.getElementById('nombre').value = '';
+        document.getElementById('asignatura').value = '';
+        actualizarListaProfesores();
+    }
+};
 
-// Actualiza lista profesores al cambiar filtros
-filtroAnio.onchange = renderListaProfesores;
-filtroAsignatura.oninput = renderListaProfesores;
+function actualizarListaProfesores() {
+    const lista = document.getElementById('listaProfesores');
+    if (!lista) return;
+    lista.innerHTML = '';
+    profesores.forEach((prof, idx) => {
+        const div = document.createElement('div');
+        div.className = 'profesor-item';
+        div.textContent = `${prof.nombre} - ${prof.asignatura} (${prof.anio})`;
+        lista.appendChild(div);
+    });
+}
+
+// Modal de asignación (ejemplo básico)
+document.getElementById('asignarProfesorBtn').onclick = function() {
+    document.getElementById('modal').style.display = 'block';
+    actualizarListaProfesores();
+};
+document.getElementById('cerrarModal').onclick = function() {
+    document.getElementById('modal').style.display = 'none';
+};
+
+// Exportar tabla a CSV (ejemplo simple)
+document.getElementById('exportarCSVBtn').onclick = function() {
+    const tabla = document.getElementById('tablaHorarios');
+    let csv = [];
+    for (let row of tabla.rows) {
+        let cols = [];
+        for (let cell of row.cells) {
+            cols.push(cell.innerText.replace(/"/g, '""'));
+        }
+        csv.push('"' + cols.join('","') + '"');
+    }
+    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'salonario.csv';
+    a.click();
+};
+
+// Opcional: cargar profesores desde CSV
+document.getElementById('archivoCSV').onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        const lines = evt.target.result.split('\n');
+        lines.forEach(line => {
+            const [nombre, asignatura, anio] = line.split(',');
+            if (nombre && asignatura && anio) {
+                profesores.push({ nombre: nombre.trim(), asignatura: asignatura.trim(), anio: anio.trim() });
+            }
+        });
+        actualizarListaProfesores();
+    };
+    reader.readAsText(file);
+};
 

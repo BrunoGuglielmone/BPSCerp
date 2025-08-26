@@ -52,51 +52,6 @@ body::before {
     flex-direction: column;
     order: 2;                         /* Siempre después del formulario */
 }
-
-/* --- Header --- */
-.header-docentes {
-    display: flex;
-    justify-content: space-between;   /* Logo a la izquierda, reloj a la derecha */
-    align-items: center;
-    background-color: rgba(0, 25, 51, 0.6); /* Fondo semitransparente */
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 10px 20px;
-    position: relative;               /* Para posicionar el título en el centro */
-}
-
-/* --- Título del header centrado --- */
-.header-docentes .titulo-admin {
-    position: absolute;               /* Se coloca sobre el flujo normal */
-    left: 50%;                        /* Centrado horizontal */
-    transform: translateX(-50%);      /* Ajusta el centrado */
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #fff;
-    letter-spacing: 2px;              /* Espaciado entre letras */
-    text-shadow: 0 2px 8px rgba(0,0,0,0.3); /* Sombra para resaltar */
-    pointer-events: none;             /* No bloquea clics debajo */
-}
-
-.header-docentes .logo-container img {
-    height: 28px;                     /* Ajusta el tamaño del logo */
-}
-
-.reloj-container {
-    font-size: 1.5rem;
-    font-weight: bold;
-    font-family: 'Courier New', Courier, monospace; /* Fuente tipo reloj */
-}
-
-/* --- Contenedores con efecto Glassmorphism --- */
-.formulario-container,
-.lista-container {
-    background-color: transparent;
-    border: 2px solid rgba(255, 255, 255, 0.5); /* Borde translúcido */
-    border-radius: 20px;
-    backdrop-filter: blur(10px);      /* Efecto vidrio */
-    padding: 20px;
-}
-
 /* --- Formulario Lateral (40%) --- */
 .formulario-container {
     width: 40%;                       /* Aquí se ajusta al 40% */
@@ -213,17 +168,7 @@ body::before {
     border-collapse: collapse;         /* Quita espacios entre celdas */
 }
 
-#tabla-docentes th, 
-#tabla-docentes td {
-    padding: 8px 10px;
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    font-size: 0.7rem;
-}
 
-#tabla-docentes thead {
-    background-color: rgba(255, 255, 255, 0.1); /* Fondo de encabezado */
-}
 
 #tabla-docentes th a {
     text-decoration: none;
@@ -249,8 +194,29 @@ body::before {
 .footer-docentes {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     background-color: rgba(0, 25, 51, 0.7);
     border-top: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 10px;
+    padding: 15px 20px;
+    color: #fff;
+    flex-wrap: wrap;
+    width: 100%;
+    font-size: 0.8rem;
+    position: static;
+    left: unset;
+    right: unset;
+    bottom: unset;
 }
+
+/* Para que el footer quede al fondo si el contenido es corto */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-bottom: 0;
+}
+
+main {
+    flex: 1;
+}
+
