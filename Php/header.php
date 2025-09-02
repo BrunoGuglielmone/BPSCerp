@@ -5,10 +5,13 @@
     <div class="logo-container">
         <img src="../imagenes/logo_cerp_3d.png" alt="Logo Institución" style="height: 70px;">
     </div>
+
     <div class="reloj-container">
         <span id="reloj"></span>
     </div>
     <span class="titulo-admin">Administrador</span>
+
+
 </header>
 
 <script>
@@ -25,4 +28,7 @@
     }
     setInterval(actualizarReloj, 1000);
     actualizarReloj();
+
 </script>
+
+

@@ -1,391 +1,311 @@
-const horarios = [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,0];
-const salones = Array.from({length: 40}, (_, i) => `Salón ${i+1}`);
+// === ESTADO DE LA APLICACIÓN ===
+const horarios = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0];
+const salones = Array.from({ length: 40 }, (_, i) => `Salón ${i + 1}`);
 let profesores = [];
-let asignaciones = {}; // clave: `${salon}-${hora}`
+let asignaciones = {}; // { fecha: { "Salon-Hora": {profesor} } }
+let selectedDate;
+let celdasSeleccionadas = [];
+let salonSeleccionado = null;
 
-// Elementos DOM
+// === ELEMENTOS DOM ===
 const tabla = document.getElementById("tablaHorarios");
 const tbody = tabla.querySelector("tbody");
+// Formulario
 const agregarBtn = document.getElementById("agregarProfesor");
 const nombreInput = document.getElementById("nombre");
 const asignaturaInput = document.getElementById("asignatura");
 const anioSelect = document.getElementById("anio");
-
-const filtroAnio = document.getElementById("filtroAnio");
-const filtroAsignatura = document.getElementById("filtroAsignatura");
-
-const asignarProfesorBtn = document.getElementById("asignarProfesorBtn");
-const exportarCSVBtn = document.getElementById("exportarCSVBtn");
-
+// Modal asignar
 const modal = document.getElementById("modal");
 const listaProfesoresDiv = document.getElementById("listaProfesores");
 const cerrarModalBtn = document.getElementById("cerrarModal");
 const confirmarAsignacionBtn = document.getElementById("confirmarAsignacionBtn");
+const filtroAnio = document.getElementById("filtroAnio");
+const filtroAsignatura = document.getElementById("filtroAsignatura");
+// Controles tabla
+const asignarProfesorBtn = document.getElementById("asignarProfesorBtn");
+const exportarCSVBtn = document.getElementById("exportarCSVBtn");
+// Formulario desplegable
+const toggleFormularioBtn = document.getElementById("toggleFormulario");
+const contenidoFormulario = document.getElementById("contenidoFormulario");
+const toggleIcon = toggleFormularioBtn.querySelector("i");
+// Calendario
+const fechaInput = document.getElementById("fechaInput");
+const primerSemestreBtn = document.getElementById("primerSemestreBtn");
+const segundoSemestreBtn = document.getElementById("segundoSemestreBtn");
 
-let celdasSeleccionadas = []; // array de keys (salon-hora)
-let salonSeleccionado = null;  // salón seleccionado para la asignación
+// === NUEVO MODAL DETALLE ===
+const modalDetalle = document.createElement("div");
+modalDetalle.classList.add("modal");
+modalDetalle.innerHTML = `
+  <div class="modal-content">
+    <span id="cerrarModalDetalle" class="cerrar">&times;</span>
+    <h3>Detalles de la asignación</h3>
+    <div id="detalleContenido"></div>
+    <div class="acciones-detalle">
+        <button id="verProfesorBtn">Ver Profesor</button>
+        <button id="verSalonBtn">Ver Salón</button>
+    </div>
+  </div>
+`;
+document.body.appendChild(modalDetalle);
 
-// Referencias nuevas
-const archivoCSV = document.getElementById("archivoCSV");
+const cerrarModalDetalle = modalDetalle.querySelector("#cerrarModalDetalle");
+const detalleContenido = modalDetalle.querySelector("#detalleContenido");
+const verProfesorBtn = modalDetalle.querySelector("#verProfesorBtn");
+const verSalonBtn = modalDetalle.querySelector("#verSalonBtn");
 
-// Renderiza tabla y encabezados
-function renderTabla() {
-  // Encabezados horarios
-  const thead = tabla.querySelector("thead tr");
-  thead.innerHTML = "<th>Salón</th>" + horarios.map(h => `<th>${h}:00</th>`).join("");
-
-  tbody.innerHTML = "";
-
-  salones.forEach(salon => {
-    const fila = document.createElement("tr");
-    fila.innerHTML = `<td>${salon}</td>` + horarios.map(hora => {
-      const key = `${salon}-${hora}`;
-      if (asignaciones[key]) {
-        const { nombre, asignatura, anio } = asignaciones[key];
-        return `<td class="ocupado" data-key="${key}">
-                  <span class="btn-quitar" data-key="${key}" title="Quitar asignación">×</span>
-                  <div>${nombre}</div>
-                  <div>${asignatura}</div>
-                  <div>${anio}</div>
-                </td>`;
-      } else {
-        return `<td class="libre" data-salon="${salon}" data-hora="${hora}" data-key="${key}">
-                  <span class="plus">+</span>
-                </td>`;
-      }
-    }).join("");
-    tbody.appendChild(fila);
-  });
-  attachEventosCeldas();
-}
-
-// Añade eventos click para selección múltiple en celdas libres y quitar asignación
-function attachEventosCeldas() {
-  salonSeleccionado = null;
-
-  const celdasLibres = tbody.querySelectorAll("td.libre");
-  celdasLibres.forEach(td => {
-    td.classList.remove("seleccionado");
-    td.onclick = () => {
-      const salon = td.dataset.salon;
-      const hora = td.dataset.hora;
-      const key = td.dataset.key;
-
-      if (!salonSeleccionado) {
-        salonSeleccionado = salon;
-      }
-
-      if (salon !== salonSeleccionado) {
-        alert("Selecciona solo celdas del mismo salón.");
-        return;
-      }
-
-      if (celdasSeleccionadas.includes(key)) {
-        celdasSeleccionadas = celdasSeleccionadas.filter(k => k !== key);
-        td.classList.remove("seleccionado");
-      } else {
-        celdasSeleccionadas.push(key);
-        td.classList.add("seleccionado");
-      }
-
-      asignarProfesorBtn.disabled = celdasSeleccionadas.length === 0;
-    };
-  });
-
-  // Evento quitar asignación
-  const btnsQuitar = tbody.querySelectorAll(".btn-quitar");
-  btnsQuitar.forEach(btn => {
-    btn.onclick = e => {
-      e.stopPropagation();
-      const key = btn.dataset.key;
-      delete asignaciones[key];
-      renderTabla();
-    };
-  });
-}
-
-// Función para filtrar profesores según filtros seleccionados
-function filtrarProfesores() {
-  const anioF = filtroAnio.value.trim();
-  const asignaturaF = filtroAsignatura.value.trim().toLowerCase();
-
-  return profesores.filter(p => {
-    const cumpleAnio = anioF === "" || p.anio === anioF;
-    const cumpleAsignatura = asignaturaF === "" || p.asignatura.toLowerCase().includes(asignaturaF);
-    return cumpleAnio && cumpleAsignatura;
-  });
-}
-
-// Renderiza la lista de profesores filtrada en el modal
-function renderListaProfesores() {
-  const filtrados = filtrarProfesores();
-  if(filtrados.length === 0) {
-    listaProfesoresDiv.innerHTML = "<em>No hay profesores que coincidan con el filtro.</em>";
-    confirmarAsignacionBtn.disabled = true;
-    return;
-  }
-  listaProfesoresDiv.innerHTML = filtrados.map((p, i) =>
-    `<div class="prof-item" data-index="${i}">${p.nombre} - ${p.asignatura} (${p.anio})</div>`
-  ).join("");
-  attachEventosProfesores();
-}
-
-// Actualiza lista profesores al cambiar filtros dentro del modal
-filtroAnio.onchange = renderListaProfesores;
-filtroAsignatura.oninput = renderListaProfesores;
-
-// Adjunta evento click para seleccionar profesor en modal
-function attachEventosProfesores() {
-  const profItems = listaProfesoresDiv.querySelectorAll(".prof-item");
-  profItems.forEach(item => {
-    item.onclick = () => {
-      profItems.forEach(i => i.classList.remove("seleccionado"));
-      item.classList.add("seleccionado");
-      confirmarAsignacionBtn.disabled = false;
-    };
-  });
-}
-
-// Mostrar modal y preparar lista profesores filtrada
-function abrirModal() {
-  renderListaProfesores();
-  modal.style.display = "flex";
-  confirmarAsignacionBtn.disabled = true;
-}
-
-// Cerrar modal y limpiar selección
-const btnCerrarModal = document.getElementById("cerrarModal");
-
-btnCerrarModal.addEventListener("click", cerrarModal);
-
-function cerrarModal() {
-  modal.style.display = "none";
-  limpiarSeleccion();
-}
-
-function cerrarModal() {
-  modal.style.display = "none";
-  limpiarSeleccion();
-}
-
-window.addEventListener("click", function (e) {
-  if (e.target === modal) {
-    cerrarModal();
-  }
+cerrarModalDetalle.onclick = () => (modalDetalle.style.display = "none");
+window.addEventListener("click", e => {
+    if (e.target === modalDetalle) modalDetalle.style.display = "none";
 });
 
-
-// Limpia selección de celdas y botón
-function limpiarSeleccion() {
-  celdasSeleccionadas = [];
-  salonSeleccionado = null;
-  asignarProfesorBtn.disabled = true;
-  const celdas = tbody.querySelectorAll("td.seleccionado");
-  celdas.forEach(td => td.classList.remove("seleccionado"));
+// === FUNCIONES ===
+function toYYYYMMDD(date) {
+    return date.toISOString().split("T")[0];
 }
 
-// Asignar profesor seleccionado a todas las celdas marcadas
-confirmarAsignacionBtn.onclick = () => {
-  const seleccionado = listaProfesoresDiv.querySelector(".prof-item.seleccionado");
-  if (!seleccionado) {
-    alert("Por favor selecciona un profesor.");
-    return;
-  }
-  const index = [...listaProfesoresDiv.children].indexOf(seleccionado);
-  // Los profesores filtrados:
-  const filtrados = filtrarProfesores();
-  const profesor = filtrados[index];
+function renderTabla() {
+    if (!selectedDate) return;
+    const asignacionesDelDia = asignaciones[selectedDate] || {};
 
-  celdasSeleccionadas.forEach(key => {
-    asignaciones[key] = profesor;
-  });
+    const thead = tabla.querySelector("thead tr");
+    thead.innerHTML =
+        "<th>Salón</th>" +
+        horarios.map(h => `<th>${h}:00</th>`).join("");
+    tbody.innerHTML = "";
 
-  cerrarModal();
-  renderTabla();
-};
-
-// Botón para abrir modal asignar profesor a celdas seleccionadas
-asignarProfesorBtn.onclick = () => {
-  if (celdasSeleccionadas.length === 0) return;
-  abrirModal();
-};
-
-// Botón exportar tabla a CSV
-exportarCSVBtn.onclick = () => {
-  let csvContent = "data:text/csv;charset=utf-8,";
-  // Cabecera
-  csvContent += "Salón," + horarios.map(h => `${h}:00`).join(",") + "\n";
-  salones.forEach(salon => {
-    let fila = [salon];
-    horarios.forEach(hora => {
-      const key = `${salon}-${hora}`;
-      if (asignaciones[key]) {
-        const a = asignaciones[key];
-        fila.push(`"${a.nombre} - ${a.asignatura} - ${a.anio}"`);
-      } else {
-        fila.push("Libre");
-      }
+    salones.forEach(salon => {
+        const fila = document.createElement("tr");
+        fila.innerHTML =
+            `<td>${salon}</td>` +
+            horarios
+                .map(hora => {
+                    const key = `${salon}-${hora}`;
+                    if (asignacionesDelDia[key]) {
+                        const { nombre, asignatura, anio } = asignacionesDelDia[key];
+                        return `<td class="ocupado" data-key="${key}">
+                                    <span class="btn-quitar" data-key="${key}" title="Quitar asignación">×</span>
+                                    <div>${nombre}</div>
+                                    <div>${asignatura}</div>
+                                    <div>${anio}</div>
+                                </td>`;
+                    } else {
+                        return `<td class="libre" data-salon="${salon}" data-hora="${hora}" data-key="${key}">
+                                    <span class="plus">+</span>
+                                </td>`;
+                    }
+                })
+                .join("");
+        tbody.appendChild(fila);
     });
-    csvContent += fila.join(",") + "\n";
-  });
 
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "tabla_salones.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
-// Función para agregar profesor (reutilizable)
-function agregarProfesor(nombre, asignatura, anio) {
-  if (!nombre || !asignatura) return false;
-  profesores.push({ nombre, asignatura, anio });
-  return true;
+    attachEventosCeldas();
 }
 
-// Manejo botón agregar profesor (original)
+function attachEventosCeldas() {
+    limpiarSeleccion();
+
+    // Celdas libres
+    tbody.querySelectorAll("td.libre").forEach(td => {
+        td.onclick = () => manejarSeleccionCelda(td);
+    });
+
+    // Botón quitar → elimina TODAS las asignaciones de ese profesor en la fecha
+    tbody.querySelectorAll(".btn-quitar").forEach(btn => {
+        btn.onclick = e => {
+            e.stopPropagation();
+            const key = btn.dataset.key;
+            const prof = asignaciones[selectedDate][key];
+            if (!prof) return;
+
+            for (const k in asignaciones[selectedDate]) {
+                if (
+                    asignaciones[selectedDate][k].nombre === prof.nombre &&
+                    asignaciones[selectedDate][k].asignatura === prof.asignatura &&
+                    asignaciones[selectedDate][k].anio === prof.anio
+                ) {
+                    delete asignaciones[selectedDate][k];
+                }
+            }
+
+            renderTabla();
+        };
+    });
+
+    // Click en casillas ocupadas → abre modal detalle
+    tbody.querySelectorAll("td.ocupado").forEach(td => {
+        td.onclick = () => {
+            const key = td.dataset.key;
+            const prof = asignaciones[selectedDate][key];
+            if (!prof) return;
+
+            detalleContenido.innerHTML = `
+                <p><strong>Profesor:</strong> ${prof.nombre}</p>
+                <p><strong>Asignatura:</strong> ${prof.asignatura}</p>
+                <p><strong>Año:</strong> ${prof.anio}</p>
+                <p><strong>Salón:</strong> ${key.split("-")[0]}</p>
+                <p><strong>Hora:</strong> ${key.split("-")[1]}:00</p>
+            `;
+
+            verProfesorBtn.onclick = () => {
+                window.location.href =
+                    "profesor.php?nombre=" + encodeURIComponent(prof.nombre);
+            };
+            verSalonBtn.onclick = () => {
+                const salon = key.split("-")[0];
+                window.location.href =
+                    "salon.php?nombre=" + encodeURIComponent(salon);
+            };
+
+            modalDetalle.style.display = "flex";
+        };
+    });
+}
+
+function manejarSeleccionCelda(td) {
+    const salon = td.dataset.salon;
+    const key = td.dataset.key;
+
+    if (celdasSeleccionadas.length > 0 && salon !== salonSeleccionado) {
+        alert("Solo puedes seleccionar celdas del mismo salón en una sola operación.");
+        return;
+    }
+
+    if (celdasSeleccionadas.length === 0) salonSeleccionado = salon;
+
+    const index = celdasSeleccionadas.indexOf(key);
+    if (index > -1) {
+        celdasSeleccionadas.splice(index, 1);
+        td.classList.remove("seleccionado");
+    } else {
+        celdasSeleccionadas.push(key);
+        td.classList.add("seleccionado");
+    }
+
+    if (celdasSeleccionadas.length === 0) salonSeleccionado = null;
+    asignarProfesorBtn.disabled = celdasSeleccionadas.length === 0;
+}
+
+confirmarAsignacionBtn.onclick = () => {
+    const seleccionado = listaProfesoresDiv.querySelector(".prof-item.seleccionado");
+    if (!seleccionado) return alert("Por favor selecciona un profesor.");
+    const index = parseInt(seleccionado.dataset.index, 10);
+    const profesor = filtrarProfesores()[index];
+    if (!asignaciones[selectedDate]) asignaciones[selectedDate] = {};
+    celdasSeleccionadas.forEach(key => {
+        asignaciones[selectedDate][key] = { ...profesor };
+    });
+    cerrarModal();
+    renderTabla();
+};
+
+fechaInput.addEventListener("change", () => {
+    selectedDate = fechaInput.value;
+    renderTabla();
+});
+primerSemestreBtn.addEventListener("click", () => {
+    const hoy = new Date();
+    const primerSemestre = new Date(hoy.getFullYear(), 3, 1);
+    fechaInput.value = toYYYYMMDD(primerSemestre);
+    fechaInput.dispatchEvent(new Event("change"));
+});
+segundoSemestreBtn.addEventListener("click", () => {
+    const hoy = new Date();
+    const segundoSemestre = new Date(hoy.getFullYear(), 7, 1);
+    fechaInput.value = toYYYYMMDD(segundoSemestre);
+    fechaInput.dispatchEvent(new Event("change"));
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const hoy = new Date();
+    selectedDate = toYYYYMMDD(hoy);
+    fechaInput.value = selectedDate;
+    renderTabla();
+    actualizarHora();
+    contenidoFormulario.classList.remove("show");
+    toggleIcon.classList.remove("fa-chevron-up");
+    toggleIcon.classList.add("fa-chevron-down");
+});
+
+// === FUNCIONES AUXILIARES ===
+function limpiarSeleccion() {
+    tbody.querySelectorAll("td.seleccionado").forEach(td =>
+        td.classList.remove("seleccionado")
+    );
+    celdasSeleccionadas = [];
+    salonSeleccionado = null;
+    asignarProfesorBtn.disabled = true;
+}
+function filtrarProfesores() {
+    const anioF = filtroAnio.value.trim();
+    const asignaturaF = filtroAsignatura.value.trim().toLowerCase();
+    return profesores.filter(
+        p =>
+            (anioF === "" || p.anio === anioF) &&
+            (asignaturaF === "" ||
+                p.asignatura.toLowerCase().includes(asignaturaF))
+    );
+}
+function renderListaProfesores() {
+    const filtrados = filtrarProfesores();
+    if (filtrados.length === 0) {
+        listaProfesoresDiv.innerHTML = "<em>No hay profesores que coincidan.</em>";
+        confirmarAsignacionBtn.disabled = true;
+        return;
+    }
+    listaProfesoresDiv.innerHTML = filtrados
+        .map(
+            (p, i) =>
+                `<div class="prof-item" data-index="${i}">${p.nombre} - ${p.asignatura} (${p.anio})</div>`
+        )
+        .join("");
+    listaProfesoresDiv.querySelectorAll(".prof-item").forEach(item => {
+        item.onclick = () => {
+            listaProfesoresDiv
+                .querySelectorAll(".prof-item")
+                .forEach(i => i.classList.remove("seleccionado"));
+            item.classList.add("seleccionado");
+            confirmarAsignacionBtn.disabled = false;
+        };
+    });
+}
+function abrirModal() {
+    renderListaProfesores();
+    modal.style.display = "flex";
+    confirmarAsignacionBtn.disabled = true;
+}
+function cerrarModal() {
+    modal.style.display = "none";
+    limpiarSeleccion();
+}
+filtroAnio.onchange = renderListaProfesores;
+filtroAsignatura.oninput = renderListaProfesores;
+cerrarModalBtn.onclick = cerrarModal;
+window.onclick = e => {
+    if (e.target === modal) cerrarModal();
+};
+asignarProfesorBtn.onclick = () => {
+    if (celdasSeleccionadas.length > 0) abrirModal();
+};
+toggleFormularioBtn.onclick = () => {
+    contenidoFormulario.classList.toggle("show");
+    toggleIcon.classList.toggle("fa-chevron-down");
+    toggleIcon.classList.toggle("fa-chevron-up");
+};
 agregarBtn.onclick = () => {
-  const nombre = nombreInput.value.trim();
-  const asignatura = asignaturaInput.value.trim();
-  const anio = anioSelect.value;
-
-  if (!nombre || !asignatura) {
-    alert("Por favor completa nombre y asignatura.");
-    return;
-  }
-
-  if (agregarProfesor(nombre, asignatura, anio)) {
+    const nombre = nombreInput.value.trim();
+    const asignatura = asignaturaInput.value.trim();
+    const anio = anioSelect.value;
+    if (!nombre || !asignatura)
+        return alert("Completa nombre y asignatura.");
+    profesores.push({ nombre, asignatura, anio });
     alert(`Profesor ${nombre} agregado.`);
     nombreInput.value = "";
     asignaturaInput.value = "";
-    renderTabla();
-  }
 };
-
-// Guardar automáticamente al presionar Enter en cualquiera de los inputs del formulario
-[nombreInput, asignaturaInput, anioSelect].forEach(el => {
-  el.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      agregarBtn.click();
-    }
-  });
-});
-
-// Función para leer CSV
-function leerCSV(texto) {
-  // Se espera formato: nombre, asignatura, año (en cada línea)
-  const lineas = texto.trim().split(/\r?\n/);
-  let agregados = 0;
-  lineas.forEach(linea => {
-    const partes = linea.split(",").map(s => s.trim());
-    if (partes.length >= 3) {
-      const [nombre, asignatura, anio] = partes;
-      if (["1°","2°","3°","4°"].includes(anio) && nombre && asignatura) {
-        if (agregarProfesor(nombre, asignatura, anio)) {
-          agregados++;
-        }
-      }
-    }
-  });
-  alert(`Se agregaron ${agregados} profesores desde el archivo.`);
-  renderTabla();
-}
-
-// Manejar carga archivo CSV
-archivoCSV.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    const texto = evt.target.result;
-    leerCSV(texto);
-    archivoCSV.value = ""; // para permitir cargar el mismo archivo otra vez si se desea
-  };
-  reader.readAsText(file);
-});
-
-// Actualiza la hora en el header
 function actualizarHora() {
-    const el = document.getElementById('horaActual');
-    if (el) {
-        const ahora = new Date();
-        el.textContent = ahora.toLocaleTimeString();
-    }
+    const el = document.getElementById("horaActual");
+    if (el) el.textContent = new Date().toLocaleTimeString();
 }
 setInterval(actualizarHora, 1000);
-actualizarHora();
-
-// Ejemplo: agregar profesor a una lista interna y actualizar la tabla
-document.getElementById('agregarProfesor').onclick = function() {
-    const nombre = document.getElementById('nombre').value.trim();
-    const asignatura = document.getElementById('asignatura').value.trim();
-    const anio = document.getElementById('anio').value;
-    if (nombre && asignatura && anio) {
-        profesores.push({ nombre, asignatura, anio });
-        document.getElementById('nombre').value = '';
-        document.getElementById('asignatura').value = '';
-        actualizarListaProfesores();
-    }
-};
-
-function actualizarListaProfesores() {
-    const lista = document.getElementById('listaProfesores');
-    if (!lista) return;
-    lista.innerHTML = '';
-    profesores.forEach((prof, idx) => {
-        const div = document.createElement('div');
-        div.className = 'profesor-item';
-        div.textContent = `${prof.nombre} - ${prof.asignatura} (${prof.anio})`;
-        lista.appendChild(div);
-    });
-}
-
-// Modal de asignación (ejemplo básico)
-document.getElementById('asignarProfesorBtn').onclick = function() {
-    document.getElementById('modal').style.display = 'block';
-    actualizarListaProfesores();
-};
-document.getElementById('cerrarModal').onclick = function() {
-    document.getElementById('modal').style.display = 'none';
-};
-
-// Exportar tabla a CSV (ejemplo simple)
-document.getElementById('exportarCSVBtn').onclick = function() {
-    const tabla = document.getElementById('tablaHorarios');
-    let csv = [];
-    for (let row of tabla.rows) {
-        let cols = [];
-        for (let cell of row.cells) {
-            cols.push(cell.innerText.replace(/"/g, '""'));
-        }
-        csv.push('"' + cols.join('","') + '"');
-    }
-    const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'salonario.csv';
-    a.click();
-};
-
-// Opcional: cargar profesores desde CSV
-document.getElementById('archivoCSV').onchange = function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-        const lines = evt.target.result.split('\n');
-        lines.forEach(line => {
-            const [nombre, asignatura, anio] = line.split(',');
-            if (nombre && asignatura && anio) {
-                profesores.push({ nombre: nombre.trim(), asignatura: asignatura.trim(), anio: anio.trim() });
-            }
-        });
-        actualizarListaProfesores();
-    };
-    reader.readAsText(file);
-};
-
