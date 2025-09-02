@@ -13,13 +13,8 @@ body {
     flex-direction: column;
 }
 
-header {
-    background-color: #003366;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
+
+
 
 main {
     flex: 1;
@@ -90,3 +85,63 @@ thead th:first-child {
     font-size: 0.8rem;
     color: #555;
 }
+
+/* HEADER Y FOOTER - IGUAL QUE DOCENTES PARA TODAS LAS PÁGINAS */
+.header-docentes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 25, 51, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 10px 20px;
+    position: relative;
+}
+
+.header-docentes .logo-container img {
+    height: 28px;
+}
+
+.header-docentes .titulo-admin {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    pointer-events: none;
+}
+
+.reloj-container {
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.footer-docentes {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: rgba(0, 25, 51, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 20px;
+    color: #fff;
+    flex-wrap: wrap;
+}
+
+.footer-info {
+    max-width: 60%;
+    font-size: 0.8rem;
+}
+
+.footer-contacto a {
+    margin-left: 10px;
+    color: #fff;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+.footer-contacto a:hover {
+    color: #1da1f2;
+}
+

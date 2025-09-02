@@ -1,0 +1,222 @@
+/* --- Permitir scroll vertical en toda la página --- */
+body {
+    overflow-y: auto;                 /* Activa el scroll vertical si el contenido excede la pantalla */
+    font-size: 0.7rem;                /* Reduce el tamaño de la tipografía en general */
+    display: flex;                    /* Hace que el body use flexbox */
+    flex-direction: column;           /* Ordena los elementos en columna */
+    min-height: 100vh;                /* Asegura que ocupe al menos la altura de la pantalla */
+    background-image: url("https://w.wallhaven.cc/full/j3/wallhaven-j3wqo5.png"); /* Imagen de fondo */
+    background-repeat: repeat;        /* Repite la imagen si no cubre todo */
+    background-position: center;      /* Centra la imagen */
+    background-size: cover;           /* Hace que cubra toda el área */
+    color: #fff;                      /* Texto principal en blanco para contraste */
+}
+
+/* --- Capa que aplica el efecto blur al fondo --- */
+body::before {
+    content: '';                      /* Crea una capa extra */
+    position: fixed;                  /* Se fija al viewport */
+    inset: 0;                         /* Ocupa toda la pantalla */
+    background: transparent;          /* Fondo transparente */
+    backdrop-filter: blur(7px);       /* Aplica desenfoque al fondo */
+    z-index: -1;                      /* Queda detrás del contenido */
+}
+
+/* --- Contenedor principal --- */
+.main-container {
+    transform: scale(0.7);            /* Escala todo el contenedor un 70% */
+    transform-origin: top left;       /* El origen de la escala es arriba a la izquierda */
+    width: 120vw;                     /* Ancho mayor que la pantalla (permite scroll horizontal) */
+    height: 80vh;                     /* Altura relativa a la pantalla */
+    min-height: 450px;                /* No puede ser más chico que 450px */
+    overflow-x: auto;                 /* Activa scroll horizontal si es necesario */
+    display: flex;                    /* Flexbox para organizar hijos */
+    flex: 1;                          /* Que crezca para ocupar espacio */
+    padding: 20px;
+    gap: 20px;                        /* Espacio entre hijos */
+    flex-direction: row;              /* Los hijos van en fila */
+}
+
+/* --- Formulario (lado izquierdo) --- */
+.formulario-container {
+    width: 20%;                       /* Ocupa 20% del ancho */
+    min-width: 280px;                 /* Nunca menos de 280px */
+    align-self: flex-start;           /* Se alinea arriba */
+    order: 1;                         /* Siempre aparece primero (izquierda) */
+}
+
+/* --- Lista de docentes (lado derecho) --- */
+.lista-container {
+    width: 80%;                       /* Ocupa 80% del ancho */
+    display: flex;
+    flex-direction: column;
+    order: 2;                         /* Siempre después del formulario */
+}
+/* --- Formulario Lateral (40%) --- */
+.formulario-container {
+    width: 40%;                       /* Aquí se ajusta al 40% */
+    min-width: 280px;
+    align-self: flex-start;
+}
+
+/* Botón para desplegar formulario */
+.toggle-form-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: rgba(0, 86, 179, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: left;
+    transition: background-color 0.3s ease;
+}
+.toggle-form-btn:hover {
+    background-color: rgba(0, 68, 148, 0.9); /* Efecto hover */
+}
+
+/* Contenedor del formulario, cerrado por defecto */
+.formulario-content {
+    max-height: 0;                    /* Altura cero = oculto */
+    overflow: hidden;
+    transition: max-height 0.5s ease-out; /* Animación al abrir */
+}
+
+/* Cuando está abierto */
+.formulario-content.abierto {
+    max-height: 900px;                /* Se expande */
+    margin-top: 15px;
+}
+
+.formulario-content h3 {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+}
+
+/* --- Campos del formulario --- */
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-bottom: 2px solid #fff;
+    background: transparent;
+    color: #fff;
+    font-size: 0.7rem;
+    outline: none;
+}
+.input-group input::placeholder { 
+    color: rgba(255,255,255,0.7); 
+}
+
+/* --- Botón Guardar --- */
+.btn-guardar {
+    width: 100%;
+    padding: 12px;
+    background-color: rgba(40, 167, 69, 0.7);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+.btn-guardar:hover {
+    background-color: rgba(33, 136, 56, 0.9);
+}
+
+/* --- Lista de Profesores (80%) --- */
+.lista-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Barra de herramientas */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Input de búsqueda */
+.search-bar input {
+    padding: 10px 10px 10px 40px; /* Deja espacio para el ícono */
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: transparent;
+    color: #fff;
+    min-width: 300px;
+}
+.search-bar input::placeholder { color: rgba(255,255,255,0.7); }
+
+.actions .btn-accion {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* --- Tabla de docentes --- */
+#tabla-docentes {
+    width: 100%;
+    border-collapse: collapse;         /* Quita espacios entre celdas */
+}
+
+
+
+#tabla-docentes th a {
+    text-decoration: none;
+    color: #161616;
+    font-weight: bold;
+}
+
+#tabla-docentes tbody tr {
+    transition: background-color 0.2s ease;
+}
+#tabla-docentes tbody tr:hover {
+    background-color: rgba(77, 77, 77, 0.15); /* Resalta fila */
+}
+
+/* Cambia color de texto en lista de docentes */
+.lista-container,
+#tabla-docentes th,
+#tabla-docentes td {
+    color: #222; /* Más oscuro para mejor lectura */
+}
+
+/* --- Footer --- */
+.footer-docentes {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: rgba(0, 25, 51, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 20px;
+    color: #fff;
+    flex-wrap: wrap;
+    width: 100%;
+    font-size: 0.8rem;
+    position: static;
+    left: unset;
+    right: unset;
+    bottom: unset;
+}
+
+/* Para que el footer quede al fondo si el contenido es corto */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-bottom: 0;
+}
+
+main {
+    flex: 1;
+}
+
