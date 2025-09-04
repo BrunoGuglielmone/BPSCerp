@@ -5,27 +5,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('registro-docente-form');
     const tbody = document.querySelector('#tabla-docentes tbody');
     const searchInput = document.getElementById('busqueda');
-    const sortLinks = document.querySelectorAll('#tabla-docentes thead a');
     const seleccionarTodosCheckbox = document.getElementById('seleccionar-todos');
     const btnEliminarSeleccionado = document.querySelector('.btn-eliminar-seleccionado');
+    const btnEditarSeleccionado = document.querySelector('.btn-editar-seleccionado'); // Botón de editar
 
     let docentesData = []; // Almacenará los datos de los docentes para búsquedas y ordenamiento
 
-    // --- FUNCIONES ---
+    // --- URL DE LA API ---
+    const API_URL = '../api/gestionar_docentes.php';
 
     /**
      * Carga los docentes desde el backend y los renderiza en la tabla.
      */
     const cargarDocentes = async () => {
         try {
-            const response = await fetch('../php/docentes.php');
-            if (!response.ok) throw new Error('La respuesta de la red no fue correcta.');
+            // Usamos GET por defecto para obtener datos
+            const response = await fetch(API_URL); 
+            if (!response.ok) {
+                throw new Error(`La respuesta de la red no fue correcta. Estatus: ${response.status}`);
+            }
             
             docentesData = await response.json();
             renderizarTabla(docentesData);
+
         } catch (error) {
             console.error('Error al cargar los docentes:', error);
-            tbody.innerHTML = `<tr><td colspan="6">Error al cargar los datos. Por favor, intente de nuevo.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6">Error al cargar los datos. Verifique la consola para más detalles.</td></tr>`;
         }
     };
 
@@ -48,7 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${docente.asignatura}</td>
                     <td>${docente.ano_cursado}º Año</td>
                     <td>C.I: ${docente.cedula || 'N/A'} | Tel: ${docente.telefono || 'N/A'}</td>
-                    <td><button class="btn-accion-fila btn-editar"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                    <td>
+                        </td>
                 </tr>
             `;
             tbody.innerHTML += fila;
@@ -62,27 +68,28 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault(); // Evitar que la página se recargue
 
         const formData = new FormData(form);
-        const id = formData.get('docente_id');
-        const url = `../php/gestionar_docente.php?accion=${id ? 'actualizar' : 'crear'}`;
+        const url = `${API_URL}`;
 
         try {
             const response = await fetch(url, {
                 method: 'POST',
                 body: formData
             });
+
             const result = await response.json();
 
             if (result.success) {
-                form.reset();
-                document.getElementById('docente_id').value = ''; // Limpiar ID oculto
-                cargarDocentes(); // Recargar la tabla
-                // Opcional: mostrar un mensaje de éxito
+                form.reset(); // Limpiar el formulario
+                document.querySelector('.formulario-content').classList.remove('abierto'); // Ocultar formulario
+                cargarDocentes(); // Recargar la tabla con los nuevos datos
+                alert('Docente guardado con éxito.'); // Mensaje de éxito
             } else {
                 console.error('Error al guardar:', result.message);
-                // Opcional: mostrar un mensaje de error al usuario
+                alert(`Error al guardar: ${result.message}`); // Mensaje de error
             }
         } catch (error) {
             console.error('Error de red al guardar:', error);
+            alert('Ocurrió un error de red. Intente de nuevo.');
         }
     };
     
@@ -98,28 +105,45 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!confirm(`¿Está seguro de que desea eliminar ${idsParaEliminar.length} docente(s)?`)) {
+        if (!confirm(`¿Está seguro de que desea eliminar ${idsParaEliminar.length} docente(s)? Esta acción no se puede deshacer.`)) {
             return;
         }
 
         try {
-            const response = await fetch('../php/gestionar_docente.php?accion=eliminar', {
-                method: 'POST',
+            const response = await fetch(API_URL, {
+                method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ids: idsParaEliminar })
+                body: JSON.stringify({ ids: idsParaEliminar }) // Enviar los IDs como un array JSON
             });
+
             const result = await response.json();
 
             if (result.success) {
                 cargarDocentes(); // Recargar la tabla
+                alert('Docente(s) eliminado(s) con éxito.');
             } else {
                 console.error('Error al eliminar:', result.message);
+                alert(`Error al eliminar: ${result.message}`);
             }
         } catch (error) {
             console.error('Error de red al eliminar:', error);
+            alert('Ocurrió un error de red al intentar eliminar. Intente de nuevo.');
         }
     };
-
+    
+    /**
+     * Habilita o deshabilita los botones de acción múltiple (Editar/Eliminar)
+     */
+    const actualizarEstadoBotones = () => {
+        const seleccionados = document.querySelectorAll('.seleccionar-fila:checked').length;
+        if (seleccionados > 0) {
+            btnEliminarSeleccionado.disabled = false;
+            btnEditarSeleccionado.disabled = seleccionados !== 1; // Habilitar solo si hay 1 seleccionado
+        } else {
+            btnEliminarSeleccionado.disabled = true;
+            btnEditarSeleccionado.disabled = true;
+        }
+    };
 
     // --- EVENT LISTENERS ---
 
@@ -131,13 +155,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Búsqueda en tiempo real
     searchInput.addEventListener('input', (e) => {
-        const termino = e.target.value.toLowerCase();
+        const termino = e.target.value.toLowerCase().trim();
         const filtrados = docentesData.filter(d => 
             d.nombre.toLowerCase().includes(termino) ||
             d.apellido.toLowerCase().includes(termino) ||
             d.asignatura.toLowerCase().includes(termino)
         );
         renderizarTabla(filtrados);
+    });
+
+    // Checkbox "Seleccionar Todos"
+    seleccionarTodosCheckbox.addEventListener('change', (e) => {
+        document.querySelectorAll('.seleccionar-fila').forEach(cb => {
+            cb.checked = e.target.checked;
+        });
+        actualizarEstadoBotones();
+    });
+
+    // Delegación de eventos para los checkboxes de cada fila
+    tbody.addEventListener('change', (e) => {
+        if (e.target.classList.contains('seleccionar-fila')) {
+            actualizarEstadoBotones();
+        }
     });
 
     // --- INICIALIZACIÓN ---
