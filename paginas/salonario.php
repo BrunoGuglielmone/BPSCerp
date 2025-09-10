@@ -11,17 +11,19 @@
 
 <main>
     <section class="formulario">
-        <h2 id="toggleFormulario">Agregar Profesor <i class="fas fa-chevron-down"></i></h2>
+        <h2 id="toggleFormulario">Agregar Docente Rápido <i class="fas fa-chevron-down"></i></h2>
         <div id="contenidoFormulario" class="contenido-formulario">
-            <input type="text" id="nombre" placeholder="Nombre y Apellido" />
-            <input type="text" id="asignatura" placeholder="Asignatura" />
-            <select id="anio">
-                <option value="1°">1°</option>
-                <option value="2°">2°</option>
-                <option value="3°">3°</option>
-                <option value="4°">4°</option>
+            <!-- Formulario actualizado para ser consistente con la página de docentes -->
+            <input type="text" id="nuevo_nombre" placeholder="Nombre" />
+            <input type="text" id="nuevo_apellido" placeholder="Apellido" />
+            <input type="text" id="nuevo_asignatura" placeholder="Asignatura" />
+            <select id="nuevo_ano">
+                <option value="1">1° Año</option>
+                <option value="2">2° Año</option>
+                <option value="3">3° Año</option>
+                <option value="4">4° Año</option>
             </select>
-            <button id="agregarProfesor">Agregar</button>
+            <button id="agregarProfesorBtn">Agregar</button>
         </div>
     </section>
 
@@ -54,15 +56,15 @@
 <div id="modal" class="modal">
     <div class="modal-content">
         <span id="cerrarModal" class="cerrar">&times;</span>
-        <h3>Seleccionar Profesor</h3>
+        <h3>Seleccionar Docente</h3>
         <div class="modal-filtros">
             <label>Año:
                 <select id="filtroAnio">
                     <option value="">Todos</option>
-                    <option value="1°">1°</option>
-                    <option value="2°">2°</option>
-                    <option value="3°">3°</option>
-                    <option value="4°">4°</option>
+                    <option value="1">1° Año</option>
+                    <option value="2">2° Año</option>
+                    <option value="3">3° Año</option>
+                    <option value="4">4° Año</option>
                 </select>
             </label>
             <label>Asignatura:

@@ -25,472 +25,26 @@ body::before {
     z-index: -1;
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    background-color: #d0e6ff;
-}
-
-header .logo {
-    font-size: 24px;
-    font-weight: bold;
-    color: #003366;
-}
-
-.logo-container img {
-    height: 40px;
-}
-
-.titulo-admin {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
-    letter-spacing: 2px;
-}
-
-.hora {
-    font-size: 18px;
-}
-
+/* El main ahora centra su contenido y ocupa el espacio disponible */
 main {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    padding: 30px;
-    justify-content: center;
-    align-items: flex-start;
     flex: 1;
-}
-
-.formulario {
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 12px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-    padding: 24px 18px;
-    min-width: 260px;
-    max-width: 320px;
-    margin-right: 20px;
-}
-
-.formulario h2 {
-    margin-top: 0;
-    color: #003366;
-    font-size: 1.2rem;
-    cursor: pointer; /* Para indicar que es clicable */
+    padding: 20px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 15px;
+    justify-content: center;
 }
 
-/* Estilos para el icono de flecha */
-.formulario h2 i {
-    transition: transform 0.3s ease;
-}
-
-.formulario h2.collapsed i {
-    transform: rotate(-90deg);
-}
-
-.contenido-formulario {
-    max-height: 500px; /* Altura máxima para mostrar el contenido */
-    overflow: hidden;
-    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-    padding-top: 0;
-    /* initial state hidden */
-    max-height: 0;
-    padding: 0;
-}
-
-.contenido-formulario.show {
-    max-height: 500px; /* Suficientemente grande para el contenido */
-    padding-top: 15px;
-}
-
-.formulario input,
-.formulario select {
-    width: 100%;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #bbb;
-    font-size: 1rem;
-    margin-bottom: 12px;
-    box-sizing: border-box; /* Asegura que el padding no afecte el width total */
-    color: #222; /* Texto visible */
-}
-
-.formulario button {
-    background: #003366;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-bottom: 10px;
-    transition: background 0.2s;
-    width: 100%;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease;
-    background-color: rgba(0, 86, 179, 0.5);
-}
-
-.formulario button:hover {
-    background-color: rgba(0, 68, 148, 0.9);
-}
-
-.lista-container {
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    order: 2;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 15px;
-}
-
-.toolbar {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
+/* El contenedor de la tabla ahora tiene un ancho definido */
 .tabla-container {
-    flex: 1; /* Permitir que la tabla ocupe el espacio restante */
-    overflow-x: auto; /* Para scroll horizontal si la tabla es muy ancha */
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 15px;
-}
-
-#tablaHorarios {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background: transparent;
-    color: #fff;
-}
-
-#tablaHorarios th,
-#tablaHorarios td {
-    padding: 8px; /* Ajustado el padding */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Borde más sutil */
-    text-align: center;
-    color: #222; /* Texto oscuro para contraste */
-}
-
-#tablaHorarios th {
-    text-align: center; /* Centrar los encabezados de hora */
-    font-weight: bold;
-    background-color: #e0e0e0;
-    color: #003366; /* Color del texto del encabezado */
-}
-
-/* Colores para los casilleros */
-#tablaHorarios td.libre {
-    background-color: #d4edda; /* Verde claro para disponible */
-}
-
-#tablaHorarios td.ocupado {
-    background-color: #f8d7da; /* Rojo claro para ocupado */
-}
-
-#tablaHorarios tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Estilo para celda seleccionada */
-#tablaHorarios td.seleccionado {
-    border: 2px solid #0055aa; /* Borde azul más oscuro para selección */
-    box-shadow: 0 0 5px rgba(0, 85, 170, 0.5);
-}
-
-
-/* Botón X para quitar asignación */
-.btn-quitar {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    color: red;
-    cursor: pointer;
-    font-size: 12px;
-    user-select: none;
-}
-
-.plus {
-    font-size: 16px;
-    color: #0066cc;
-    pointer-events: none; /* evita doble clic */
-}
-
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background: #fff;
-    border-radius: 10px;
-    padding: 24px 18px;
-    min-width: 320px;
-    max-width: 400px;
-    margin: auto;
-    position: relative;
-    color: #222;
-}
-
-.cerrar {
-    position: absolute;
-    top: 10px;
-    right: 14px;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-#listaProfesores {
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 15px;
-    text-align: left;
-    border: 1px solid #eee; /* Borde sutil para la lista de profesores */
-    padding: 5px;
-    background-color: #f9f9f9;
-}
-
-.prof-item {
-    padding: 8px 5px;
-    border-bottom: 1px solid #eee;
-    color: #003366;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.prof-item:last-child {
-    border-bottom: none;
-}
-
-.prof-item:hover,
-.prof-item.seleccionado {
-    background-color: #c8def9;
-}
-
-/* Filtros dentro del modal */
-.modal-filtros {
-    display: flex;
-    flex-wrap: wrap; /* Permite que los filtros se envuelvan en pantallas pequeñas */
-    gap: 10px;
-    margin-bottom: 15px;
-    justify-content: space-between;
-}
-
-.modal-filtros label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    color: #222;
-}
-
-.modal-filtros input,
-.modal-filtros select {
-    padding: 4px;
-    font-size: 13px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    color: #222;
-}
-
-/* Botones en el modal */
-#confirmarAsignacionBtn {
-    background-color: #0055aa;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    width: 100%;
-    transition: background-color 0.3s ease;
-}
-
-#confirmarAsignacionBtn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-#confirmarAsignacionBtn:hover:not(:disabled) {
-    background-color: #003366;
-}
-
-/* Sticky Headers y primera columna */
-
-table thead th {
-    position: sticky;
-    top: 0;
-    background-color: #d0e6ff;
-    z-index: 10;
-    border-bottom: 2px solid #aaa;
-    color: #003366;
-}
-
-table tbody td:first-child,
-table thead th:first-child {
-    position: sticky;
-    left: 0;
-    background-color: #eaf4ff;
-    z-index: 9;
-    border-right: 2px solid #aaa;
-    color: #003366;
-    font-weight: bold;
-}
-
-/* El cruce primera fila y columna */
-table thead th:first-child {
-    z-index: 11;
-}
-
-/* --- HEADER Y FOOTER adaptados del archivo proporcionado --- */
-
-/* --- Header --- */
-.header-docentes {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: rgba(0, 25, 51, 0.7);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 15px 20px;
-    color: #fff;
-    position: relative;
-    font-size: 0.8rem;
-}
-
-.header-docentes .logo-container img {
-    height: 28px;
-}
-
-.header-docentes .titulo-admin {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #fff;
-    letter-spacing: 2px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    pointer-events: none;
-}
-
-.reloj-container {
-    font-size: 1.5rem;
-    font-weight: bold;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-/* --- Footer --- */
-.footer-docentes {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    background-color: rgba(0, 25, 51, 0.7);
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 15px 20px;
-    color: #fff;
-    flex-wrap: wrap;
-    width: 100%;
-    font-size: 0.8rem;
-    position: static;
-    left: unset;
-    right: unset;
-    bottom: unset;
-}
-
-/* Para que el footer quede al fondo si el contenido es corto */
-body {
+    max-width: 1500px; /* Ancho máximo para la tabla en pantallas grandes */
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    padding-bottom: 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-main {
-    flex: 1;
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-    .main-container {
-        flex-direction: column;
-        gap: 10px;
-        padding: 10px;
-    }
-    .formulario-container,
-    .lista-container {
-        max-width: 100%;
-        min-width: 0;
-        margin-right: 0;
-    }
-    .modal-filtros {
-        flex-direction: column;
-    }
-}
-/* ... (todos los estilos anteriores) ... */
-
-/* Colores para los casilleros */
-#tablaHorarios td.libre {
-    background-color: #d4edda; /* Verde claro para disponible */
-}
-
-#tablaHorarios td.ocupado {
-    background-color: #f8d7da; /* Rojo claro para ocupado */
-    position: relative; /* ¡¡IMPORTANTE!! Para que la 'X' se posicione correctamente */
-    padding-top: 15px; /* Damos espacio para la 'X' */
-}
-
-#tablaHorarios tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* ... (resto de estilos de la tabla) ... */
-
-/* Botón X para quitar asignación */
-.btn-quitar {
-    position: absolute;
-    top: 2px;
-    right: 4px;
-    color: #dc3545; /* Un rojo más visible */
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: bold;
-    user-select: none;
-    transition: background-color 0.2s;
-}
-
-.btn-quitar:hover {
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #a01a27;
-}
-
-/* ================================== */
-/* == NUEVOS ESTILOS DE CALENDARIO == */
-/* ================================== */
 .calendario-container {
     display: flex;
     justify-content: space-between;
@@ -541,4 +95,228 @@ main {
     margin-bottom: 15px;
 }
 
-/* ... (resto de los estilos) ... */
+.acciones-tabla button {
+     padding: 8px 12px;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    background-color: rgba(0, 86, 179, 0.5);
+    color: #fff;
+}
+
+.acciones-tabla button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+
+#tablaHorarios {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: transparent;
+    color: #fff;
+}
+
+#tablaHorarios th,
+#tablaHorarios td {
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    color: #222;
+}
+
+#tablaHorarios th {
+    text-align: center;
+    font-weight: bold;
+    color: #003366;
+}
+
+#tablaHorarios td.libre {
+    background-color: #d4edda;
+}
+
+#tablaHorarios td.ocupado {
+    background-color: #f8d7da;
+    position: relative;
+    padding-top: 15px;
+}
+
+#tablaHorarios tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#tablaHorarios td.seleccionado {
+    border: 2px solid #0055aa;
+    box-shadow: 0 0 5px rgba(0, 85, 170, 0.5);
+}
+
+.btn-quitar {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    color: #dc3545;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.btn-quitar:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #a01a27;
+}
+
+.plus {
+    font-size: 16px;
+    color: #0066cc;
+    pointer-events: none;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 10px;
+    padding: 24px 18px;
+    min-width: 320px;
+    max-width: 400px;
+    margin: auto;
+    position: relative;
+    color: #222;
+}
+
+.cerrar {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+#listaProfesores {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    text-align: left;
+    border: 1px solid #eee;
+    padding: 5px;
+    background-color: #f9f9f9;
+}
+
+.prof-item {
+    padding: 8px 5px;
+    border-bottom: 1px solid #eee;
+    color: #003366;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.prof-item:last-child {
+    border-bottom: none;
+}
+
+.prof-item:hover,
+.prof-item.seleccionado {
+    background-color: #c8def9;
+}
+
+.modal-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    justify-content: space-between;
+}
+
+.modal-filtros label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #222;
+}
+
+.modal-filtros input,
+.modal-filtros select {
+    padding: 4px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #222;
+}
+
+#confirmarAsignacionBtn {
+    background-color: #0055aa;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+#confirmarAsignacionBtn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+#confirmarAsignacionBtn:hover:not(:disabled) {
+    background-color: #003366;
+}
+
+/* Sticky Headers y primera columna */
+table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #d0e6ff;
+    z-index: 10;
+    border-bottom: 2px solid #aaa;
+    color: #003366;
+}
+
+table tbody td:first-child,
+table thead th:first-child {
+    position: sticky;
+    left: 0;
+    background-color: #eaf4ff;
+    z-index: 9;
+    border-right: 2px solid #aaa;
+    color: #003366;
+    font-weight: bold;
+}
+
+table thead th:first-child {
+    z-index: 11;
+}
+
+@media (max-width: 900px) {
+    .tabla-container {
+        padding: 10px;
+    }
+}

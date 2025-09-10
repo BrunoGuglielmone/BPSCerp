@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['usuario_email'] = $usuario['Email'];
             
             // Redirigimos al panel de administración.
-            header("Location: ../paginas/panel_admin.php"); // RUTA CORREGIDA
+            header("Location: ../paginas/menuinteractivo.php"); // RUTA CORREGIDA
             exit();
 
         } else {
