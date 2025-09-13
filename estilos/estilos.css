@@ -13,9 +13,6 @@ body {
     flex-direction: column;
 }
 
-
-
-
 main {
     flex: 1;
     padding: 0;
@@ -47,7 +44,7 @@ th {
 .piso {
     background-color: #d0ebff;
     font-weight: bold;
-    }
+}
 
 .ocupado {
     background-color: #ffc0cb;
@@ -63,7 +60,7 @@ th {
 
 .hora-actual {
     background-color: #fff3cd !important;
-    }
+}
 
 /* Fijar la primera columna (Aulas) */
 th:first-child, td:first-child {
@@ -144,4 +141,3 @@ thead th:first-child {
 .footer-contacto a:hover {
     color: #1da1f2;
 }
-

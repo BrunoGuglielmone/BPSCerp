@@ -1,4 +1,7 @@
-<?php include_once("../Php/header.php"); ?>
+<?php 
+include_once("../api/verificar_sesion.php");
+include_once("../Php/header.php"); ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -74,10 +77,10 @@
         <div id="listaProfesores"></div>
         <button id="confirmarAsignacionBtn" disabled>Confirmar asignación</button>
     </div>
-</div>
+</div><?php include_once("../Php/footer.php"); ?>
 
 <script src="../js/salonario.js"></script>
-<?php include_once("../Php/footer.php"); ?>
+
 
 </body>
 </html>

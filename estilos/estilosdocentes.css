@@ -1,60 +1,60 @@
 /* --- Permitir scroll vertical en toda la página --- */
 body {
-    overflow-y: auto;                 /* Activa el scroll vertical si el contenido excede la pantalla */
-    font-size: 0.7rem;                /* Reduce el tamaño de la tipografía en general */
-    display: flex;                    /* Hace que el body use flexbox */
-    flex-direction: column;           /* Ordena los elementos en columna */
-    min-height: 100vh;                /* Asegura que ocupe al menos la altura de la pantalla */
-    background-image: url("https://w.wallhaven.cc/full/j3/wallhaven-j3wqo5.png"); /* Imagen de fondo */
-    background-repeat: repeat;        /* Repite la imagen si no cubre todo */
-    background-position: center;      /* Centra la imagen */
-    background-size: cover;           /* Hace que cubra toda el área */
-    color: #fff;                      /* Texto principal en blanco para contraste */
+    overflow-y: auto;
+    font-size: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-image: url('../imagenes/fondocerp.jpeg');
+    background-repeat: repeat;
+    background-position: center;
+    background-size: cover;
+    color: #fff;
 }
 
 /* --- Capa que aplica el efecto blur al fondo --- */
 body::before {
-    content: '';                      /* Crea una capa extra */
-    position: fixed;                  /* Se fija al viewport */
-    inset: 0;                         /* Ocupa toda la pantalla */
-    background: transparent;          /* Fondo transparente */
-    backdrop-filter: blur(7px);       /* Aplica desenfoque al fondo */
-    z-index: -1;                      /* Queda detrás del contenido */
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    backdrop-filter: blur(7px);
+    z-index: -1;
 }
 
 /* --- Contenedor principal --- */
 .main-container {
-    transform: scale(0.7);            /* Escala todo el contenedor un 70% */
-    transform-origin: top left;       /* El origen de la escala es arriba a la izquierda */
-    width: 120vw;                     /* Ancho mayor que la pantalla (permite scroll horizontal) */
-    height: 80vh;                     /* Altura relativa a la pantalla */
-    min-height: 450px;                /* No puede ser más chico que 450px */
-    overflow-x: auto;                 /* Activa scroll horizontal si es necesario */
-    display: flex;                    /* Flexbox para organizar hijos */
-    flex: 1;                          /* Que crezca para ocupar espacio */
+    transform: scale(0.7);
+    transform-origin: top left;
+    width: 120vw;
+    height: 80vh;
+    min-height: 450px;
+    overflow-x: auto;
+    display: flex;
+    flex: 1;
     padding: 20px;
-    gap: 20px;                        /* Espacio entre hijos */
-    flex-direction: row;              /* Los hijos van en fila */
+    gap: 20px;
+    flex-direction: row;
 }
 
 /* --- Formulario (lado izquierdo) --- */
 .formulario-container {
-    width: 20%;                       /* Ocupa 20% del ancho */
-    min-width: 280px;                 /* Nunca menos de 280px */
-    align-self: flex-start;           /* Se alinea arriba */
-    order: 1;                         /* Siempre aparece primero (izquierda) */
+    width: 20%;
+    min-width: 280px;
+    align-self: flex-start;
+    order: 1;
 }
 
 /* --- Lista de docentes (lado derecho) --- */
 .lista-container {
-    width: 80%;                       /* Ocupa 80% del ancho */
+    width: 80%;
     display: flex;
     flex-direction: column;
-    order: 2;                         /* Siempre después del formulario */
+    order: 2;
 }
 /* --- Formulario Lateral (40%) --- */
 .formulario-container {
-    width: 40%;                       /* Aquí se ajusta al 40% */
+    width: 40%;
     min-width: 280px;
     align-self: flex-start;
 }
@@ -78,14 +78,14 @@ body::before {
 
 /* Contenedor del formulario, cerrado por defecto */
 .formulario-content {
-    max-height: 0;                    /* Altura cero = oculto */
+    max-height: 0;
     overflow: hidden;
     transition: max-height 0.5s ease-out; /* Animación al abrir */
 }
 
 /* Cuando está abierto */
 .formulario-content.abierto {
-    max-height: 900px;                /* Se expande */
+    max-height: 900px;
     margin-top: 15px;
 }
 
@@ -111,8 +111,8 @@ body::before {
     font-size: 0.7rem;
     outline: none;
 }
-.input-group input::placeholder { 
-    color: rgba(255,255,255,0.7); 
+.input-group input::placeholder {
+    color: rgba(255,255,255,0.7);
 }
 
 /* --- Botón Guardar --- */
@@ -165,10 +165,8 @@ body::before {
 /* --- Tabla de docentes --- */
 #tabla-docentes {
     width: 100%;
-    border-collapse: collapse;         /* Quita espacios entre celdas */
+    border-collapse: collapse;
 }
-
-
 
 #tabla-docentes th a {
     text-decoration: none;
@@ -219,4 +217,3 @@ body {
 main {
     flex: 1;
 }
-

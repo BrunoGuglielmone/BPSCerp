@@ -6,7 +6,7 @@
 }
 
 body {
-    background-image: url("https://w.wallhaven.cc/full/j3/wallhaven-j3wqo5.png"); /* Cambiar imagen */
+    background-image: url('../imagenes/fondocerp.jpeg'); /* Imagen de fondo */
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -285,6 +285,16 @@ main {
     background-color: rgba(179, 0, 0, 0.8);
     color: #fff;
 }
+/* ================== NUEVOS COLORES AÑADIDOS ================== */
+.tarjeta-verde {
+    background-color: rgba(1, 102, 8, 0.8);
+}
+
+.tarjeta-amarillo {
+    background-color: rgba(199, 137, 2, 0.85);
+}
+/* ============================================================== */
+
 
 /* Ajuste de íconos */
 .icono {

@@ -143,9 +143,12 @@
                     icon.classList.add('fa-user-plus');
                 }
             });
-        }
+        } 
     </script>
+    <?php 
+    // Incluye el footer si lo necesitas.
+    include_once("../Php/footer.php"); 
+    ?>
     
-    <?php include_once("../Php/footer.php"); ?>
 </body>
 </html>

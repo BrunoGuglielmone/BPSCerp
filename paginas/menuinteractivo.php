@@ -1,4 +1,9 @@
-<?php include_once("../Php/header.php"); ?>
+
+<?php
+// ¡Este es el guardia! Se asegura de que solo usuarios autenticados vean el menú.
+include_once("../api/verificar_sesion.php");
+include_once("../Php/header.php"); 
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,7 +17,6 @@
 
     <main>
         <div class="contenedor">
-            <!-- Tarjeta Docentes -->
             <a href="docentes.php" class="tarjeta tarjeta-azul">
                 <div class="icono"><i class="fa-solid fa-chalkboard-user"></i></div>
                 <div>
@@ -21,20 +25,34 @@
                 </div>
             </a>
 
-            <!-- Tarjeta Salonario -->
             <a href="salonario.php" class="tarjeta tarjeta-celeste">
                 <div class="icono"><i class="fa-solid fa-calendar-alt"></i></div>
                 <div>
-                    <h1>Salonario</h1>
-                    <p>Consulta y administra los horarios de salones y asignaciones.</p>
+                    <h1>Salonario (Admin)</h1>
+                    <p>Administra los horarios de salones y realiza las asignaciones.</p>
                 </div>
             </a>
 
-            <!-- Tarjeta Cerrar Sesión -->
-            <a href="login.php" class="tarjeta tarjeta-roja">
+            <a href="salones.php" class="tarjeta tarjeta-verde">
+                <div class="icono"><i class="fa-solid fa-school"></i></div>
+                <div>
+                    <h1>Gestión de Salones</h1>
+                    <p>Administra los salones disponibles: agregar, editar o eliminar.</p>
+                </div>
+            </a>
+
+            <a href="salonarioexterno.php" class="tarjeta tarjeta-amarillo">
+                <div class="icono"><i class="fa-solid fa-eye"></i></div>
+                <div>
+                    <h1>Vista Previa Salonario</h1>
+                    <p>Consulta los horarios de los salones en tiempo real (vista pública).</p>
+                </div>
+            </a>
+
+            <a href="logout.php" class="tarjeta tarjeta-roja">
                 <div class="icono"><i class="fa-solid fa-right-from-bracket"></i></div>
                 <div>
-                    <h1>Cerrar sesión</h1>
+                    <h1>Cerrar Sesión</h1>
                     <p>Salir de tu cuenta de forma segura y volver a la pantalla de inicio.</p>
                 </div>
             </a>

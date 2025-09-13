@@ -9,7 +9,7 @@ body {
     display: flex;
     flex-direction: column; /* Igual que docentes */
     min-height: 100vh;
-    background-image: url("https://w.wallhaven.cc/full/j3/wallhaven-j3wqo5.png");
+    background-image: url('../imagenes/fondocerp.jpeg'); /* Imagen de fondo */
     background-repeat: repeat;
     background-position: center;
     background-size: cover;
