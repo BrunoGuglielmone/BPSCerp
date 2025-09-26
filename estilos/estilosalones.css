@@ -1,6 +1,35 @@
 /* ==========================================================================
-   ESTILOS PARA LA PÁGINA DE DOCENTES (CON ESTILO UNIFICADO)
+   ESTILOS PARA LA PÁGINA DE SALONES (CON ESTILO DE DOCENTES)
    ========================================================================== */
+
+/* --- Estilos Globales y Fondo --- */
+html, body {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: url('../imagenes/fondocerp.jpeg') center/cover repeat fixed;
+    color: #fff;
+    font-size: 1rem;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    backdrop-filter: blur(7px);
+    z-index: -1;
+}
+
+main {
+    flex: 1;
+}
 
 /* --- Contenedor Principal (Layout General) --- */
 .main-container {
@@ -13,16 +42,15 @@
 
 /* --- Lado del Formulario --- */
 .formulario-container {
-    flex: 1; /* Ocupa 1 parte del espacio */
-    min-width: 320px; /* Ancho mínimo para mantener la forma */
-    align-self: flex-start; /* Se alinea arriba */
+    flex: 1;
+    min-width: 320px;
+    align-self: flex-start;
     background-color: rgba(0, 25, 51, 0.4);
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Botón para desplegar el formulario */
 .toggle-form-btn {
     width: 100%;
     padding: 12px;
@@ -40,7 +68,6 @@
     background-color: rgba(0, 68, 148, 0.9);
 }
 
-/* Contenido del formulario (colapsable) */
 .formulario-content {
     max-height: 0;
     overflow: hidden;
@@ -48,7 +75,7 @@
 }
 
 .formulario-content.abierto {
-    max-height: 1000px; /* Altura suficiente para el contenido */
+    max-height: 1000px;
     margin-top: 15px;
 }
 
@@ -96,9 +123,10 @@
     background-color: rgba(33, 136, 56, 0.9);
 }
 
-/* --- Lado de la Lista/Tabla de Docentes --- */
+/* --- Lado de la Lista/Tabla --- */
 .lista-container {
-    flex: 3; /* Ocupa 3 partes del espacio, es más grande */
+    flex: 3;
+    min-width: 320px;
     display: flex;
     flex-direction: column;
     background-color: rgba(0, 25, 51, 0.4);
@@ -107,7 +135,6 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Barra de herramientas (Búsqueda y Acciones) */
 .toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -121,7 +148,7 @@
     position: relative;
 }
 
-.search-bar i { /* Para un ícono de lupa, si lo agregas en el HTML */
+.search-bar i {
     position: absolute;
     left: 15px;
     top: 50%;
@@ -130,7 +157,7 @@
 }
 
 .search-bar input {
-    padding: 10px 15px 10px 40px; /* Espacio para el ícono a la izquierda */
+    padding: 10px 15px 10px 40px;
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.5);
     background: transparent;
@@ -156,44 +183,41 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Contenedor para que la tabla sea responsive en horizontal */
+.actions .btn-accion:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .tabla-responsive {
     overflow-x: auto;
 }
 
-#tabla-docentes {
+#tabla-salones {
     width: 100%;
+    white-space: nowrap;
     border-collapse: collapse;
-    color: #fff; /* Texto blanco para que contraste con el fondo oscuro */
+    color: #fff;
 }
 
-#tabla-docentes th,
-#tabla-docentes td {
+#tabla-salones th,
+#tabla-salones td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    white-space: nowrap; /* Evita que el texto de las celdas se parta */
 }
 
-#tabla-docentes thead {
-    background-color: rgba(255, 255, 255, 0.1); /* Fondo sutil para la cabecera */
+#tabla-salones thead {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
-#tabla-docentes th a {
-    text-decoration: none;
-    color: #fff; /* Color de los enlaces en la cabecera */
-    font-weight: bold;
-}
-
-#tabla-docentes tbody tr {
+#tabla-salones tbody tr {
     transition: background-color 0.2s ease;
 }
 
-#tabla-docentes tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.15); /* Resalta la fila al pasar el mouse */
+#tabla-salones tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Celda para botones de editar/eliminar en la tabla */
 .acciones-celda {
     display: flex;
     gap: 10px;
@@ -209,30 +233,60 @@
 }
 
 .btn-accion-fila.btn-editar:hover {
-    color: #58a6ff; /* Azul para editar */
+    color: #58a6ff;
 }
 
 .btn-accion-fila.btn-eliminar:hover {
-    color: #ff7b72; /* Rojo para eliminar */
+    color: #ff7b72;
 }
+
 
 /* --- Media Queries para Diseño Responsivo --- */
 @media (max-width: 992px) {
     .main-container {
-        flex-direction: column; /* Apila los contenedores verticalmente */
+        flex-direction: column;
         align-items: center;
     }
     .formulario-container,
     .lista-container {
         width: 100%;
-        max-width: 700px; /* Limita el ancho en pantallas medianas */
+        max-width: 700px;
     }
 }
 
 @media (max-width: 576px) {
     .toolbar {
         flex-direction: column;
-        align-items: stretch; /* Estira los elementos de la barra de herramientas */
+        align-items: stretch;
     }
 }
 
+/* --- Estilos para el Pie de Página --- */
+.footer-docentes {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: rgba(0, 25, 51, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 20px;
+    color: #fff;
+    flex-wrap: wrap;
+    width: 100%;
+    font-size: 0.8rem;
+}
+
+.footer-info {
+    max-width: 60%;
+    font-size: 0.8rem;
+}
+
+.footer-contacto a {
+    margin-left: 10px;
+    color: #fff;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.footer-contacto a:hover {
+    color: #1da1f2;
+}

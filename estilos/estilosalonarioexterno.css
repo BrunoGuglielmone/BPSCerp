@@ -1,0 +1,161 @@
+/* === ESTILOS GENERALES === */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #0a192f;
+    background-image: url('../imagenes/fondocerp.jpeg'); 
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    color: #fff;
+    box-sizing: border-box;
+    overflow: hidden; /* Evita barras de scroll en el body */
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 25, 47, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: -1;
+}
+
+.main-container {
+    max-width: 1400px;
+    height: calc(100vh - 40px); /* Ocupa casi toda la altura de la pantalla */
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+}
+
+/* === ENCABEZADO DE LA PÁGINA === */
+.info-header {
+    text-align: center;
+    margin-bottom: 25px;
+    flex-shrink: 0; /* Evita que el header se encoja */
+}
+
+.info-header .logo {
+    max-height: 60px;
+    margin-bottom: 10px;
+}
+
+.info-header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    color: #ccd6f6;
+    letter-spacing: 1.5px;
+}
+
+.info-header p {
+    margin: 5px 0 0;
+    font-size: 1.2rem;
+    color: #8892b0;
+}
+
+/* === CONTENEDOR DE LA TABLA CON SCROLL === */
+.scroll-container {
+    overflow-x: auto; /* Habilita el scroll horizontal */
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    flex-grow: 1; /* Ocupa el espacio restante */
+}
+
+/* === TABLA DE HORARIOS === */
+#tablaAulas {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px;
+}
+
+#tablaAulas th,
+#tablaAulas td {
+    padding: 12px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    text-align: center;
+    font-size: 0.8rem;
+    min-width: 120px;
+}
+
+/* -- Encabezado Fijo (Sticky) -- */
+#tablaAulas thead th {
+    position: sticky;
+    top: 0;
+    background-color: rgba(10, 25, 47, 0.95);
+    color: #64ffda;
+    z-index: 10;
+    font-size: 0.9rem;
+}
+
+/* -- Primera Columna Fija (Sticky) -- */
+#tablaAulas tbody td:first-child,
+#tablaAulas thead th:first-child {
+    position: sticky;
+    left: 0;
+    background-color: rgba(10, 25, 47, 0.95);
+    font-weight: bold;
+    color: #ccd6f6;
+    z-index: 5;
+    min-width: 150px;
+}
+
+#tablaAulas thead th:first-child {
+    z-index: 11;
+}
+
+/* -- Estilos de Celdas -- */
+#tablaAulas td.libre {
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+#tablaAulas td.ocupado {
+    background-color: rgba(231, 76, 60, 0.2);
+    font-weight: 500;
+    color: #f7b2ac;
+}
+
+#tablaAulas td.ocupado div {
+    font-size: 0.75rem;
+    line-height: 1.3;
+}
+
+/* -- Columna de la Hora Actual -- */
+#tablaAulas .hora-actual {
+    background-color: rgba(52, 152, 219, 0.3);
+    border-left: 2px solid #3498db;
+    border-right: 2px solid #3498db;
+}
+
+#tablaAulas thead .hora-actual {
+    color: #3498db;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+    body { padding: 10px; }
+    .main-container { padding: 15px; height: calc(100vh - 20px); }
+    .info-header h1 { font-size: 1.8rem; }
+    .info-header p { font-size: 1rem; }
+    #tablaAulas th, #tablaAulas td { font-size: 0.75rem; padding: 8px 5px; min-width: 100px; }
+    #tablaAulas tbody td:first-child, #tablaAulas thead th:first-child { min-width: 120px; }
+}
+
+/*===ESTILOS PARA LA PAGINACIÓN Y TRANSICIONES === */
+#tablaAulas tbody tr {
+    /* Estado inicial visible */
+    opacity: 1;
+    /* Transición suave para la opacidad */
+    transition: opacity 0.5s ease-in-out;
+}
+
+#tablaAulas tbody tr.oculto {
+    /* Estado oculto con opacidad 0 */
+    opacity: 0;
+}

@@ -1,0 +1,84 @@
+<?php 
+include_once("../api/verificar_sesion.php");
+include_once("../Php/header.php"); ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Salones</title>
+    <link rel="stylesheet" href="../estilos/estilos.css">
+    <link rel="stylesheet" href="../estilos/estilosalones.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <main class="main-container">
+        <aside class="formulario-container">
+            <button type="button" class="toggle-form-btn">
+                <i class="fa-solid fa-plus"></i> Registrar Nuevo Salón
+            </button>
+            <div class="formulario-content">
+                <form id="registro-salon-form">
+                    <input type="hidden" id="salon_id" name="salon_id">
+                    <h3>Datos del Salón</h3>
+                    <div class="input-group">
+                        <label for="nombre">Nombre del Salón</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="capacidad">Capacidad</label>
+                        <input type="number" id="capacidad" name="capacidad" min="1" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="tipo">Tipo de Salón</label>
+                        <input type="text" id="tipo" name="tipo">
+                    </div>
+                    <button type="submit" class="btn-guardar">Guardar Salón</button>
+                </form>
+            </div>
+        </aside>
+
+        <section class="lista-container">
+            <div class="toolbar">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="busqueda" placeholder="Buscar salón...">
+                </div>
+                <div class="actions">
+                    <button class="btn-accion btn-editar-seleccionado" disabled><i class="fa-solid fa-pencil"></i> Editar</button>
+                    <button class="btn-accion btn-eliminar-seleccionado" disabled><i class="fa-solid fa-trash"></i> Eliminar</button>
+                </div>
+            </div>
+            <div class="tabla-responsive">
+                <table id="tabla-salones">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="seleccionar-todos"></th>
+                            <th>Nombre</th><th>Capacidad</th><th>Tipo</th><th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="../js/salones.js"></script>
+    <script>
+        // Script para el botón de desplegar formulario
+        document.querySelector('.toggle-form-btn').addEventListener('click', e => {
+            const formContent = document.querySelector('.formulario-content');
+            formContent.classList.toggle('abierto');
+            const icon = e.currentTarget.querySelector('i');
+            icon.classList.toggle('fa-plus');
+            icon.classList.toggle('fa-chevron-up');
+        });
+
+        
+    </script>
+    
+    <?php include_once("../Php/footer.php"); ?>
+</body>
+</html>

@@ -1,4 +1,6 @@
-<?php include_once("../Php/header.php"); ?>
+<?php
+include_once("../api/verificar_sesion.php");
+include_once("../Php/header.php"); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -143,9 +145,12 @@
                     icon.classList.add('fa-user-plus');
                 }
             });
-        }
+        } 
     </script>
+    <?php 
+    // Incluye el footer si lo necesitas.
+    include_once("../Php/footer.php"); 
+    ?>
     
-    <?php include_once("../Php/footer.php"); ?>
 </body>
 </html>
