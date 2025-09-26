@@ -11,6 +11,7 @@ include_once("../Php/header.php");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../estilos/estilos.css" />
     <link rel="stylesheet" href="../estilos/estiloslogin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <title>Login Cerp</title>
@@ -29,8 +30,10 @@ include_once("../Php/header.php");
 <body>
     <div class="fondo-transparente" aria-hidden="true"></div>
 
+    <!-- ===== INICIO DEL CAMBIO IMPORTANTE ===== -->
     <main>
         <section>
+            <!-- El formulario ahora apunta a "procesar_login.php" y usa el método POST -->
             <form action="../api/procesar_login.php" method="POST">
                 <div class="titulo-con-logo">
                     <img src="../imagenes/logo_cerp_3d.png" alt="Logo de Salones CerP 2025" class="logo-cabecera">
@@ -48,23 +51,26 @@ include_once("../Php/header.php");
 
                 <div class="inputbox">
                     <ion-icon name="mail-outline"></ion-icon>
+                    <!-- Agregamos el atributo "name" para que PHP pueda recibir el dato -->
                     <input type="text" name="usuario" id="usuario" required>
                     <label for="usuario">USUARIO (Email)</label>
                 </div>
 
                 <div class="inputbox">
                     <ion-icon name="lock-closed-outline"></ion-icon>
+                     <!-- Agregamos el atributo "name" para que PHP pueda recibir el dato -->
                     <input type="password" name="contrasena" id="contrasena" required>
                     <label for="contrasena">CONTRASEÑA</label>
                 </div>
                 
+                <!-- Cambiamos la etiqueta <a> por <button type="submit"> para enviar el formulario -->
                 <button type="submit" class="button">INICIAR</button>
             </form>
         </section>
     </main>
-    <?php 
-    // Incluye el footer si lo necesitas.
-    include_once("../Php/footer.php"); 
-    ?>
+  
+
+
+    <?php include_once("../Php/footer.php"); ?>
 </body>
 </html>

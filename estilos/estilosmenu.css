@@ -1,215 +1,34 @@
+/* ==========================================================================
+   ESTILOS PARA LA PÁGINA DEL MENÚ PRINCIPAL
+   ========================================================================== */
+
+/* --- Estilos Globales y Fondo --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 body {
-    background-image: url('../imagenes/fondocerp.jpeg'); /* Imagen de fondo */
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-
-    backdrop-filter: blur(8px);            /* desenfoque */
-    -webkit-backdrop-filter: blur(8px);    /* soporte Safari */
-}
-
-/* Contenedor general para organizar en fila */
-.contenedor {
     display: flex;
-    /* Alinea los bloques en fila */
-    gap: 20px;
-    /* Espacio entre bloques */
-    justify-content: center;
-    /* Centrado horizontal */
-    padding: 20px;
-    /* Espaciado interno */
+    flex-direction: column;
+    min-height: 100vh;
+    background: url('../imagenes/fondocerp.jpeg') center/cover no-repeat fixed;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px); /* Soporte para Safari */
 }
 
-/* Cada tarjeta (bloque clickeable) */
-.tarjeta {
-    flex: 1;
-    /* Que se ajusten al mismo ancho */
-    min-width: 200px;
-    /* Para que no se achiquen demasiado */
-    max-width: 800px;
-    /* Máximo tamaño de la tarjeta */
-    padding: 30px;
-    /* Espaciado interno */
-    border-radius: 10px;
-    /* Bordes redondeados */
-    color: black;
-    /* Texto negro */
-    font-family: Arial, sans-serif;
-    font-size: 1.2em;
-    /* Tamaño del texto */
-    font-weight: bold;
-    text-decoration: none;
-    /* Sacar subrayado de los enlaces */
-    display: flex;
-    /* Texto e icono en columna */
-    gap: 15px;
-    /* Espacio entre texto e icono */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    /* Animación suave */
+main {
+    flex: 1; /* Asegura que el contenido principal ocupe el espacio disponible */
 }
 
-/* Efecto al pasar el mouse */
-.tarjeta:hover {
-    transform: scale(1.05);
-    /* Aumenta un poco el tamaño */
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-    /* Sombra elegante */
-    cursor: pointer;
-}
-
-/* Colores específicos de cada tarjeta */
-.verde {
-    background-color: #a8dcd6;
-}
-
-.celeste {
-    background-color: #5ec9f3;
-}
-
-.amarillo {
-    background-color: #ffd400;
-}
-
-/* Iconos de ejemplo (podrías usar imágenes o emojis) */
-.icono {
-    font-size: 2em;     /* Tamaño grande */
-    display: flex;      /* Convierte el div en contenedor flex */
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center;     /* Centra verticalmente */
-    width: 100%;        /* Que ocupe todo el ancho de su contenedor */
-}
-
-.encabezado, .piepagina{
-    height: 100px;
-    width: 100%;
-    padding: 0;
-    background-color: red;
-
-    display: flex;
-    gap: 20px;
-    justify-content: space-between;
-    padding: 35px;
-}
-
-/*Trabaja con el boton*/
-.button {
-    display: inline-block;
-    width: 70%;
-    height: 40px;
-    border-radius: 10px;
-    background-color: transparent;
-    border: 1px solid #fff;
-    outline: none;
-    cursor: pointer;
-    font-size: 20px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s ease;
-    z-index: 1;
-}
-
-/* hace que el boton se vea con un fondo color */
-.button:hover {
-    background-color: rgb(255, 255, 255, 0.5);
-}
-
-/*Genera el efecto de pulsacion del boton*/
-.button::before,
-.button::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 0;
-    height: 100%;
-    transform: skew(15deg);
-    transition: all 0.8s;
-    overflow: hidden;
-    z-index: -1;
-}
-
-/*Hace que el efecto de pulsacion del boton se vea desde el lado izquierdo*/
-.button::before {
-    left: -10%;
-    background: #4F4B31;
-}
-
-/*Hace que el efecto de pulsacion del boton se vea desde el lado derecho*/
-.button::after {
-    right: -10%;
-    background: #181D1B;
-}
-
-/*Hace que el efecto de pulsacion del boton se vea desde el lado izquierdo y derecho*/
-.button:hover::before,
-.button:hover::after {
-    width: 60%;
-}
-
-/*Hace que el efecto de pulsacion del boton se vea con un color*/
-.button:hover span {
-    color: #e0aaff;
-    transition: 0.3s;
-}
-
-/* Hace que el texto del boton se vea con un color */
-.button span {
-    color: #fff;
-    font-size: 18px;
-    transition: all 0.3s ease-in;
-}
-
-/* Estilos para el enlace de "Iniciar" y "Registrate" */
 a {
     text-decoration: none;
-    padding: 10px;
     color: #fff;
 }
 
-h1 {
-    font-size: 30px;
-    color: #fff;
-    text-align: center;
-}
-
-p {
-    font-size: 15px;
-    color: white;
-    text-align: left;
-}
-
-.redessociales {
-    display: flex;                 /* organiza los tres divs en fila */
-    gap: 5px;                     /* espacio entre cada div */
-    padding: 0px;                 /* margen interno */
-}
-
-/* Colores de prueba momentáneos para verlos */
-.redessociales .instagram {
-    width: 50px;
-    height: 50px;
-    background-color: pink;
-}
-
-.redessociales .correo {
-    width: 50px;
-    height: 50px;
-    background-color: lightblue;
-}
-
-.redessociales .contacto {
-    width: 50px;
-    height: 50px;
-    background-color: lightgreen;
-}
-
-/* HEADER Y FOOTER - IGUAL QUE DOCENTES */
+/* --- Header y Footer --- */
 .header-docentes {
     display: flex;
     justify-content: space-between;
@@ -218,6 +37,7 @@ p {
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     padding: 10px 20px;
     position: relative;
+    color: #fff;
 }
 
 .header-docentes .logo-container img {
@@ -230,7 +50,6 @@ p {
     transform: translateX(-50%);
     font-size: 1.3rem;
     font-weight: bold;
-    color: #fff;
     letter-spacing: 2px;
     text-shadow: 0 2px 8px rgba(0,0,0,0.3);
     pointer-events: none;
@@ -242,78 +61,142 @@ p {
     font-family: 'Courier New', Courier, monospace;
 }
 
-/* --- Footer --- */
 .footer-docentes {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    flex-wrap: wrap;
     background-color: rgba(0, 25, 51, 0.7);
     border-top: 1px solid rgba(255, 255, 255, 0.3);
     padding: 15px 20px;
     color: #fff;
-    flex-wrap: wrap;
     width: 100%;
     font-size: 0.8rem;
-    position: static;
-    left: unset;
-    right: unset;
-    bottom: unset;
 }
 
-/* Para que el footer quede al fondo si el contenido es corto */
-body {
+.footer-info p {
+    font-size: 1em;
+    text-align: left;
+}
+
+.redessociales a {
+    margin-left: 10px;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+.redessociales a:hover {
+    color: #1da1f2; /* Color para hover, puedes ajustarlo */
+}
+
+
+/* --- Contenedor de Tarjetas de Menú --- */
+.contenedor {
     display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    padding-bottom: 0;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    flex-wrap: wrap; /* Permite que las tarjetas se ajusten en pantallas pequeñas */
 }
 
-main {
+.tarjeta {
     flex: 1;
-}
-.tarjeta-azul {
-    background-color: rgba(0, 25, 51, 0.85);
-    color: #fff;
-}
-
-.tarjeta-celeste {
-    background-color: rgba(0, 86, 179, 0.8);
-    color: #fff;
-}
-
-.tarjeta-roja {
-    background-color: rgba(179, 0, 0, 0.8);
-    color: #fff;
-}
-/* ================== NUEVOS COLORES AÑADIDOS ================== */
-.tarjeta-verde {
-    background-color: rgba(1, 102, 8, 0.8);
+    min-width: 400px;
+    max-width: 1600px;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: #0a7075; 
+    color: #fff;              
+    font-family: Arial, sans-serif;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+    display: flex;
+    gap: 15px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.tarjeta-amarillo {
-    background-color: rgba(199, 137, 2, 0.85);
+.tarjeta:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
 }
-/* ============================================================== */
 
-
-/* Ajuste de íconos */
 .icono {
     font-size: 2.5em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 60px;
+    min-width: 60px; /* Asegura espacio para el ícono */
+    text-align: center;
 }
 
-/* Títulos y descripciones dentro de tarjetas */
-.tarjeta h1 {
+.texto-tarjeta h1 {
     font-size: 1.2rem;
     margin: 0;
+    text-align: left;
     color: #fff;
 }
 
-.tarjeta p {
+.texto-tarjeta p {
     font-size: 0.9rem;
     margin-top: 5px;
     color: #e0e0e0;
+    font-weight: normal; /* El párrafo no necesita ser negrita */
+    text-align: left;
+}
+
+/* --- Botón Animado Reutilizable --- */
+.btn-animado {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    padding: 0 25px;
+    border-radius: 10px;
+    background-color: transparent;
+    border: 1px solid #fff;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    z-index: 1;
+}
+
+.btn-animado span {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: color 0.3s ease-in;
+}
+
+.btn-animado:hover span {
+    color: #e0aaff;
+    transition-delay: 0.1s;
+}
+
+.btn-animado::before,
+.btn-animado::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 0;
+    height: 100%;
+    transform: skew(15deg);
+    transition: all 0.8s;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.btn-animado::before {
+    left: -10%;
+    background: #4F4B31;
+}
+
+.btn-animado::after {
+    right: -10%;
+    background: #181D1B;
+}
+
+.btn-animado:hover::before,
+.btn-animado:hover::after {
+    width: 60%;
 }

@@ -147,7 +147,7 @@ body::before {
     #tablaAulas tbody td:first-child, #tablaAulas thead th:first-child { min-width: 120px; }
 }
 
-/* === NUEVO: ESTILOS PARA LA PAGINACIÓN Y TRANSICIONES === */
+/*===ESTILOS PARA LA PAGINACIÓN Y TRANSICIONES === */
 #tablaAulas tbody tr {
     /* Estado inicial visible */
     opacity: 1;

@@ -5,240 +5,26 @@
     font-family: 'poppins', sans-serif;
 }
 
+/* --- ESTRUCTURA PRINCIPAL Y FONDO --- */
+/* Unificamos las reglas del body en un solo lugar */
 body {
     display: flex;
-    flex-direction: column; /* Igual que docentes */
-    min-height: 100vh;
-    background-image: url('../imagenes/fondocerp.jpeg'); /* Imagen de fondo */
+    flex-direction: column;
+    min-height: 100vh; /* Clave: El body ocupa como mínimo el 100% de la altura de la pantalla */
+    background-image: url('../imagenes/fondocerp.jpeg');
     background-repeat: repeat;
     background-position: center;
     background-size: cover;
     color: #fff;
-    font-size: 0.7rem; /* Reduce tipografía igual que docentes */
+    font-size: 0.7rem;
 }
 
-/* Fondo desenfocado solo detrás del header, login y footer */
-.header-docentes,
-.footer-docentes,
-section {
-    position: relative;
-    z-index: 1;
+/* Clave: El main crece para ocupar el espacio disponible, empujando el footer hacia abajo */
+main {
+    flex: 1;
 }
 
-.header-docentes::before,
-.footer-docentes::before,
-
-section::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    background: rgba(0, 25, 51, 0.3);
-    border-radius: 12px;
-}
-
-/* Ajusta el header y footer para que el desenfoque no sobresalga */
-.header-docentes {
-    overflow: hidden;
-}
-
-.footer-docentes {
-    overflow: hidden;
-}
-
-/* Ajusta el section (ventana de login) para que el desenfoque solo esté detrás */
-section {
-    margin: 40px auto;
-    max-width: 400px;
-    border-radius: 18px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-    overflow: hidden;
-    background: rgba(255,255,255,0.05);
-}
-
-/*Trabaja con el fondo del formulario*/
-section {
-    position: relative;
-    max-width: 400px;
-    background-color: transparent;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px 30px;
-}
-
-/* Trabaja con los campos de texto */
-.inputbox input {
-    width: 100%;
-    height: 60px;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    padding: 0 35px 0 5px;
-    color: #fff;
-}
-
-.inputbox ion-icon {
-    position: absolute;
-    right: 8px;
-    color: #fff;
-    font-size: 1.2rem;
-    top: 20px;
-}
-
-/* Trabaja con el checkbox */
-.forget {
-    margin: 35px 0;
-    font-size: 20px;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-}
-
-/* Trabaja con todo lo que esta dentro del h1 */
-h1 {
-    font-size: 30px;
-    color: #fff;
-    text-align: center;
-}
-
-/* Se trabaja con los campos de textos de "correo" y "contraseña" */
-.inputbox {
-    position: relative;
-    margin: 30px 0;
-    max-width: 310px;
-    border-bottom: 2px solid #fff;
-}
-
-/* Se trabaja con el label de los campos de textos de "correo" y "contraseña" */
-.inputbox label {
-    position: absolute;
-    top: 50%;
-    left: 5px;
-    transform: translateY(-50%);
-    color: #fff;
-    font-size: 15px;
-    pointer-events: none;
-    transition: all 0.5s ease-in-out;
-}
-
-/* Hace que el label de los campos de textos de "correo" y "contraseña" se mueva hacia arriba cuando el usuario escribe algo en el campo */
-input:focus ~ label,
-input:valid ~ label {
-    top: -10px;
-}
-
-/*Trabaja con el boton*/
-.button {
-    display: inline-block;
-    width: 70%;
-    height: 40px;
-    border-radius: 10px;
-    background-color: transparent;
-    border: 1px solid #fff;
-    outline: none;
-    cursor: pointer;
-    font-size: 20px;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s ease;
-    z-index: 1;
-}
-
-/* hace que el boton se vea con un fondo color */
-.button:hover {
-    background-color: rgb(255, 255, 255, 0.5);
-}
-
-/*Genera el efecto de pulsacion del boton*/
-.button::before,
-.button::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    width: 0;
-    height: 100%;
-    transform: skew(15deg);
-    transition: all 0.8s;
-    overflow: hidden;
-    z-index: -1;
-}
-
-/*Hace que el efecto de pulsacion del boton se vea desde el lado izquierdo*/
-.button::before {
-    left: -10%;
-    background: #4F4B31;
-}
-
-/*Hace que el efecto de pulsacion del boton se vea desde el lado derecho*/
-.button::after {
-    right: -10%;
-    background: #181D1B;
-}
-
-/*Hace que el efecto de pulsacion del boton se vea desde el lado izquierdo y derecho*/
-.button:hover::before,
-.button:hover::after {
-    width: 60%;
-}
-
-/*Hace que el efecto de pulsacion del boton se vea con un color*/
-.button:hover span {
-    color: #e0aaff;
-    transition: 0.3s;
-}
-
-/* Hace que el texto del boton se vea con un color */
-.button span {
-    color: #fff;
-    font-size: 18px;
-    transition: all 0.3s ease-in;
-}
-
-/* Estilos para el enlace de "Iniciar" y "Registrate" */
-a {
-    text-decoration: none;
-    padding: 10px;
-    color: #fff;
-}
-
-/* Estilos para el formulario */
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Capa que cubre todo el viewport para "tapar" el fondo con transparencia */
-.fondo-transparente {
-    position: fixed;     /* Se fija a la ventana, no al scroll */
-    inset: 0;            /* top/right/bottom/left: 0; ocupa toda la pantalla */
-    background: transparent; /* Oscurece con transparencia (ajusta el 0.45 a gusto) */
-    backdrop-filter: blur(7px); /* Genera la transparencia con blur */
-    pointer-events: none;/* No intercepta clics ni foco; todo pasa "a través" */
-    z-index: 0;          /* Queda detrás del contenido que viene después */
-}
-
-/* Contenedor flexible para logo + título */
-.titulo-con-logo {
-    display: flex;
-    align-items: center;   /* centra verticalmente logo y texto */
-    justify-content: center; /* centra en horizontal dentro del form */
-    gap: 12px;             /* espacio entre logo y texto */
-}
-
-/* Estilo para el logo */
-.logo-cabecera {
-    width: 70px;   /* ajusta tamaño */
-    height: auto;  /* mantiene proporción */
-}
-
-/* HEADER Y FOOTER - IGUAL QUE DOCENTES */
+/* --- HEADER --- */
 .header-docentes {
     display: flex;
     justify-content: space-between;
@@ -247,6 +33,7 @@ form {
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     padding: 10px 20px;
     position: relative;
+    overflow: hidden; /* Para que el ::before no se salga */
 }
 
 .header-docentes .logo-container img {
@@ -271,43 +58,201 @@ form {
     font-family: 'Courier New', Courier, monospace;
 }
 
-/* Apply this to all your CSS files for a unified footer style */
+
+/* --- VENTANA DE LOGIN (SECTION) --- */
+/* Unificamos todas las reglas de 'section' en una sola para evitar conflictos */
+section {
+    /* Layout y Posicionamiento */
+    position: relative; /* Necesario para el pseudo-elemento ::before */
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px auto;
+    padding: 20px 30px;
+
+    /* Dimensiones y Estilo Visual */
+    max-width: 400px;
+    background-color: transparent; /* El fondo real lo pone el ::before */
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    overflow: hidden; /* Evita que el ::before se desborde */
+}
+
+
+/* --- EFECTO DE FONDO DESENFOCADO (BLUR) --- */
+/* Contenedor para el efecto de desenfoque */
+.header-docentes,
+.footer-docentes,
+section {
+    position: relative;
+    z-index: 1;
+}
+
+/* El pseudo-elemento que crea el fondo desenfocado */
+.header-docentes::before,
+.footer-docentes::before,
+section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(0, 25, 51, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 12px; /* Hereda el border-radius del contenedor si es necesario */
+}
+
+
+/* --- FORMULARIO Y SUS ELEMENTOS --- */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra los elementos del formulario */
+}
+
+.titulo-con-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px; /* Espacio debajo del título */
+}
+
+.logo-cabecera {
+    width: 70px;
+    height: auto;
+}
+
+h1 {
+    font-size: 30px;
+    color: #fff;
+    text-align: center;
+}
+
+.inputbox {
+    position: relative;
+    margin: 30px 0;
+    width: 310px; /* Usamos width en vez de max-width para consistencia */
+    border-bottom: 2px solid #fff;
+}
+
+.inputbox label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 15px;
+    pointer-events: none;
+    transition: all 0.5s ease-in-out;
+}
+
+.inputbox input {
+    width: 100%;
+    height: 60px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    padding: 0 35px 0 5px;
+    color: #fff;
+}
+
+/* Animación del label */
+input:focus ~ label,
+input:valid ~ label {
+    top: -10px;
+}
+
+.inputbox ion-icon {
+    position: absolute;
+    right: 8px;
+    color: #fff;
+    font-size: 1.2rem;
+    top: 20px;
+}
+
+.forget {
+    margin: -15px 0 30px; /* Ajustamos el margen */
+    font-size: 0.9rem; /* Ligeramente más pequeño */
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.forget label {
+    display: flex;
+    align-items: center;
+}
+
+.forget label input {
+    margin-right: 8px;
+}
+
+.forget a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    margin-left: auto; /* Empuja el enlace a la derecha */
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* --- BOTÓN DE LOGIN --- */
+.button {
+    width: 100%; /* Mantenemos el ancho completo para el formulario */
+    height: 45px; /* Una altura cómoda y definida */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Estilo de borde de 'volver' */
+    border-radius: 6px; /* Bordes menos redondeados, como en 'volver' */
+    background-color: rgba(0, 86, 179, 0.5); /* Color de fondo azulado de 'volver' */
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease; /* Transición suave de 'volver' */
+    outline: none; /* Buena práctica quitar el outline por defecto si hay hover */
+}
+
+.button:hover {
+    background-color: rgba(0, 68, 148, 0.9); /* Efecto hover de 'volver', sin sombra */
+}
+
+
+/* --- FOOTER --- */
 .footer-docentes {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    flex-wrap: wrap; /* Permite que los elementos se ajusten en pantallas pequeñas */
     background-color: rgba(0, 25, 51, 0.7);
     border-top: 1px solid rgba(255, 255, 255, 0.3);
     padding: 15px 20px;
     color: #fff;
-    flex-wrap: wrap;
+    overflow: hidden; /* Para que el ::before no se salga */
+    flex-shrink: 0; /* Clave: Evita que el footer se encoja */
 }
-
-/* Para que el footer quede al fondo si el contenido es corto */
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    padding-bottom: 0; /* Elimina el espacio extra del footer fijo */
-}
-
 
 .footer-info {
     max-width: 60%;
     font-size: 0.8rem;
 }
 
+.footer-contacto {
+    display: flex;
+    gap: 15px; /* Espacio entre iconos de redes sociales */
+}
+
 .footer-contacto a {
-    margin-left: 10px;
     color: #fff;
     font-size: 1.2rem;
     transition: color 0.3s ease;
 }
+
 .footer-contacto a:hover {
-    color: #1da1f2;
+    color: #1da1f2; /* Color de Twitter/X como ejemplo */
 }
-
-main {
-    flex: 1;
-}
-

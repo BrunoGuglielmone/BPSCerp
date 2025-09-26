@@ -2,7 +2,7 @@
 // Siempre iniciar la sesión al principio de los archivos que la usan.
 session_start();
 
-// Incluir TU archivo de conexión. Asumimos que está en la misma carpeta 'api'.
+// Incluir  archivo de conexión.
 include_once 'conexion.php';
 
 // Verificar que se hayan enviado datos por el método POST.

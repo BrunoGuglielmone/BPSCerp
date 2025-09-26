@@ -1,4 +1,6 @@
-<?php include_once("../Php/header.php"); ?>
+<?php
+include_once("../api/verificar_sesion.php");
+include_once("../Php/header.php"); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

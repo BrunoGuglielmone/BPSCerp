@@ -15,4 +15,13 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     // el resto de la página protegida.
     exit;
 }
+
+// Enviar cabeceras para prevenir el almacenamiento en caché.
+// Esto le dice al navegador que no guarde una copia de la página.
+// Así, si el usuario cierra sesión y presiona "atrás", el navegador
+// se verá forzado a solicitar la página de nuevo, y nuestro script lo
+// redirigirá al login porque la sesión ya no existe.
+header('Cache-Control: no-cache, no-store, must-revalidate'); // HTTP 1.1.
+header('Pragma: no-cache'); // HTTP 1.0.
+header('Expires: 0'); // Proxies.
 ?>

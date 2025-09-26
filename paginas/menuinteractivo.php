@@ -10,6 +10,7 @@ include_once("../Php/header.php");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú Interactivo</title>
+        <link rel="stylesheet" href="../estilos/estilos.css">
     <link rel="stylesheet" href="../estilos/estilosmenu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -28,7 +29,7 @@ include_once("../Php/header.php");
             <a href="salonario.php" class="tarjeta tarjeta-celeste">
                 <div class="icono"><i class="fa-solid fa-calendar-alt"></i></div>
                 <div>
-                    <h1>Salonario (Admin)</h1>
+                    <h1>Salonario</h1>
                     <p>Administra los horarios de salones y realiza las asignaciones.</p>
                 </div>
             </a>

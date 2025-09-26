@@ -10,13 +10,6 @@ let salonSeleccionado = null;
 // === ELEMENTOS DOM ===
 const tabla = document.getElementById("tablaHorarios");
 const tbody = tabla.querySelector("tbody");
-// Nuevos selectores para el formulario de agregar profesor
-const agregarBtn = document.getElementById("agregarProfesorBtn");
-const nuevoNombreInput = document.getElementById("nuevo_nombre");
-const nuevoApellidoInput = document.getElementById("nuevo_apellido");
-const nuevaAsignaturaInput = document.getElementById("nuevo_asignatura");
-const nuevoAnoSelect = document.getElementById("nuevo_ano");
-
 const modal = document.getElementById("modal");
 const listaProfesoresDiv = document.getElementById("listaProfesores");
 const cerrarModalBtn = document.getElementById("cerrarModal");
@@ -25,41 +18,38 @@ const filtroAnio = document.getElementById("filtroAnio");
 const filtroAsignatura = document.getElementById("filtroAsignatura");
 const asignarProfesorBtn = document.getElementById("asignarProfesorBtn");
 const exportarCSVBtn = document.getElementById("exportarCSVBtn");
-const toggleFormularioBtn = document.getElementById("toggleFormulario");
-const contenidoFormulario = document.getElementById("contenidoFormulario");
-const toggleIcon = toggleFormularioBtn.querySelector('i');
 const fechaInput = document.getElementById("fechaInput");
 const primerSemestreBtn = document.getElementById("primerSemestreBtn");
 const segundoSemestreBtn = document.getElementById("segundoSemestreBtn");
 
 // === FUNCIONES DE API ===
 
-// Carga todos los datos iniciales (salones, horarios, profesores) y las asignaciones del día
 async function cargarDatos(fecha) {
     try {
-        // La ruta a tu API debe ser relativa a la raíz del sitio
         const response = await fetch(`../api/get_datos.php?fecha=${fecha}`);
         if (!response.ok) throw new Error('Error en la red al cargar datos.');
         const data = await response.json();
 
-        salones = data.salones;
-        horarios = data.horarios;
-        profesores = data.docentes; // La API devuelve 'docentes'
+        salones = data.salones || [];
+        horarios = data.horarios || [];
+        profesores = data.docentes || [];
 
         asignaciones = {};
-        asignaciones[fecha] = data.asignaciones;
+        asignaciones[fecha] = data.asignaciones || {};
 
         renderTabla();
     } catch (error) {
         console.error("Error al cargar datos iniciales:", error);
         alert("No se pudieron cargar los datos del servidor. Revise la consola.");
+        const thead = tabla.querySelector("thead tr");
+        thead.innerHTML = "<th>Error</th>";
+        tbody.innerHTML = `<tr><td>No se pudieron cargar los datos. Verifique la conexión y la consola de errores (F12).</td></tr>`;
     }
 }
 
-// Envía una asignación (guardar o quitar) al servidor
 async function manejarAsignacionAPI(payload) {
     try {
-        const response = await fetch('../api/manejar_asignaciones.php', { // Nombre de archivo corregido
+        const response = await fetch('../api/manejar_asignaciones.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -78,64 +68,28 @@ async function manejarAsignacionAPI(payload) {
     }
 }
 
-/**
- * Agrega un nuevo docente usando la API centralizada 'gestionar_docentes.php'.
- */
-async function agregarDocenteAPI() {
-    const nombre = nuevoNombreInput.value.trim();
-    const apellido = nuevoApellidoInput.value.trim();
-    const asignatura = nuevaAsignaturaInput.value.trim();
-    const ano_cursado = nuevoAnoSelect.value;
-
-    if (!nombre || !apellido || !asignatura) {
-        return alert("Por favor, complete nombre, apellido y asignatura.");
-    }
-
-    // Usamos FormData porque la API 'gestionar_docentes.php' espera datos de formulario
-    const formData = new FormData();
-    formData.append('nombre', nombre);
-    formData.append('apellido', apellido);
-    formData.append('asignatura', asignatura);
-    formData.append('ano_cursado', ano_cursado);
-    // Campos opcionales vacíos
-    formData.append('cedula', '');
-    formData.append('telefono', '');
-
-    try {
-        const response = await fetch('../api/gestionar_docentes.php', {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!response.ok) throw new Error('Error en la red al agregar el docente.');
-        const result = await response.json();
-
-        if (result.success) {
-            alert('Docente agregado con éxito. La lista se actualizará.');
-            // Limpiar formulario
-            nuevoNombreInput.value = '';
-            nuevoApellidoInput.value = '';
-            nuevaAsignaturaInput.value = '';
-            // Recargar todos los datos para incluir el nuevo profesor
-            cargarDatos(selectedDate);
-        } else {
-            throw new Error(result.message);
-        }
-    } catch (error) {
-        console.error("Error al agregar docente:", error);
-        alert(`Error: ${error.message}`);
-    }
-}
-
-
-// === LÓGICA DE RENDERIZADO Y EVENTOS (Sin cambios significativos, solo correcciones menores) ===
+// === LÓGICA DE RENDERIZADO Y EVENTOS ===
 
 function renderTabla() {
-    if (!selectedDate || salones.length === 0 || horarios.length === 0) return;
-    const asignacionesDelDia = asignaciones[selectedDate] || {};
     const thead = tabla.querySelector("thead tr");
+
+    if (!selectedDate) {
+        thead.innerHTML = "<th>Aviso</th>";
+        tbody.innerHTML = '<tr><td>Por favor, seleccione una fecha para ver los horarios.</td></tr>';
+        return;
+    }
+    
+    // ✨ MEJORA: Muestra un mensaje si no hay salones u horarios registrados.
+    if (salones.length === 0 || horarios.length === 0) {
+        thead.innerHTML = "<th>Aviso</th>";
+        tbody.innerHTML = '<tr><td>No hay salones u horarios registrados en el sistema. Por favor, agréguelos desde el panel de administración para poder continuar.</td></tr>';
+        return;
+    }
+
+    const asignacionesDelDia = asignaciones[selectedDate] || {};
     thead.innerHTML = "<th>Salón</th>" + horarios.map(h => `<th>${h.hora}:00</th>`).join("");
     tbody.innerHTML = "";
+    
     salones.forEach(salon => {
         const fila = document.createElement("tr");
         const celdasHorario = horarios.map(hora => {
@@ -234,14 +188,11 @@ confirmarAsignacionBtn.onclick = async () => {
     if (!huboError) alert("Asignaciones guardadas correctamente.");
 };
 
-// === EVENT LISTENERS y FUNCIONES AUXILIARES (sin cambios) ===
+// === EVENT LISTENERS y FUNCIONES AUXILIARES ===
 document.addEventListener('DOMContentLoaded', () => {
     selectedDate = toYYYYMMDD(new Date());
     fechaInput.value = selectedDate;
     cargarDatos(selectedDate);
-    contenidoFormulario.classList.remove('show');
-    toggleIcon.classList.add('fa-chevron-down');
-    toggleIcon.classList.remove('fa-chevron-up');
 });
 fechaInput.addEventListener("change", () => {
     selectedDate = fechaInput.value;
@@ -257,14 +208,16 @@ segundoSemestreBtn.addEventListener("click", () => {
     fechaInput.value = toYYYYMMDD(fecha);
     fechaInput.dispatchEvent(new Event('change'));
 });
-agregarBtn.addEventListener("click", agregarDocenteAPI);
+
 function toYYYYMMDD(date) { return date.toISOString().split('T')[0]; }
+
 function limpiarSeleccion() {
     tbody.querySelectorAll("td.seleccionado").forEach(td => td.classList.remove("seleccionado"));
     celdasSeleccionadas = [];
     salonSeleccionado = null;
     asignarProfesorBtn.disabled = true;
 }
+
 function renderListaProfesores() {
     const filtrados = filtrarProfesores();
     listaProfesoresDiv.innerHTML = "";
@@ -287,6 +240,7 @@ function renderListaProfesores() {
         listaProfesoresDiv.appendChild(item);
     });
 }
+
 function filtrarProfesores() {
     const anioF = filtroAnio.value;
     const asignaturaF = filtroAsignatura.value.trim().toLowerCase();
@@ -295,15 +249,12 @@ function filtrarProfesores() {
         (asignaturaF === "" || p.asignatura.toLowerCase().includes(asignaturaF))
     );
 }
+
 function abrirModal() { renderListaProfesores(); modal.style.display = "flex"; confirmarAsignacionBtn.disabled = true; }
 function cerrarModal() { modal.style.display = "none"; limpiarSeleccion(); }
+
 filtroAnio.onchange = renderListaProfesores;
 filtroAsignatura.oninput = renderListaProfesores;
 cerrarModalBtn.onclick = cerrarModal;
 window.onclick = e => { if (e.target === modal) cerrarModal(); };
 asignarProfesorBtn.onclick = () => { if (celdasSeleccionadas.length > 0) abrirModal(); };
-toggleFormularioBtn.onclick = () => {
-    contenidoFormulario.classList.toggle('show');
-    toggleIcon.classList.toggle('fa-chevron-down');
-    toggleIcon.classList.toggle('fa-chevron-up');
-};

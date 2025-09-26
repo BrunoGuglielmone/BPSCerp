@@ -7,29 +7,13 @@ include_once("../Php/header.php"); ?>
 <head>
     <meta charset="UTF-8" />
     <title>Administración de Salones</title>
+    <link rel="stylesheet" href="../estilos/estilos.css" />
     <link rel="stylesheet" href="../estilos/estilosalonario.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
 <main>
-    <section class="formulario">
-        <h2 id="toggleFormulario">Agregar Docente Rápido <i class="fas fa-chevron-down"></i></h2>
-        <div id="contenidoFormulario" class="contenido-formulario">
-            <!-- Formulario actualizado para ser consistente con la página de docentes -->
-            <input type="text" id="nuevo_nombre" placeholder="Nombre" />
-            <input type="text" id="nuevo_apellido" placeholder="Apellido" />
-            <input type="text" id="nuevo_asignatura" placeholder="Asignatura" />
-            <select id="nuevo_ano">
-                <option value="1">1° Año</option>
-                <option value="2">2° Año</option>
-                <option value="3">3° Año</option>
-                <option value="4">4° Año</option>
-            </select>
-            <button id="agregarProfesorBtn">Agregar</button>
-        </div>
-    </section>
-
     <section class="tabla-container">
         
         <div class="calendario-container">
@@ -80,7 +64,6 @@ include_once("../Php/header.php"); ?>
 </div><?php include_once("../Php/footer.php"); ?>
 
 <script src="../js/salonario.js"></script>
-
 
 </body>
 </html>
