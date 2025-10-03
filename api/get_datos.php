@@ -2,7 +2,7 @@
 // Incluir el archivo de conexión a la base de datos
 include 'conexion.php';
 
-// Establecer la cabecera para devolver respuestas en formato JSON
+// Establecer la cabera para devolver respuestas en formato JSON
 header('Content-Type: application/json; charset=utf-8');
 
 // Obtener la fecha de la petición GET, si no se proporciona, usar la fecha actual
@@ -16,37 +16,44 @@ $response = [
     'asignaciones' => []
 ];
 
-// 1. Obtener Salones
+// 1. Obtener Salones (Sin cambios)
 $resultSalones = $conn->query("SELECT id, nombre FROM salones ORDER BY id ASC");
 while ($row = $resultSalones->fetch_assoc()) {
     $response['salones'][] = $row;
 }
 
-// 2. Obtener Horarios
+// 2. Obtener Horarios (Sin cambios)
 $resultHorarios = $conn->query("SELECT id, hora FROM horarios ORDER BY hora ASC");
 while ($row = $resultHorarios->fetch_assoc()) {
     $response['horarios'][] = $row;
 }
 
-// 3. Obtener Docentes
-$resultDocentes = $conn->query("SELECT id, nombre, apellido, asignatura, ano_cursado FROM docentes ORDER BY apellido ASC, nombre ASC");
+// 3. Obtener Docentes (Consulta CORREGIDA)
+$sqlDocentes = "
+    SELECT d.id, d.nombre, d.apellido, a.nombre AS asignatura, d.ano_cursado 
+    FROM docentes d
+    LEFT JOIN asignaturas a ON d.asignatura_id = a.id
+    ORDER BY d.apellido ASC, d.nombre ASC
+";
+$resultDocentes = $conn->query($sqlDocentes);
 while ($row = $resultDocentes->fetch_assoc()) {
     // Combinamos nombre y apellido para facilitar su uso en el frontend
     $row['nombre_completo'] = $row['nombre'] . ' ' . $row['apellido'];
     $response['docentes'][] = $row;
 }
 
-// 4. Obtener Asignaciones para la fecha solicitada
+// 4. Obtener Asignaciones para la fecha solicitada (Consulta CORREGIDA)
 $sqlAsignaciones = "
     SELECT 
         a.salon_id, 
         a.horario_id, 
         d.id AS docente_id,
         CONCAT(d.nombre, ' ', d.apellido) AS nombre,
-        d.asignatura,
+        asig.nombre AS asignatura, -- CORREGIDO: Obtiene el nombre desde la tabla 'asignaturas'
         d.ano_cursado AS anio
     FROM asignaciones a
     JOIN docentes d ON a.docente_id = d.id
+    LEFT JOIN asignaturas asig ON d.asignatura_id = asig.id -- CORREGIDO: Se une a la tabla 'asignaturas'
     WHERE a.fecha = ?
 ";
 

@@ -105,6 +105,7 @@
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    min-width: 0;
 }
 
 /* Barra de herramientas (Búsqueda y Acciones) */
@@ -158,21 +159,27 @@
 
 /* Contenedor para que la tabla sea responsive en horizontal */
 .tabla-responsive {
-    overflow-x: auto;
+    overflow-x: hidden; 
+    
 }
 
 #tabla-docentes {
     width: 100%;
     border-collapse: collapse;
     color: #fff; /* Texto blanco para que contraste con el fondo oscuro */
+    
 }
 
 #tabla-docentes th,
 #tabla-docentes td {
+    max-width: 150px;
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     white-space: nowrap; /* Evita que el texto de las celdas se parta */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Añade "..." si el texto es muy largo */
+    vertical-align: sub;
 }
 
 #tabla-docentes thead {
@@ -236,3 +243,55 @@
     }
 }
 
+
+/* ... (Todos tus estilos anteriores) ... */
+
+/* === NUEVO: Estilos para el select personalizado === */
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+    background: transparent;
+    color: #fff;
+    font-size: 0.9rem;
+    outline: none;
+    box-sizing: border-box;
+    /* Quitar apariencia nativa */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Flecha personalizada */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: .65em auto;
+    padding-right: 30px; /* Espacio para la flecha */
+}
+.input-group select option {
+    background-color: #0a192f;
+    color: #fff;
+}
+
+/* === NUEVO: Estilos para el grupo de checkboxes de carreras === */
+.checkbox-group {
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 10px;
+    background-color: rgba(0,0,0,0.2);
+}
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.checkbox-item input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+.checkbox-item label {
+    margin-bottom: 0;
+    font-weight: normal;
+}

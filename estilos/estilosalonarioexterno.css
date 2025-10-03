@@ -11,7 +11,6 @@ body {
     background-attachment: fixed;
     color: #fff;
     box-sizing: border-box;
-    overflow: hidden; /* Evita barras de scroll en el body */
 }
 
 body::before {
@@ -23,9 +22,38 @@ body::before {
     z-index: -1;
 }
 
+/* === NUEVO: ENCABEZADO DE PÁGINA === */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px 20px 10px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.logo-container img {
+    height: 60px;
+    display: block;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.reloj {
+    font-size: 1.8rem;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+    color: #ccd6f6;
+    letter-spacing: 1.5px;
+}
+
 .main-container {
     max-width: 1400px;
-    height: calc(100vh - 40px); /* Ocupa casi toda la altura de la pantalla */
+    height: calc(100vh - 125px); /* Altura ajustada por el nuevo header y filtros */
     margin: 0 auto;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -36,126 +64,111 @@ body::before {
     flex-direction: column;
 }
 
-/* === ENCABEZADO DE LA PÁGINA === */
-.info-header {
-    text-align: center;
-    margin-bottom: 25px;
-    flex-shrink: 0; /* Evita que el header se encoja */
+/* === NUEVO: CONTENEDOR DE FILTROS === */
+.filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    align-items: flex-end;
 }
 
-.info-header .logo {
-    max-height: 60px;
-    margin-bottom: 10px;
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.info-header h1 {
-    margin: 0;
-    font-size: 2.5rem;
-    color: #ccd6f6;
-    letter-spacing: 1.5px;
-}
-
-.info-header p {
-    margin: 5px 0 0;
-    font-size: 1.2rem;
+.filter-group label {
+    font-size: 0.8rem;
     color: #8892b0;
+    font-weight: bold;
 }
 
-/* === CONTENEDOR DE LA TABLA CON SCROLL === */
+.filter-group input,
+.filter-group select {
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ccd6f6;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.filter-group input[type="date"] {
+    color-scheme: dark;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto; /* Alinea los botones a la derecha */
+}
+
+.filter-button {
+    padding: 8px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    color: #0a192f;
+    background-color: #64ffda;
+    font-size: 0.9rem;
+}
+
+.filter-button.clear {
+    background-color: #8892b0;
+    color: #0a192f;
+}
+
+.filter-button:hover {
+    opacity: 0.85;
+}
+
+/* === CONTENEDOR DE LA TABLA CON SCROLL OCULTO === */
 .scroll-container {
-    overflow-x: auto; /* Habilita el scroll horizontal */
-    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
-    flex-grow: 1; /* Ocupa el espacio restante */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-grow: 1;
+    /* Ocultar barra de scroll */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE y Edge */
+}
+.scroll-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, y Opera */
 }
 
-/* === TABLA DE HORARIOS === */
+/* === ESTILOS DE TABLA (SIN CAMBIOS SIGNIFICATIVOS) === */
 #tablaAulas {
     width: 100%;
     border-collapse: collapse;
     min-width: 1200px;
 }
-
-#tablaAulas th,
-#tablaAulas td {
-    padding: 12px 8px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    text-align: center;
-    font-size: 0.8rem;
-    min-width: 120px;
-}
-
-/* -- Encabezado Fijo (Sticky) -- */
-#tablaAulas thead th {
-    position: sticky;
-    top: 0;
-    background-color: rgba(10, 25, 47, 0.95);
-    color: #64ffda;
-    z-index: 10;
-    font-size: 0.9rem;
-}
-
-/* -- Primera Columna Fija (Sticky) -- */
-#tablaAulas tbody td:first-child,
-#tablaAulas thead th:first-child {
-    position: sticky;
-    left: 0;
-    background-color: rgba(10, 25, 47, 0.95);
-    font-weight: bold;
-    color: #ccd6f6;
-    z-index: 5;
-    min-width: 150px;
-}
-
-#tablaAulas thead th:first-child {
-    z-index: 11;
-}
-
-/* -- Estilos de Celdas -- */
-#tablaAulas td.libre {
-    background-color: rgba(46, 204, 113, 0.1);
-}
-
-#tablaAulas td.ocupado {
-    background-color: rgba(231, 76, 60, 0.2);
-    font-weight: 500;
-    color: #f7b2ac;
-}
-
-#tablaAulas td.ocupado div {
-    font-size: 0.75rem;
-    line-height: 1.3;
-}
-
-/* -- Columna de la Hora Actual -- */
-#tablaAulas .hora-actual {
-    background-color: rgba(52, 152, 219, 0.3);
-    border-left: 2px solid #3498db;
-    border-right: 2px solid #3498db;
-}
-
-#tablaAulas thead .hora-actual {
-    color: #3498db;
-}
+#tablaAulas th, #tablaAulas td { padding: 12px 8px; border: 1px solid rgba(255, 255, 255, 0.15); text-align: center; font-size: 0.8rem; min-width: 120px; }
+#tablaAulas thead th { position: sticky; top: 0; background-color: rgba(10, 25, 47, 0.95); color: #64ffda; z-index: 10; font-size: 0.9rem; }
+#tablaAulas tbody td:first-child, #tablaAulas thead th:first-child { position: sticky; left: 0; background-color: rgba(10, 25, 47, 0.95); font-weight: bold; color: #ccd6f6; z-index: 5; min-width: 150px; }
+#tablaAulas thead th:first-child { z-index: 11; }
+#tablaAulas td.libre { background-color: rgba(46, 204, 113, 0.1); }
+#tablaAulas td.ocupado { background-color: rgba(231, 76, 60, 0.2); font-weight: 500; color: #f7b2ac; }
+#tablaAulas td.ocupado div { font-size: 0.75rem; line-height: 1.3; }
+#tablaAulas .hora-actual { background-color: rgba(52, 152, 219, 0.3); border-left: 2px solid #3498db; border-right: 2px solid #3498db; }
+#tablaAulas thead .hora-actual { color: #3498db; }
 
 /* === RESPONSIVE DESIGN === */
+@media (max-width: 900px) {
+    .filters-container { flex-direction: column; align-items: stretch; }
+    .filter-actions { margin-left: 0; width: 100%; justify-content: space-between; }
+    .filter-button { flex-grow: 1; text-align: center; }
+}
 @media (max-width: 768px) {
     body { padding: 10px; }
-    .main-container { padding: 15px; height: calc(100vh - 20px); }
-    .info-header h1 { font-size: 1.8rem; }
-    .info-header p { font-size: 1rem; }
+    .page-header { padding: 0 0 15px 0; }
+    .logo-container img { height: 45px; }
+    .reloj { font-size: 1.3rem; }
+    .main-container { padding: 15px; height: calc(100vh - 90px); }
     #tablaAulas th, #tablaAulas td { font-size: 0.75rem; padding: 8px 5px; min-width: 100px; }
     #tablaAulas tbody td:first-child, #tablaAulas thead th:first-child { min-width: 120px; }
-}
-
-/*===ESTILOS PARA LA PAGINACIÓN Y TRANSICIONES === */
-#tablaAulas tbody tr {
-    /* Estado inicial visible */
-    opacity: 1;
-    /* Transición suave para la opacidad */
-    transition: opacity 0.5s ease-in-out;
-}
-
-#tablaAulas tbody tr.oculto {
-    /* Estado oculto con opacidad 0 */
-    opacity: 0;
 }

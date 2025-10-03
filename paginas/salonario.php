@@ -1,6 +1,7 @@
 <?php 
 include_once("../api/verificar_sesion.php");
-include_once("../Php/header.php"); ?>
+include_once("../Php/header.php"); 
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -17,10 +18,11 @@ include_once("../Php/header.php"); ?>
     <section class="tabla-container">
         
         <div class="calendario-container">
-            <div class="semestres">
-                <button id="primerSemestreBtn">1er Semestre</button>
-                <button id="segundoSemestreBtn">2do Semestre</button>
+            <div class="semestre-toggle">
+                <input type="checkbox" id="semestreToggleInput" class="semestre-toggle-input">
+                <label for="semestreToggleInput" class="semestre-toggle-label"></label>
             </div>
+            
             <div class="fecha-especifica">
                 <label for="fechaInput">Ver fecha:</label>
                 <input type="date" id="fechaInput">
@@ -28,9 +30,11 @@ include_once("../Php/header.php"); ?>
         </div>
 
         <div class="acciones-tabla">
-            <button id="asignarProfesorBtn" disabled>Asignar profesor a seleccionadas</button>
-            <button id="exportarCSVBtn">Exportar tabla a CSV</button>
+            <button id="asignarProfesorBtn" class="btn-animado" disabled><span>Asignar a seleccionadas</span></button>
+            <button id="asignarSemestreBtn" class="btn-animado"><span>Asignar a todo el semestre</span></button>
+            <button id="exportarCSVBtn" class="btn-animado"><span>Exportar tabla a CSV</span></button>
         </div>
+
         <table id="tablaHorarios">
             <thead>
                 <tr><th>Salón</th></tr>
@@ -61,7 +65,9 @@ include_once("../Php/header.php"); ?>
         <div id="listaProfesores"></div>
         <button id="confirmarAsignacionBtn" disabled>Confirmar asignación</button>
     </div>
-</div><?php include_once("../Php/footer.php"); ?>
+</div>
+
+<?php include_once("../Php/footer.php"); ?>
 
 <script src="../js/salonario.js"></script>
 

@@ -7,13 +7,13 @@
 .main-container {
     display: flex;
     flex: 1;
-    flex-direction: column; /* Apilamos los elementos verticalmente */
+    flex-direction: column;
     padding: 20px;
     gap: 20px;
     background-color: rgba(0, 25, 51, 0.4);
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    overflow: hidden; /* Evita que los elementos internos se desborden */
+    overflow: hidden;
 }
 
 /* --- Controles del Calendario (Toolbar) --- */
@@ -22,7 +22,7 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 20px; /* Aumentado para más espacio */
     padding-bottom: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -43,6 +43,68 @@
     background-color: rgba(0, 68, 148, 0.9);
 }
 
+/* --- NUEVOS ESTILOS PARA EL INTERRUPTOR DE SEMESTRE --- */
+.semestre-toggle {
+    position: relative;
+    width: 300px; /* Ancho total del componente */
+    height: 40px;
+}
+
+.semestre-toggle-input {
+    display: none; /* Ocultamos el checkbox real */
+}
+
+.semestre-toggle-label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 86, 179, 0.7);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* El círculo que se desliza */
+.semestre-toggle-label::after {
+    content: '';
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 20px;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Texto dentro del interruptor */
+.semestre-toggle-label::before {
+    content: '1er Semestre / 2do Semestre';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: #001933; /* Color oscuro para el texto */
+    mix-blend-mode: difference; /* Efecto para que el texto cambie de color */
+    filter: invert(1) grayscale(1);
+    z-index: 1;
+}
+
+/* Movimiento del círculo al seleccionar (2do semestre) */
+.semestre-toggle-input:checked + .semestre-toggle-label::after {
+    transform: translateX(100%);
+}
+
+.semestre-toggle-input:checked + .semestre-toggle-label {
+    background-color: rgba(40, 167, 69, 0.7); /* Verde para el segundo semestre */
+}
+
 .fecha-especifica {
     display: flex;
     align-items: center;
@@ -58,10 +120,25 @@
     color-scheme: dark; /* Ayuda a que el selector de fecha sea oscuro en navegadores compatibles */
 }
 
+/* --- Acciones de la tabla --- */
+.acciones-tabla {
+    display: flex;
+    gap: 15px;
+    padding-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+/* Ajuste para que los botones animados funcionen bien aquí */
+.acciones-tabla .btn-animado {
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 8px; /* Un poco menos redondeado para combinar */
+}
+
 /* --- Contenedor de la Tabla de Horarios --- */
 .tabla-container {
-    flex: 1; /* Permite que la tabla crezca y ocupe el espacio disponible */
-    overflow: auto; /* Mantiene el scroll para la tabla grande */
+    flex: 1;
+    overflow: auto;
 }
 
 #tablaHorarios {
@@ -100,7 +177,6 @@
     z-index: 9;
 }
 
-/* La esquina superior izquierda necesita el z-index más alto */
 #tablaHorarios thead th:first-child {
     z-index: 11;
 }
@@ -153,7 +229,7 @@
 }
 
 /* ============================================= */
-/* ==       ESTILOS DEL MODAL (SIN CAMBIOS)     == */
+/* ==       ESTILOS DEL MODAL     == */
 /* ============================================= */
 
 
@@ -254,3 +330,4 @@
         flex-direction: column;
     }
 }
+

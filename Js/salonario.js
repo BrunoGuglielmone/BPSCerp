@@ -6,6 +6,7 @@ let asignaciones = {};
 let selectedDate;
 let celdasSeleccionadas = [];
 let salonSeleccionado = null;
+let currentYear = new Date().getFullYear();
 
 // === ELEMENTOS DOM ===
 const tabla = document.getElementById("tablaHorarios");
@@ -19,8 +20,8 @@ const filtroAsignatura = document.getElementById("filtroAsignatura");
 const asignarProfesorBtn = document.getElementById("asignarProfesorBtn");
 const exportarCSVBtn = document.getElementById("exportarCSVBtn");
 const fechaInput = document.getElementById("fechaInput");
-const primerSemestreBtn = document.getElementById("primerSemestreBtn");
-const segundoSemestreBtn = document.getElementById("segundoSemestreBtn");
+const semestreToggle = document.getElementById("semestreToggleInput");
+const asignarSemestreBtn = document.getElementById("asignarSemestreBtn");
 
 // === FUNCIONES DE API ===
 
@@ -79,7 +80,6 @@ function renderTabla() {
         return;
     }
     
-    // ✨ MEJORA: Muestra un mensaje si no hay salones u horarios registrados.
     if (salones.length === 0 || horarios.length === 0) {
         thead.innerHTML = "<th>Aviso</th>";
         tbody.innerHTML = '<tr><td>No hay salones u horarios registrados en el sistema. Por favor, agréguelos desde el panel de administración para poder continuar.</td></tr>';
@@ -188,26 +188,97 @@ confirmarAsignacionBtn.onclick = async () => {
     if (!huboError) alert("Asignaciones guardadas correctamente.");
 };
 
+// === NUEVA LÓGICA PARA SEMESTRES Y RESTRICCIONES DE FECHA ===
+
+function actualizarRestriccionesYFecha() {
+    const esSegundoSemestre = semestreToggle.checked;
+    
+    const primerSemestreMax = `${currentYear}-07-27`;
+    const segundoSemestreMin = `${currentYear}-07-28`;
+
+    if (esSegundoSemestre) {
+        fechaInput.min = segundoSemestreMin;
+        fechaInput.max = ''; 
+        if (fechaInput.value < segundoSemestreMin) {
+            fechaInput.value = segundoSemestreMin;
+        }
+    } else { // Primer semestre
+        fechaInput.min = '';
+        fechaInput.max = primerSemestreMax;
+        if (fechaInput.value > primerSemestreMax) {
+            fechaInput.value = primerSemestreMax;
+        }
+    }
+    // evento de cambio para recargar la tabla con la fecha potencialmente ajustada
+    fechaInput.dispatchEvent(new Event('change'));
+}
+
+// === FUNCIÓN PARA ASIGNAR A TODO EL SEMESTRE ===
+asignarSemestreBtn.onclick = async () => {
+    const asignacionesDelDia = asignaciones[selectedDate];
+    if (!asignacionesDelDia || Object.keys(asignacionesDelDia).length === 0) {
+        return alert("No hay ninguna asignación en la fecha seleccionada para copiar.");
+    }
+
+    const esSegundoSemestre = semestreToggle.checked;
+    const semestreTexto = esSegundoSemestre ? "segundo" : "primer";
+    const diaSemana = new Date(selectedDate + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long' });
+
+    const confirmacion = confirm(
+        `Esto copiará TODAS las asignaciones del día ${selectedDate} (${diaSemana}) a todos los ${diaSemana}s correspondientes del ${semestreTexto} semestre.\n\n¿Estás seguro de que deseas continuar? Esta acción es irreversible.`
+    );
+
+    if (!confirmacion) return;
+    
+    alert("Iniciando asignación masiva. Este proceso puede tardar un momento. Se te notificará al finalizar.");
+
+    const payload = {
+        accion: 'guardar_semestre',
+        fecha_base: selectedDate,
+        semestre: esSegundoSemestre ? 2 : 1
+    };
+
+    const exito = await manejarAsignacionAPI(payload);
+
+    if (exito) {
+        alert("¡Éxito! Todas las asignaciones se han copiado al semestre completo.");
+        cargarDatos(selectedDate);
+    } else {
+        alert("Ocurrió un error durante la asignación masiva. Revisa la consola para más detalles.");
+    }
+};
+
 // === EVENT LISTENERS y FUNCIONES AUXILIARES ===
 document.addEventListener('DOMContentLoaded', () => {
-    selectedDate = toYYYYMMDD(new Date());
+    const hoy = new Date();
+    // La fecha de corte es el 28 de Julio (mes 6 en JS)
+    semestreToggle.checked = hoy >= new Date(currentYear, 6, 28);
+
+    selectedDate = toYYYYMMDD(hoy);
     fechaInput.value = selectedDate;
+
+    // 1. Aplicamos las restricciones de fecha (min/max) al cargar.
+    const esSegundoSemestre = semestreToggle.checked;
+    if (esSegundoSemestre) {
+        fechaInput.min = `${currentYear}-07-28`;
+        fechaInput.max = '';
+    } else {
+        fechaInput.min = '';
+        fechaInput.max = `${currentYear}-07-27`;
+    }
+
+    // 2. Cargamos los datos para la fecha de hoy.
     cargarDatos(selectedDate);
 });
+
 fechaInput.addEventListener("change", () => {
     selectedDate = fechaInput.value;
     cargarDatos(selectedDate);
 });
-primerSemestreBtn.addEventListener("click", () => {
-    const fecha = new Date(new Date().getFullYear(), 2, 1); // Marzo
-    fechaInput.value = toYYYYMMDD(fecha);
-    fechaInput.dispatchEvent(new Event('change'));
-});
-segundoSemestreBtn.addEventListener("click", () => {
-    const fecha = new Date(new Date().getFullYear(), 7, 1); // Agosto
-    fechaInput.value = toYYYYMMDD(fecha);
-    fechaInput.dispatchEvent(new Event('change'));
-});
+
+// Listener para el nuevo interruptor de semestre
+semestreToggle.addEventListener('change', actualizarRestriccionesYFecha);
+
 
 function toYYYYMMDD(date) { return date.toISOString().split('T')[0]; }
 

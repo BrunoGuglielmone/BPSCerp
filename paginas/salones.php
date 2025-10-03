@@ -1,6 +1,7 @@
 <?php 
 include_once("../api/verificar_sesion.php");
-include_once("../Php/header.php"); ?>
+include_once("../Php/header.php"); 
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,7 +10,6 @@ include_once("../Php/header.php"); ?>
     <title>Gestión de Salones</title>
     <link rel="stylesheet" href="../estilos/estilos.css">
     <link rel="stylesheet" href="../estilos/estilosalones.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
@@ -33,7 +33,13 @@ include_once("../Php/header.php"); ?>
                     </div>
                     <div class="input-group">
                         <label for="tipo">Tipo de Salón</label>
-                        <input type="text" id="tipo" name="tipo">
+                        <select id="tipo" name="tipo">
+                            <option value="">Seleccione un tipo...</option>
+                            <option value="Común">Común</option>
+                            <option value="Sala informática">Sala informática</option>
+                            <option value="Laboratorio Biología">Laboratorio Biología</option>
+                            <option value="Laboratorio Física">Laboratorio Física</option>
+                        </select>
                     </div>
                     <button type="submit" class="btn-guardar">Guardar Salón</button>
                 </form>
@@ -42,10 +48,7 @@ include_once("../Php/header.php"); ?>
 
         <section class="lista-container">
             <div class="toolbar">
-                <div class="search-bar">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="busqueda" placeholder="Buscar salón...">
-                </div>
+                <h3>Lista de Salones</h3>
                 <div class="actions">
                     <button class="btn-accion btn-editar-seleccionado" disabled><i class="fa-solid fa-pencil"></i> Editar</button>
                     <button class="btn-accion btn-eliminar-seleccionado" disabled><i class="fa-solid fa-trash"></i> Eliminar</button>
@@ -56,7 +59,25 @@ include_once("../Php/header.php"); ?>
                     <thead>
                         <tr>
                             <th><input type="checkbox" id="seleccionar-todos"></th>
-                            <th>Nombre</th><th>Capacidad</th><th>Tipo</th><th>Acciones</th>
+                            <th>Nombre</th>
+                            <th>Capacidad</th>
+                            <th>Tipo</th>
+                            <th>Acciones</th>
+                        </tr>
+                        <tr class="filtros-fila">
+                            <th></th>
+                            <th><input type="text" placeholder="Filtrar por nombre..." data-columna="nombre" class="filtro-input"></th>
+                            <th><input type="text" placeholder="Filtrar por capacidad..." data-columna="capacidad" class="filtro-input"></th>
+                            <th>
+                                <select data-columna="tipo" class="filtro-input">
+                                    <option value="">Todos</option>
+                                    <option value="Común">Común</option>
+                                    <option value="Sala informática">Sala informática</option>
+                                    <option value="Laboratorio Biología">Laboratorio Biología</option>
+                                    <option value="Laboratorio Física">Laboratorio Física</option>
+                                </select>
+                            </th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -75,8 +96,6 @@ include_once("../Php/header.php"); ?>
             icon.classList.toggle('fa-plus');
             icon.classList.toggle('fa-chevron-up');
         });
-
-        
     </script>
     
     <?php include_once("../Php/footer.php"); ?>
