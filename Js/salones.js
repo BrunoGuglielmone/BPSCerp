@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Selectores de elementos
     const form = document.getElementById('registro-salon-form');
     const tbody = document.querySelector('#tabla-salones tbody');
-    const searchInput = document.getElementById('busqueda');
+    const filtroInputs = document.querySelectorAll('.filtro-input'); // NUEVO: Selector de filtros
     const seleccionarTodosCheckbox = document.getElementById('seleccionar-todos');
     const btnEliminarSeleccionado = document.querySelector('.btn-eliminar-seleccionado');
     const btnEditarSeleccionado = document.querySelector('.btn-editar-seleccionado');
@@ -12,13 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let salonesData = [];
 
-    // URL de la API
     const API_URL = '../api/gestionar_salones.php';
 
-    // Función de notificación simple
     const mostrarNotificacion = (message, isError = false) => alert(message);
 
-    // Cargar salones desde el backend
     const cargarSalones = async () => {
         try {
             const response = await fetch(API_URL);
@@ -31,9 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Renderizar la tabla de salones
     const renderizarTabla = (salones) => {
-        tbody.innerHTML = '';
+        // Limpiamos solo el cuerpo, no los filtros de la cabecera
+        tbody.innerHTML = ''; 
         if (salones.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5">No se encontraron salones.</td></tr>`;
             return;
@@ -54,7 +51,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Lógica para enviar el formulario (crear/actualizar)
+    // NUEVO: Función central para aplicar todos los filtros
+    const aplicarFiltros = () => {
+        const filtros = {};
+        filtroInputs.forEach(input => {
+            filtros[input.dataset.columna] = input.value.toLowerCase().trim();
+        });
+
+        const salonesFiltrados = salonesData.filter(salon => {
+            return Object.keys(filtros).every(columna => {
+                const valorFiltro = filtros[columna];
+                if (!valorFiltro) return true; // Si el filtro está vacío, no se aplica
+
+                // Asegurarse de que el valor del salón exista y convertirlo a string
+                const valorSalon = salon[columna] ? String(salon[columna]).toLowerCase() : '';
+                
+                return valorSalon.includes(valorFiltro);
+            });
+        });
+        renderizarTabla(salonesFiltrados);
+    };
+
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
@@ -75,20 +92,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Lógica para iniciar la edición de un salón
     const iniciarEdicion = (id) => {
         const salon = salonesData.find(s => s.id == id);
         if (!salon) return;
         hiddenSalonId.value = salon.id;
         form.querySelector('#nombre').value = salon.nombre;
         form.querySelector('#capacidad').value = salon.capacidad;
+        // CAMBIO: Asignar valor al select
         form.querySelector('#tipo').value = salon.tipo || '';
         if (!formContent.classList.contains('abierto')) toggleBtn.click();
         form.querySelector('h3').textContent = 'Editar Datos del Salón';
         form.querySelector('.btn-guardar').textContent = 'Actualizar Salón';
     };
 
-    // Lógica para eliminar salones
     const eliminarSalones = async (ids) => {
         if (ids.length === 0) return mostrarNotificacion('Seleccione al menos un salón.');
         if (!confirm(`¿Seguro que quiere eliminar ${ids.length} salón(es)?`)) return;
@@ -110,41 +126,48 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Actualizar estado de botones de acción masiva
     const actualizarEstadoBotones = () => {
         const seleccionados = document.querySelectorAll('.seleccionar-fila:checked').length;
         btnEliminarSeleccionado.disabled = seleccionados === 0;
         btnEditarSeleccionado.disabled = seleccionados !== 1;
     };
     
-    // Listeners de eventos
+    // --- Listeners de eventos ---
     form.addEventListener('submit', handleFormSubmit);
+
+    // NUEVO: Listener para todos los inputs de filtro
+    filtroInputs.forEach(input => {
+        input.addEventListener('input', aplicarFiltros);
+    });
+
     btnEliminarSeleccionado.addEventListener('click', () => {
         const ids = Array.from(document.querySelectorAll('.seleccionar-fila:checked')).map(cb => cb.closest('tr').dataset.id);
         eliminarSalones(ids);
     });
+
     btnEditarSeleccionado.addEventListener('click', () => {
         const id = document.querySelector('.seleccionar-fila:checked').closest('tr').dataset.id;
         iniciarEdicion(id);
     });
-    searchInput.addEventListener('input', (e) => {
-        const termino = e.target.value.toLowerCase().trim();
-        const filtrados = salonesData.filter(s => s.nombre.toLowerCase().includes(termino) || (s.tipo && s.tipo.toLowerCase().includes(termino)));
-        renderizarTabla(filtrados);
-    });
+    
     seleccionarTodosCheckbox.addEventListener('change', (e) => {
         document.querySelectorAll('.seleccionar-fila').forEach(cb => cb.checked = e.target.checked);
         actualizarEstadoBotones();
     });
+
     tbody.addEventListener('change', e => {
         if (e.target.classList.contains('seleccionar-fila')) actualizarEstadoBotones();
     });
+
     tbody.addEventListener('click', e => {
-        const id = e.target.closest('tr')?.dataset.id;
+        const fila = e.target.closest('tr');
+        if (!fila) return;
+        const id = fila.dataset.id;
         if (!id) return;
         if (e.target.closest('.btn-editar')) iniciarEdicion(id);
         if (e.target.closest('.btn-eliminar')) eliminarSalones([id]);
     });
+    
     toggleBtn.addEventListener('click', () => {
         if (formContent.classList.contains('abierto')) {
             form.reset();

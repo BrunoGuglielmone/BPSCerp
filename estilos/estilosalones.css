@@ -1,82 +1,302 @@
 /* ==========================================================================
-    ESTILOS PARA LA PÁGINA DE SALONES
-    ========================================================================== */
+   ESTILOS PARA LA PÁGINA DE SALONES (CON ESTILO DE DOCENTES)
+   ========================================================================== */
 
-/* Fondo con efecto blur y layout general */
+/* --- Estilos Globales y Fondo --- */
+html, body {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
 body {
-    background-image: url('../imagenes/fondocerp.jpeg');
-    background-attachment: fixed;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: url('../imagenes/fondocerp.jpeg') center/cover repeat fixed;
     color: #fff;
-}
-body::before {
-    content: ''; position: fixed; inset: 0; backdrop-filter: blur(7px); z-index: -1;
+    font-size: 1rem;
 }
 
-/* Contenedor principal que organiza el formulario y la lista */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    backdrop-filter: blur(7px);
+    z-index: -1;
+}
+
+main {
+    flex: 1;
+}
+
+/* --- Contenedor Principal (Layout General) --- */
 .main-container {
-    display: flex; flex-wrap: wrap; gap: 20px; padding: 20px;
-    width: 100%; max-width: 1600px; margin: 0 auto; box-sizing: border-box;
+    display: flex;
+    flex: 1;
+    padding: 20px;
+    gap: 20px;
+    flex-direction: row;
 }
 
 /* --- Lado del Formulario --- */
 .formulario-container {
-    flex: 1; min-width: 320px; align-self: flex-start;
-    background-color: rgba(0, 25, 51, 0.4); border-radius: 8px;
-    padding: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    flex: 1;
+    min-width: 320px;
+    align-self: flex-start;
+    background-color: rgba(0, 25, 51, 0.4);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .toggle-form-btn {
-    width: 100%; padding: 12px; background-color: rgba(0, 86, 179, 0.5);
-    color: white; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 6px;
-    cursor: pointer; font-size: 1rem; text-align: left; transition: background-color 0.3s ease;
+    width: 100%;
+    padding: 12px;
+    background-color: rgba(0, 86, 179, 0.5);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: left;
+    transition: background-color 0.3s ease;
 }
-.toggle-form-btn:hover { background-color: rgba(0, 68, 148, 0.9); }
+
+.toggle-form-btn:hover {
+    background-color: rgba(0, 68, 148, 0.9);
+}
+
 .formulario-content {
-    max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, margin-top 0.5s ease-out;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out, margin-top 0.5s ease-out;
 }
-.formulario-content.abierto { max-height: 1000px; margin-top: 15px; }
-.input-group { margin-bottom: 15px; }
-.input-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-.input-group input {
-    width: 100%; padding: 10px; border: none; border-bottom: 2px solid rgba(255, 255, 255, 0.7);
-    background: transparent; color: #fff; font-size: 0.9rem; outline: none; box-sizing: border-box;
+
+.formulario-content.abierto {
+    max-height: 1000px;
+    margin-top: 15px;
 }
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+/* Estilos unificados para input y select en el formulario */
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+    background: transparent;
+    color: #fff;
+    font-size: 0.9rem;
+    outline: none;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Estilos para las opciones del select */
+.input-group select option {
+    background-color: #0a192f;
+    color: #fff;
+}
+
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
 .btn-guardar {
-    width: 100%; padding: 12px; background-color: rgba(40, 167, 69, 0.7); color: white;
-    border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 6px; cursor: pointer;
-    font-size: 1rem; font-weight: bold; transition: background-color 0.3s ease; margin-top: 10px;
+    width: 100%;
+    padding: 12px;
+    background-color: rgba(40, 167, 69, 0.7);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
 }
-.btn-guardar:hover { background-color: rgba(33, 136, 56, 0.9); }
+
+.btn-guardar:hover {
+    background-color: rgba(33, 136, 56, 0.9);
+}
 
 /* --- Lado de la Lista/Tabla --- */
 .lista-container {
-    flex: 3; min-width: 320px; display: flex; flex-direction: column;
-    background-color: rgba(240, 248, 255, 0.95); color: #333;
-    border-radius: 8px; padding: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    flex: 3;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 25, 51, 0.4);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
-.toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; }
-.search-bar { position: relative; }
-.search-bar i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
-.search-bar input { padding: 10px 15px 10px 40px; border-radius: 20px; border: 1px solid #ccc; background: #fff; color: #333; min-width: 250px; }
-.actions .btn-accion { padding: 8px 15px; border: 1px solid #aaa; border-radius: 6px; background-color: #f0f0f0; cursor: pointer; }
-.actions .btn-accion:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.tabla-responsive { overflow-x: auto; }
-#tabla-salones { width: 100%; white-space: nowrap; border-collapse: collapse; }
-#tabla-salones th, #tabla-salones td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
-#tabla-salones thead { background-color: #e9ecef; }
-#tabla-salones tbody tr:hover { background-color: #f5f5f5; }
+/* Barra de herramientas simplificada */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
 
-.acciones-celda { display: flex; gap: 10px; }
-.btn-accion-fila { background: none; border: none; cursor: pointer; font-size: 1rem; color: #555; }
-.btn-accion-fila.btn-editar:hover { color: #007bff; }
-.btn-accion-fila.btn-eliminar:hover { color: #dc3545; }
+.actions .btn-accion {
+    padding: 8px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    background-color: transparent;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.actions .btn-accion:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.actions .btn-accion:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tabla-responsive {
+    overflow-x: auto;
+}
+
+#tabla-salones {
+    width: 100%;
+    white-space: nowrap;
+    border-collapse: collapse;
+    color: #fff;
+}
+
+#tabla-salones th,
+#tabla-salones td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    vertical-align: middle;
+}
+
+#tabla-salones thead {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/*  Fila de filtros */
+.filtros-fila th {
+    padding: 8px 15px;
+}
+
+.filtro-input {
+    width: 100%;
+    padding: 6px 8px;
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.filtro-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+.filtro-input option {
+    background-color: #0a192f;
+}
+
+#tabla-salones tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+#tabla-salones tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.acciones-celda {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-accion-fila {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #ddd;
+    transition: color 0.2s ease;
+}
+
+.btn-accion-fila.btn-editar:hover {
+    color: #58a6ff;
+}
+
+.btn-accion-fila.btn-eliminar:hover {
+    color: #ff7b72;
+}
+
 
 /* --- Media Queries para Diseño Responsivo --- */
 @media (max-width: 992px) {
-    .main-container { flex-direction: column; align-items: center; }
-    .formulario-container, .lista-container { width: 100%; max-width: 700px; }
+    .main-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .formulario-container,
+    .lista-container {
+        width: 100%;
+        max-width: 700px;
+    }
 }
+
 @media (max-width: 576px) {
-    .toolbar { flex-direction: column; align-items: stretch; }
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* --- Estilos para el Pie de Página --- */
+.footer-docentes {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: rgba(0, 25, 51, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 20px;
+    color: #fff;
+    flex-wrap: wrap;
+    width: 100%;
+    font-size: 0.8rem;
+}
+
+.footer-info {
+    max-width: 60%;
+    font-size: 0.8rem;
+}
+
+.footer-contacto a {
+    margin-left: 10px;
+    color: #fff;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.footer-contacto a:hover {
+    color: #1da1f2;
 }

@@ -1,35 +1,9 @@
-/* --- Permitir scroll vertical en toda la página --- */
-body {
-    overflow-y: auto;
-    font-size: 0.7rem;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-image: url('../imagenes/fondocerp.jpeg');
-    background-repeat: repeat;
-    background-position: center;
-    background-size: cover;
-    color: #fff;
-}
+/* ==========================================================================
+   ESTILOS PARA LA PÁGINA DE DOCENTES (CON ESTILO UNIFICADO)
+   ========================================================================== */
 
-/* --- Capa que aplica el efecto blur al fondo --- */
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: transparent;
-    backdrop-filter: blur(7px);
-    z-index: -1;
-}
-
-/* --- Contenedor principal --- */
+/* --- Contenedor Principal (Layout General) --- */
 .main-container {
-    transform: scale(0.7);
-    transform-origin: top left;
-    width: 120vw;
-    height: 80vh;
-    min-height: 450px;
-    overflow-x: auto;
     display: flex;
     flex: 1;
     padding: 20px;
@@ -37,33 +11,22 @@ body::before {
     flex-direction: row;
 }
 
-/* --- Formulario (lado izquierdo) --- */
+/* --- Lado del Formulario --- */
 .formulario-container {
-    width: 20%;
-    min-width: 280px;
-    align-self: flex-start;
-    order: 1;
+    flex: 1; /* Ocupa 1 parte del espacio */
+    min-width: 320px; /* Ancho mínimo para mantener la forma */
+    align-self: flex-start; /* Se alinea arriba */
+    background-color: rgba(0, 25, 51, 0.4);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* --- Lista de docentes (lado derecho) --- */
-.lista-container {
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    order: 2;
-}
-/* --- Formulario Lateral (40%) --- */
-.formulario-container {
-    width: 40%;
-    min-width: 280px;
-    align-self: flex-start;
-}
-
-/* Botón para desplegar formulario */
+/* Botón para desplegar el formulario */
 .toggle-form-btn {
     width: 100%;
     padding: 12px;
-    background-color: rgba(0, 86, 179, 0.2);
+    background-color: rgba(0, 86, 179, 0.5);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 6px;
@@ -72,29 +35,27 @@ body::before {
     text-align: left;
     transition: background-color 0.3s ease;
 }
+
 .toggle-form-btn:hover {
-    background-color: rgba(0, 68, 148, 0.9); /* Efecto hover */
+    background-color: rgba(0, 68, 148, 0.9);
 }
 
-/* Contenedor del formulario, cerrado por defecto */
+/* Contenido del formulario (colapsable) */
 .formulario-content {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.5s ease-out; /* Animación al abrir */
+    transition: max-height 0.5s ease-out, margin-top 0.5s ease-out;
 }
 
-/* Cuando está abierto */
 .formulario-content.abierto {
-    max-height: 900px;
+    max-height: 1000px; /* Altura suficiente para el contnido */
     margin-top: 15px;
 }
 
-.formulario-content h3 {
-    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-    padding-bottom: 10px;
+.input-group {
+    margin-bottom: 15px;
 }
 
-/* --- Campos del formulario --- */
 .input-group label {
     display: block;
     margin-bottom: 5px;
@@ -103,19 +64,20 @@ body::before {
 
 .input-group input {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     border: none;
-    border-bottom: 2px solid #fff;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.7);
     background: transparent;
     color: #fff;
-    font-size: 0.7rem;
+    font-size: 0.9rem;
     outline: none;
-}
-.input-group input::placeholder {
-    color: rgba(255,255,255,0.7);
+    box-sizing: border-box;
 }
 
-/* --- Botón Guardar --- */
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
 .btn-guardar {
     width: 100%;
     padding: 12px;
@@ -127,93 +89,207 @@ body::before {
     font-size: 1rem;
     font-weight: bold;
     transition: background-color 0.3s ease;
+    margin-top: 10px;
 }
+
 .btn-guardar:hover {
     background-color: rgba(33, 136, 56, 0.9);
 }
 
-/* --- Lista de Profesores (80%) --- */
+/* --- Lado de la Lista/Tabla de Docentes --- */
 .lista-container {
-    width: 100%;
+    flex: 3; /* Ocupa 3 partes del espacio, es más grande */
     display: flex;
     flex-direction: column;
+    background-color: rgba(0, 25, 51, 0.4);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    min-width: 0;
 }
 
-/* Barra de herramientas */
+/* Barra de herramientas (Búsqueda y Acciones) */
 .toolbar {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    gap: 15px;
     margin-bottom: 20px;
 }
 
-/* Input de búsqueda */
+.search-bar {
+    position: relative;
+}
+
+.search-bar i { /* Para un ícono de lupa, si lo agregas en el HTML */
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+}
+
 .search-bar input {
-    padding: 10px 10px 10px 40px; /* Deja espacio para el ícono */
+    padding: 10px 15px 10px 40px; /* Espacio para el ícono a la izquierda */
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.5);
     background: transparent;
     color: #fff;
-    min-width: 300px;
+    min-width: 250px;
 }
-.search-bar input::placeholder { color: rgba(255,255,255,0.7); }
+
+.search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
 
 .actions .btn-accion {
+    padding: 8px 15px;
     border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    background-color: transparent;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-/* --- Tabla de docentes --- */
+.actions .btn-accion:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Contenedor para que la tabla sea responsive en horizontal */
+.tabla-responsive {
+    overflow-x: hidden; 
+    
+}
+
 #tabla-docentes {
     width: 100%;
     border-collapse: collapse;
+    color: #fff; /* Texto blanco para que contraste con el fondo oscuro */
+    
+}
+
+#tabla-docentes th,
+#tabla-docentes td {
+    max-width: 150px;
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap; /* Evita que el texto de las celdas se parta */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Añade "..." si el texto es muy largo */
+    vertical-align: sub;
+}
+
+#tabla-docentes thead {
+    background-color: rgba(255, 255, 255, 0.1); /* Fondo sutil para la cabecera */
 }
 
 #tabla-docentes th a {
     text-decoration: none;
-    color: #161616;
+    color: #fff; /* Color de los enlaces en la cabecera */
     font-weight: bold;
 }
 
 #tabla-docentes tbody tr {
     transition: background-color 0.2s ease;
 }
+
 #tabla-docentes tbody tr:hover {
-    background-color: rgba(77, 77, 77, 0.15); /* Resalta fila */
+    background-color: rgba(255, 255, 255, 0.15); /* Resalta la fila al pasar el mouse */
 }
 
-/* Cambia color de texto en lista de docentes */
-.lista-container,
-#tabla-docentes th,
-#tabla-docentes td {
-    color: #222; /* Más oscuro para mejor lectura */
-}
-
-/* --- Footer --- */
-.footer-docentes {
+/* Celda para botones de editar/eliminar en la tabla */
+.acciones-celda {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    background-color: rgba(0, 25, 51, 0.7);
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 15px 20px;
-    color: #fff;
-    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-accion-fila {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #ddd;
+    transition: color 0.2s ease;
+}
+
+.btn-accion-fila.btn-editar:hover {
+    color: #58a6ff; /* Azul para editar */
+}
+
+.btn-accion-fila.btn-eliminar:hover {
+    color: #ff7b72; /* Rojo para eliminar */
+}
+
+/* --- Media Queries para Diseño Responsivo --- */
+@media (max-width: 992px) {
+    .main-container {
+        flex-direction: column; /* Apila los contenedores verticalmente */
+        align-items: center;
+    }
+    .formulario-container,
+    .lista-container {
+        width: 100%;
+        max-width: 700px; /* Limita el ancho en pantallas medianas */
+    }
+}
+
+@media (max-width: 576px) {
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch; /* Estira los elementos de la barra de herramientas */
+    }
+}
+
+
+/* Estilos para el select personalizado === */
+.input-group select {
     width: 100%;
-    font-size: 0.8rem;
-    position: static;
-    left: unset;
-    right: unset;
-    bottom: unset;
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+    background: transparent;
+    color: #fff;
+    font-size: 0.9rem;
+    outline: none;
+    box-sizing: border-box;
+    /* Quitar apariencia nativa */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Flecha personalizada */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: .65em auto;
+    padding-right: 30px; /* Espacio para la flecha */
+}
+.input-group select option {
+    background-color: #0a192f;
+    color: #fff;
 }
 
-/* Para que el footer quede al fondo si el contenido es corto */
-body {
+/*Estilos para el grupo de checkboxes de carreras === */
+.checkbox-group {
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 10px;
+    background-color: rgba(0,0,0,0.2);
+}
+.checkbox-item {
     display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    padding-bottom: 0;
+    align-items: center;
+    margin-bottom: 8px;
 }
-
-main {
-    flex: 1;
+.checkbox-item input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+.checkbox-item label {
+    margin-bottom: 0;
+    font-weight: normal;
 }

@@ -1,52 +1,42 @@
-<?php 
+<?php
 include_once("../api/verificar_sesion.php");
-include_once("../Php/header.php"); ?>
+include_once("../Php/header.php");
+?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
     <title>Administración de Salones</title>
+    <link rel="stylesheet" href="../estilos/estilos.css" />
     <link rel="stylesheet" href="../estilos/estilosalonario.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
 <main>
-    <section class="formulario">
-        <h2 id="toggleFormulario">Agregar Docente Rápido <i class="fas fa-chevron-down"></i></h2>
-        <div id="contenidoFormulario" class="contenido-formulario">
-            <!-- Formulario actualizado para ser consistente con la página de docentes -->
-            <input type="text" id="nuevo_nombre" placeholder="Nombre" />
-            <input type="text" id="nuevo_apellido" placeholder="Apellido" />
-            <input type="text" id="nuevo_asignatura" placeholder="Asignatura" />
-            <select id="nuevo_ano">
-                <option value="1">1° Año</option>
-                <option value="2">2° Año</option>
-                <option value="3">3° Año</option>
-                <option value="4">4° Año</option>
-            </select>
-            <button id="agregarProfesorBtn">Agregar</button>
-        </div>
-    </section>
-
     <section class="tabla-container">
         
         <div class="calendario-container">
-            <div class="semestres">
-                <button id="primerSemestreBtn">1er Semestre</button>
-                <button id="segundoSemestreBtn">2do Semestre</button>
-            </div>
+            <div id="semana-botones" class="semana-botones">
+                </div>
+            
             <div class="fecha-especifica">
                 <label for="fechaInput">Ver fecha:</label>
                 <input type="date" id="fechaInput">
             </div>
+
+            <div class="configuracion-semestre">
+                <button id="configSemestreBtn" class="btn-animado"><span><i class="fa-solid fa-calendar-days"></i> Configurar Semestres</span></button>
+            </div>
         </div>
 
         <div class="acciones-tabla">
-            <button id="asignarProfesorBtn" disabled>Asignar profesor a seleccionadas</button>
-            <button id="exportarCSVBtn">Exportar tabla a CSV</button>
+            <button id="asignarProfesorBtn" class="btn-animado" disabled><span>Asignar a seleccionadas</span></button>
+            <button id="asignarSemestreBtn" class="btn-animado"><span>Asignar a todo el semestre</span></button>
+            <button id="exportarCSVBtn" class="btn-animado"><span>Exportar tabla a CSV</span></button>
         </div>
+
         <table id="tablaHorarios">
             <thead>
                 <tr><th>Salón</th></tr>
@@ -77,10 +67,36 @@ include_once("../Php/header.php"); ?>
         <div id="listaProfesores"></div>
         <button id="confirmarAsignacionBtn" disabled>Confirmar asignación</button>
     </div>
-</div><?php include_once("../Php/footer.php"); ?>
+</div>
+
+<div id="modalSemestre" class="modal">
+    <div class="modal-content">
+        <span id="cerrarModalSemestre" class="cerrar">&times;</span>
+        <h3>Configurar Fechas de Semestres</h3>
+        <div class="form-semestre">
+            <fieldset>
+                <legend>Primer Semestre</legend>
+                <label for="semestre1_inicio">Fecha de Inicio:</label>
+                <input type="date" id="semestre1_inicio" name="semestre1_inicio">
+                <label for="semestre1_fin">Fecha de Fin:</label>
+                <input type="date" id="semestre1_fin" name="semestre1_fin">
+            </fieldset>
+            <fieldset>
+                <legend>Segundo Semestre</legend>
+                <label for="semestre2_inicio">Fecha de Inicio:</label>
+                <input type="date" id="semestre2_inicio" name="semestre2_inicio">
+                <label for="semestre2_fin">Fecha de Fin:</label>
+                <input type="date" id="semestre2_fin" name="semestre2_fin">
+            </fieldset>
+        </div>
+        <button id="guardarFechasSemestreBtn">Guardar Configuración</button>
+    </div>
+</div>
+
+
+<?php include_once("../Php/footer.php"); ?>
 
 <script src="../js/salonario.js"></script>
-
 
 </body>
 </html>

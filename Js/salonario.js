@@ -1,22 +1,13 @@
 // === ESTADO DE LA APLICACIÓN ===
-let horarios = [];
-let salones = [];
-let profesores = [];
-let asignaciones = {};
+let horarios = [], salones = [], profesores = [], asignaciones = {};
 let selectedDate;
 let celdasSeleccionadas = [];
 let salonSeleccionado = null;
+let configSemestre = {}; // Objeto para guardar las fechas del semestre cargadas desde la BD
 
 // === ELEMENTOS DOM ===
 const tabla = document.getElementById("tablaHorarios");
 const tbody = tabla.querySelector("tbody");
-// Nuevos selectores para el formulario de agregar profesor
-const agregarBtn = document.getElementById("agregarProfesorBtn");
-const nuevoNombreInput = document.getElementById("nuevo_nombre");
-const nuevoApellidoInput = document.getElementById("nuevo_apellido");
-const nuevaAsignaturaInput = document.getElementById("nuevo_asignatura");
-const nuevoAnoSelect = document.getElementById("nuevo_ano");
-
 const modal = document.getElementById("modal");
 const listaProfesoresDiv = document.getElementById("listaProfesores");
 const cerrarModalBtn = document.getElementById("cerrarModal");
@@ -25,41 +16,44 @@ const filtroAnio = document.getElementById("filtroAnio");
 const filtroAsignatura = document.getElementById("filtroAsignatura");
 const asignarProfesorBtn = document.getElementById("asignarProfesorBtn");
 const exportarCSVBtn = document.getElementById("exportarCSVBtn");
-const toggleFormularioBtn = document.getElementById("toggleFormulario");
-const contenidoFormulario = document.getElementById("contenidoFormulario");
-const toggleIcon = toggleFormularioBtn.querySelector('i');
-const fechaInput = document.getElementById("fechaInput");
-const primerSemestreBtn = document.getElementById("primerSemestreBtn");
-const segundoSemestreBtn = document.getElementById("segundoSemestreBtn");
+const asignarSemestreBtn = document.getElementById("asignarSemestreBtn");
+const fechaInput = document.getElementById("fechaInput"); // Calendario
+
+// Elementos para la nueva funcionalidad
+const semanaBotonesContainer = document.getElementById("semana-botones");
+const configSemestreBtn = document.getElementById("configSemestreBtn");
+const modalSemestre = document.getElementById("modalSemestre");
+const cerrarModalSemestreBtn = document.getElementById("cerrarModalSemestre");
+const guardarFechasSemestreBtn = document.getElementById("guardarFechasSemestreBtn");
 
 // === FUNCIONES DE API ===
 
-// Carga todos los datos iniciales (salones, horarios, profesores) y las asignaciones del día
 async function cargarDatos(fecha) {
     try {
-        // La ruta a tu API debe ser relativa a la raíz del sitio
         const response = await fetch(`../api/get_datos.php?fecha=${fecha}`);
         if (!response.ok) throw new Error('Error en la red al cargar datos.');
         const data = await response.json();
 
-        salones = data.salones;
-        horarios = data.horarios;
-        profesores = data.docentes; // La API devuelve 'docentes'
-
+        salones = data.salones || [];
+        horarios = data.horarios || [];
+        profesores = data.docentes || [];
+        configSemestre = data.configuracion || {}; // Guardamos la configuración de fechas
         asignaciones = {};
-        asignaciones[fecha] = data.asignaciones;
+        asignaciones[fecha] = data.asignaciones || {};
 
         renderTabla();
     } catch (error) {
         console.error("Error al cargar datos iniciales:", error);
         alert("No se pudieron cargar los datos del servidor. Revise la consola.");
+        const thead = tabla.querySelector("thead tr");
+        thead.innerHTML = "<th>Error</th>";
+        tbody.innerHTML = `<tr><td>No se pudieron cargar los datos. Verifique la conexión (F12).</td></tr>`;
     }
 }
 
-// Envía una asignación (guardar o quitar) al servidor
 async function manejarAsignacionAPI(payload) {
     try {
-        const response = await fetch('../api/manejar_asignaciones.php', { // Nombre de archivo corregido
+        const response = await fetch('../api/manejar_asignaciones.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -78,64 +72,27 @@ async function manejarAsignacionAPI(payload) {
     }
 }
 
-/**
- * Agrega un nuevo docente usando la API centralizada 'gestionar_docentes.php'.
- */
-async function agregarDocenteAPI() {
-    const nombre = nuevoNombreInput.value.trim();
-    const apellido = nuevoApellidoInput.value.trim();
-    const asignatura = nuevaAsignaturaInput.value.trim();
-    const ano_cursado = nuevoAnoSelect.value;
-
-    if (!nombre || !apellido || !asignatura) {
-        return alert("Por favor, complete nombre, apellido y asignatura.");
-    }
-
-    // Usamos FormData porque la API 'gestionar_docentes.php' espera datos de formulario
-    const formData = new FormData();
-    formData.append('nombre', nombre);
-    formData.append('apellido', apellido);
-    formData.append('asignatura', asignatura);
-    formData.append('ano_cursado', ano_cursado);
-    // Campos opcionales vacíos
-    formData.append('cedula', '');
-    formData.append('telefono', '');
-
-    try {
-        const response = await fetch('../api/gestionar_docentes.php', {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!response.ok) throw new Error('Error en la red al agregar el docente.');
-        const result = await response.json();
-
-        if (result.success) {
-            alert('Docente agregado con éxito. La lista se actualizará.');
-            // Limpiar formulario
-            nuevoNombreInput.value = '';
-            nuevoApellidoInput.value = '';
-            nuevaAsignaturaInput.value = '';
-            // Recargar todos los datos para incluir el nuevo profesor
-            cargarDatos(selectedDate);
-        } else {
-            throw new Error(result.message);
-        }
-    } catch (error) {
-        console.error("Error al agregar docente:", error);
-        alert(`Error: ${error.message}`);
-    }
-}
-
-
-// === LÓGICA DE RENDERIZADO Y EVENTOS (Sin cambios significativos, solo correcciones menores) ===
+// === LÓGICA DE RENDERIZADO Y MANEJO DE TABLA (Sin cambios mayores) ===
 
 function renderTabla() {
-    if (!selectedDate || salones.length === 0 || horarios.length === 0) return;
-    const asignacionesDelDia = asignaciones[selectedDate] || {};
     const thead = tabla.querySelector("thead tr");
+
+    if (!selectedDate) {
+        thead.innerHTML = "<th>Aviso</th>";
+        tbody.innerHTML = '<tr><td>Por favor, seleccione una fecha para ver los horarios.</td></tr>';
+        return;
+    }
+    
+    if (salones.length === 0 || horarios.length === 0) {
+        thead.innerHTML = "<th>Aviso</th>";
+        tbody.innerHTML = '<tr><td>No hay salones u horarios registrados. Agréguelos desde administración.</td></tr>';
+        return;
+    }
+
+    const asignacionesDelDia = asignaciones[selectedDate] || {};
     thead.innerHTML = "<th>Salón</th>" + horarios.map(h => `<th>${h.hora}:00</th>`).join("");
     tbody.innerHTML = "";
+    
     salones.forEach(salon => {
         const fila = document.createElement("tr");
         const celdasHorario = horarios.map(hora => {
@@ -171,12 +128,14 @@ function attachEventosCeldas() {
             const celda = btn.closest('td');
             const salon_id = celda.dataset.salonId;
             const horario_id = celda.dataset.horarioId;
-            const payload = { accion: 'quitar', fecha: selectedDate, salon_id, horario_id };
-            const exito = await manejarAsignacionAPI(payload);
-            if (exito) {
-                const key = `${salon_id}-${horario_id}`;
-                if (asignaciones[selectedDate]) delete asignaciones[selectedDate][key];
-                renderTabla();
+            if (confirm('¿Estás seguro de que deseas quitar esta asignación?')) {
+                const payload = { accion: 'quitar', fecha: selectedDate, salon_id, horario_id };
+                const exito = await manejarAsignacionAPI(payload);
+                if (exito) {
+                    const key = `${salon_id}-${horario_id}`;
+                    if (asignaciones[selectedDate]) delete asignaciones[selectedDate][key];
+                    renderTabla();
+                }
             }
         };
     });
@@ -190,14 +149,15 @@ function manejarSeleccionCelda(td) {
         return;
     }
     if (celdasSeleccionadas.length === 0) salonSeleccionado = salonId;
-    const index = celdasSeleccionadas.indexOf(key);
-    if (index > -1) {
-        celdasSeleccionadas.splice(index, 1);
-        td.classList.remove("seleccionado");
-    } else {
+    td.classList.toggle("seleccionado");
+    
+    if (td.classList.contains("seleccionado")) {
         celdasSeleccionadas.push(key);
-        td.classList.add("seleccionado");
+    } else {
+        const index = celdasSeleccionadas.indexOf(key);
+        if (index > -1) celdasSeleccionadas.splice(index, 1);
     }
+    
     if (celdasSeleccionadas.length === 0) salonSeleccionado = null;
     asignarProfesorBtn.disabled = celdasSeleccionadas.length === 0;
 }
@@ -211,10 +171,8 @@ confirmarAsignacionBtn.onclick = async () => {
     if (!asignaciones[selectedDate]) asignaciones[selectedDate] = {};
 
     const infoAsignacion = {
-        docente_id: profesor.id,
-        nombre: profesor.nombre_completo,
-        asignatura: profesor.asignatura,
-        anio: profesor.ano_cursado
+        docente_id: profesor.id, nombre: profesor.nombre_completo,
+        asignatura: profesor.asignatura, anio: profesor.ano_cursado
     };
     
     let huboError = false;
@@ -234,37 +192,173 @@ confirmarAsignacionBtn.onclick = async () => {
     if (!huboError) alert("Asignaciones guardadas correctamente.");
 };
 
-// === EVENT LISTENERS y FUNCIONES AUXILIARES (sin cambios) ===
-document.addEventListener('DOMContentLoaded', () => {
-    selectedDate = toYYYYMMDD(new Date());
-    fechaInput.value = selectedDate;
-    cargarDatos(selectedDate);
-    contenidoFormulario.classList.remove('show');
-    toggleIcon.classList.add('fa-chevron-down');
-    toggleIcon.classList.remove('fa-chevron-up');
-});
-fechaInput.addEventListener("change", () => {
-    selectedDate = fechaInput.value;
-    cargarDatos(selectedDate);
-});
-primerSemestreBtn.addEventListener("click", () => {
-    const fecha = new Date(new Date().getFullYear(), 2, 1); // Marzo
-    fechaInput.value = toYYYYMMDD(fecha);
-    fechaInput.dispatchEvent(new Event('change'));
-});
-segundoSemestreBtn.addEventListener("click", () => {
-    const fecha = new Date(new Date().getFullYear(), 7, 1); // Agosto
-    fechaInput.value = toYYYYMMDD(fecha);
-    fechaInput.dispatchEvent(new Event('change'));
-});
-agregarBtn.addEventListener("click", agregarDocenteAPI);
+// === LÓGICA DE SINCRONIZACIÓN DE FECHAS ===
+
 function toYYYYMMDD(date) { return date.toISOString().split('T')[0]; }
+
+// Función principal para actualizar la vista a una nueva fecha
+function actualizarVistaPorFecha(fechaStr) {
+    if (!fechaStr) return; // Evitar errores si la fecha es inválida
+    selectedDate = fechaStr;
+    fechaInput.value = selectedDate;
+    actualizarBotonesSemana(new Date(fechaStr + 'T12:00:00')); // Usar T12 para evitar problemas de zona horaria
+    cargarDatos(selectedDate);
+}
+
+// Genera/Actualiza los botones para la semana de la fecha dada y resalta el día activo
+function actualizarBotonesSemana(fechaDeReferencia) {
+    const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+    const diaDeReferencia = fechaDeReferencia.getDay();
+    const fechaActivaYYYYMMDD = toYYYYMMDD(fechaDeReferencia);
+
+    const offset = (diaDeReferencia === 0 ? 6 : diaDeReferencia - 1); // Domingo es 0, Lunes es 1
+    const lunesDeLaSemana = new Date(fechaDeReferencia);
+    lunesDeLaSemana.setDate(fechaDeReferencia.getDate() - offset);
+    
+    semanaBotonesContainer.innerHTML = '';
+
+    for (let i = 0; i < 6; i++) {
+        const fechaDia = new Date(lunesDeLaSemana);
+        fechaDia.setDate(lunesDeLaSemana.getDate() + i);
+        const fechaFormato = toYYYYMMDD(fechaDia);
+        
+        const boton = document.createElement('button');
+        boton.innerText = dias[i];
+        boton.dataset.fecha = fechaFormato;
+
+        if (fechaFormato === fechaActivaYYYYMMDD) {
+            boton.classList.add('activo');
+        }
+
+        boton.addEventListener('click', () => {
+            actualizarVistaPorFecha(boton.dataset.fecha);
+        });
+
+        semanaBotonesContainer.appendChild(boton);
+    }
+}
+
+// === LÓGICA PARA ASIGNAR A TODO EL SEMESTRE (MEJORADA) ===
+asignarSemestreBtn.onclick = async () => {
+    const asignacionesDelDia = asignaciones[selectedDate];
+    if (!asignacionesDelDia || Object.keys(asignacionesDelDia).length === 0) {
+        return alert("No hay ninguna asignación en la fecha seleccionada para copiar.");
+    }
+    
+    // Determinar a qué semestre pertenece la fecha seleccionada
+    let semestreNumero = 0;
+    if (selectedDate >= configSemestre.semestre1_inicio && selectedDate <= configSemestre.semestre1_fin) {
+        semestreNumero = 1;
+    } else if (selectedDate >= configSemestre.semestre2_inicio && selectedDate <= configSemestre.semestre2_fin) {
+        semestreNumero = 2;
+    }
+
+    if (semestreNumero === 0) {
+        return alert("La fecha seleccionada no pertenece a ningún semestre configurado. Por favor, ajuste las fechas en 'Configurar Semestres'.");
+    }
+
+    const semestreTexto = semestreNumero === 1 ? "primer" : "segundo";
+    const diaSemana = new Date(selectedDate + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long' });
+
+    const confirmacion = confirm(
+        `Esto copiará TODAS las asignaciones del día ${selectedDate} (${diaSemana}) a todos los ${diaSemana}s correspondientes del ${semestreTexto} semestre.\n\n¿Estás seguro? Esta acción es irreversible.`
+    );
+
+    if (!confirmacion) return;
+    
+    alert("Iniciando asignación masiva. Este proceso puede tardar. Se te notificará al finalizar.");
+
+    const payload = {
+        accion: 'guardar_semestre',
+        fecha_base: selectedDate,
+        semestre: semestreNumero
+    };
+    
+    // Esta llamada requiere que 'manejar_asignaciones.php' entienda la nueva lógica de semestre
+    const exito = await manejarAsignacionAPI(payload);
+
+    if (exito) {
+        alert("¡Éxito! Todas las asignaciones se han copiado al semestre completo.");
+        cargarDatos(selectedDate);
+    } else {
+        alert("Ocurrió un error durante la asignación masiva. Revisa la consola.");
+    }
+};
+
+
+// === LÓGICA PARA MODAL DE SEMESTRES (CONECTADO A LA API) ===
+
+function abrirModalSemestre() {
+    document.getElementById('semestre1_inicio').value = configSemestre.semestre1_inicio || '';
+    document.getElementById('semestre1_fin').value = configSemestre.semestre1_fin || '';
+    document.getElementById('semestre2_inicio').value = configSemestre.semestre2_inicio || '';
+    document.getElementById('semestre2_fin').value = configSemestre.semestre2_fin || '';
+    modalSemestre.style.display = 'flex';
+}
+
+function cerrarModalSemestre() {
+    modalSemestre.style.display = 'none';
+}
+
+async function guardarFechasSemestre() {
+    const payload = {
+        inicioS1: document.getElementById('semestre1_inicio').value,
+        finS1: document.getElementById('semestre1_fin').value,
+        inicioS2: document.getElementById('semestre2_inicio').value,
+        finS2: document.getElementById('semestre2_fin').value,
+    };
+
+    if (!payload.inicioS1 || !payload.finS1 || !payload.inicioS2 || !payload.finS2) {
+        alert("Por favor, complete todas las fechas.");
+        return;
+    }
+    
+    try {
+        const response = await fetch('../api/manejar_configuracion.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (result.error) throw new Error(result.mensaje);
+
+        alert(result.mensaje);
+        // Actualizar la configuración localmente tras guardar
+        configSemestre = {
+            semestre1_inicio: payload.inicioS1, semestre1_fin: payload.finS1,
+            semestre2_inicio: payload.inicioS2, semestre2_fin: payload.finS2
+        };
+        cerrarModalSemestre();
+
+    } catch (error) {
+        console.error("Error al guardar fechas:", error);
+        alert("Error al guardar las fechas: " + error.message);
+    }
+}
+
+// === EVENT LISTENERS y FUNCIONES AUXILIARES ===
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicia la aplicación con la fecha de hoy
+    actualizarVistaPorFecha(toYYYYMMDD(new Date()));
+});
+
+fechaInput.addEventListener("change", () => {
+    actualizarVistaPorFecha(fechaInput.value);
+});
+
+configSemestreBtn.addEventListener('click', abrirModalSemestre);
+cerrarModalSemestreBtn.addEventListener('click', cerrarModalSemestre);
+guardarFechasSemestreBtn.addEventListener('click', guardarFechasSemestre);
+
 function limpiarSeleccion() {
     tbody.querySelectorAll("td.seleccionado").forEach(td => td.classList.remove("seleccionado"));
     celdasSeleccionadas = [];
     salonSeleccionado = null;
     asignarProfesorBtn.disabled = true;
 }
+
 function renderListaProfesores() {
     const filtrados = filtrarProfesores();
     listaProfesoresDiv.innerHTML = "";
@@ -287,6 +381,7 @@ function renderListaProfesores() {
         listaProfesoresDiv.appendChild(item);
     });
 }
+
 function filtrarProfesores() {
     const anioF = filtroAnio.value;
     const asignaturaF = filtroAsignatura.value.trim().toLowerCase();
@@ -295,15 +390,15 @@ function filtrarProfesores() {
         (asignaturaF === "" || p.asignatura.toLowerCase().includes(asignaturaF))
     );
 }
+
 function abrirModal() { renderListaProfesores(); modal.style.display = "flex"; confirmarAsignacionBtn.disabled = true; }
 function cerrarModal() { modal.style.display = "none"; limpiarSeleccion(); }
+
 filtroAnio.onchange = renderListaProfesores;
 filtroAsignatura.oninput = renderListaProfesores;
 cerrarModalBtn.onclick = cerrarModal;
-window.onclick = e => { if (e.target === modal) cerrarModal(); };
 asignarProfesorBtn.onclick = () => { if (celdasSeleccionadas.length > 0) abrirModal(); };
-toggleFormularioBtn.onclick = () => {
-    contenidoFormulario.classList.toggle('show');
-    toggleIcon.classList.toggle('fa-chevron-down');
-    toggleIcon.classList.toggle('fa-chevron-up');
+window.onclick = e => { 
+    if (e.target === modal) cerrarModal(); 
+    if (e.target === modalSemestre) cerrarModalSemestre();
 };

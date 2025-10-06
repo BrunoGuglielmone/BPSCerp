@@ -1,0 +1,39 @@
+/* --- Contenedor Principal y Layout --- */
+.main-container { display: flex; flex: 1; padding: 20px; gap: 20px; flex-direction: row; }
+.formulario-container, .lista-container { background-color: rgba(0, 25, 51, 0.4); border-radius: 8px; padding: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+
+/* --- Formulario --- */
+.formulario-container { flex: 1; min-width: 320px; align-self: flex-start; }
+.toggle-form-btn { width: 100%; padding: 12px; background-color: rgba(0, 86, 179, 0.5); color: white; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 6px; cursor: pointer; font-size: 1rem; text-align: left; transition: background-color 0.3s ease; }
+.toggle-form-btn:hover { background-color: rgba(0, 68, 148, 0.9); }
+.formulario-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, margin-top 0.5s ease-out; }
+.formulario-content.abierto { max-height: 1000px; margin-top: 15px; }
+.input-group { margin-bottom: 15px; }
+.input-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+.input-group input { width: 100%; padding: 10px; border: none; border-bottom: 2px solid rgba(255, 255, 255, 0.7); background: transparent; color: #fff; font-size: 0.9rem; outline: none; box-sizing: border-box; }
+.btn-guardar { width: 100%; padding: 12px; background-color: rgba(40, 167, 69, 0.7); color: white; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: background-color 0.3s ease; margin-top: 10px; }
+.btn-guardar:hover { background-color: rgba(33, 136, 56, 0.9); }
+
+/* --- Lista y Tabla --- */
+.lista-container { flex: 3; display: flex; flex-direction: column; }
+.toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; }
+.actions .btn-accion { padding: 8px 15px; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 6px; background-color: transparent; color: #fff; cursor: pointer; transition: background-color 0.3s ease; }
+.actions .btn-accion:hover:not(:disabled) { background-color: rgba(255, 255, 255, 0.1); }
+.actions .btn-accion:disabled { opacity: 0.5; cursor: not-allowed; }
+.tabla-responsive { overflow-x: auto; }
+#tabla-asignaturas, #tabla-carreras { width: 100%; white-space: nowrap; border-collapse: collapse; color: #fff; }
+#tabla-asignaturas th, #tabla-asignaturas td, #tabla-carreras th, #tabla-carreras td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.2); vertical-align: middle; }
+#tabla-asignaturas thead, #tabla-carreras thead { background-color: rgba(255, 255, 255, 0.1); }
+.filtros-fila th { padding: 8px 15px; }
+.filtro-input { width: 100%; padding: 6px 8px; background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; border-radius: 4px; font-size: 0.8rem; }
+#tabla-asignaturas tbody tr:hover, #tabla-carreras tbody tr:hover { background-color: rgba(255, 255, 255, 0.15); }
+.acciones-celda { display: flex; gap: 10px; }
+.btn-accion-fila { background: none; border: none; cursor: pointer; font-size: 1rem; color: #ddd; transition: color 0.2s ease; }
+.btn-accion-fila.btn-editar:hover { color: #58a6ff; }
+.btn-accion-fila.btn-eliminar:hover { color: #ff7b72; }
+
+/* --- Responsive --- */
+@media (max-width: 992px) {
+    .main-container { flex-direction: column; align-items: center; }
+    .formulario-container, .lista-container { width: 100%; max-width: 700px; }
+}

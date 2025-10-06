@@ -1,11 +1,7 @@
 <?php
-// Incluir el archivo de conexión a la base de datos
 include 'conexion.php';
-
-// Establecer la cabecera para devolver respuestas en formato JSON
 header('Content-Type: application/json; charset=utf-8');
 
-// Obtener la fecha de la petición GET, si no se proporciona, usar la fecha actual
 $fecha = $_GET['fecha'] ?? date("Y-m-d");
 
 // Array para la respuesta final
@@ -13,7 +9,8 @@ $response = [
     'salones' => [],
     'horarios' => [],
     'docentes' => [],
-    'asignaciones' => []
+    'asignaciones' => [],
+    'configuracion' => [] 
 ];
 
 // 1. Obtener Salones
@@ -29,49 +26,52 @@ while ($row = $resultHorarios->fetch_assoc()) {
 }
 
 // 3. Obtener Docentes
-$resultDocentes = $conn->query("SELECT id, nombre, apellido, asignatura, ano_cursado FROM docentes ORDER BY apellido ASC, nombre ASC");
+$sqlDocentes = "
+    SELECT d.id, d.nombre, d.apellido, a.nombre AS asignatura, d.ano_cursado 
+    FROM docentes d
+    LEFT JOIN asignaturas a ON d.asignatura_id = a.id
+    ORDER BY d.apellido ASC, d.nombre ASC
+";
+$resultDocentes = $conn->query($sqlDocentes);
 while ($row = $resultDocentes->fetch_assoc()) {
-    // Combinamos nombre y apellido para facilitar su uso en el frontend
     $row['nombre_completo'] = $row['nombre'] . ' ' . $row['apellido'];
     $response['docentes'][] = $row;
 }
 
-// 4. Obtener Asignaciones para la fecha solicitada
+// 4. Obtener Asignaciones para la fecha
 $sqlAsignaciones = "
-    SELECT 
-        a.salon_id, 
-        a.horario_id, 
-        d.id AS docente_id,
-        CONCAT(d.nombre, ' ', d.apellido) AS nombre,
-        d.asignatura,
-        d.ano_cursado AS anio
+    SELECT a.salon_id, a.horario_id, d.id AS docente_id,
+           CONCAT(d.nombre, ' ', d.apellido) AS nombre,
+           asig.nombre AS asignatura, d.ano_cursado AS anio
     FROM asignaciones a
     JOIN docentes d ON a.docente_id = d.id
+    LEFT JOIN asignaturas asig ON d.asignatura_id = asig.id
     WHERE a.fecha = ?
 ";
-
-$stmt = $conn->prepare($sqlAsignaciones);
-$stmt->bind_param("s", $fecha);
-$stmt->execute();
-$resultAsignaciones = $stmt->get_result();
-
+$stmtAsignaciones = $conn->prepare($sqlAsignaciones);
+$stmtAsignaciones->bind_param("s", $fecha);
+$stmtAsignaciones->execute();
+$resultAsignaciones = $stmtAsignaciones->get_result();
 $asignacionesHoy = [];
 while ($row = $resultAsignaciones->fetch_assoc()) {
-    // Crear una clave única 'salon_id-horario_id' para que coincida con la lógica del frontend
     $key = $row['salon_id'] . '-' . $row['horario_id'];
     $asignacionesHoy[$key] = [
-        'docente_id' => $row['docente_id'],
-        'nombre'     => $row['nombre'],
-        'asignatura' => $row['asignatura'],
-        'anio'       => $row['anio']
+        'docente_id' => $row['docente_id'], 'nombre' => $row['nombre'],
+        'asignatura' => $row['asignatura'], 'anio' => $row['anio']
     ];
 }
 $response['asignaciones'] = $asignacionesHoy;
+$stmtAsignaciones->close();
 
-// Devolver todos los datos como un único objeto JSON
+// 5. NUEVO: Obtener la configuración de semestres
+$resultConfig = $conn->query("SELECT clave, valor FROM configuracion WHERE clave LIKE 'semestre%'");
+$configData = [];
+while ($row = $resultConfig->fetch_assoc()) {
+    $configData[$row['clave']] = $row['valor'];
+}
+$response['configuracion'] = $configData;
+
+// Devolver todos los datos
 echo json_encode($response);
-
-// Cerrar la conexión
-$stmt->close();
 $conn->close();
 ?>

@@ -1,4 +1,3 @@
-
 <?php
 // ¡Este es el guardia! Se asegura de que solo usuarios autenticados vean el menú.
 include_once("../api/verificar_sesion.php");
@@ -10,6 +9,7 @@ include_once("../Php/header.php");
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú Interactivo</title>
+    <link rel="stylesheet" href="../estilos/estilos.css">
     <link rel="stylesheet" href="../estilos/estilosmenu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -28,7 +28,7 @@ include_once("../Php/header.php");
             <a href="salonario.php" class="tarjeta tarjeta-celeste">
                 <div class="icono"><i class="fa-solid fa-calendar-alt"></i></div>
                 <div>
-                    <h1>Salonario (Admin)</h1>
+                    <h1>Salonario</h1>
                     <p>Administra los horarios de salones y realiza las asignaciones.</p>
                 </div>
             </a>
@@ -40,6 +40,24 @@ include_once("../Php/header.php");
                     <p>Administra los salones disponibles: agregar, editar o eliminar.</p>
                 </div>
             </a>
+
+            <a href="asignaturas.php" class="tarjeta tarjeta-morada">
+                <div class="icono"><i class="fa-solid fa-book"></i></div>
+                <div>
+                    <h1>Asignaturas</h1>
+                    <p>Administra el listado de asignaturas disponibles en el sistema.</p>
+                </div>
+            </a>
+            
+            <!-- === NUEVA TARJETA AÑADIDA AQUÍ === -->
+            <a href="carreras.php" class="tarjeta tarjeta-naranja">
+                <div class="icono"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div>
+                    <h1>Carreras</h1>
+                    <p>Gestiona las carreras a las que pueden pertenecer los docentes.</p>
+                </div>
+            </a>
+            <!-- === FIN DE LA NUEVA TARJETA === -->
 
             <a href="salonarioexterno.php" class="tarjeta tarjeta-amarillo">
                 <div class="icono"><i class="fa-solid fa-eye"></i></div>

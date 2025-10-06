@@ -98,7 +98,7 @@ switch ($metodo) {
 
     // Si el método no es GET, POST o DELETE.
     default:
-        http_response_code(405); // Method Not Allowed
+        http_response_code(405); 
         echo json_encode(["success" => false, "message" => "Método no permitido."]);
         break;
 }
