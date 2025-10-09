@@ -1,17 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- ELEMENTOS DEL DOM ---
-    const scrollContainer = document.querySelector(".scroll-container");
-    const tabla = document.getElementById("tablaAulas");
     const relojEl = document.getElementById('reloj');
     const fechaInput = document.getElementById('fecha');
     const semestreInput = document.getElementById('semestre');
-
-    if (!scrollContainer || !tabla) {
-        console.error("No se encontraron los elementos necesarios para el script.");
-        return;
-    }
-    
-    let autoScrollInterval;
 
     // --- LÓGICA DEL RELOJ ---
     function actualizarReloj() {
@@ -43,70 +34,79 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- LÓGICA DE DESPLAZAMIENTO Y RESALTADO ---
-    function scrollToCurrentHour() {
-        // Solo ejecutar si la fecha mostrada es hoy
-        if (typeof horasDB === 'undefined' || horasDB.length === 0 || fechaMostrada !== fechaHoy) return;
-        
-        const currentHour = new Date().getHours();
-        const index = horasDB.findIndex(h => parseInt(h) === currentHour);
-
-        if (index > -1) {
-            const headerCells = tabla.querySelector("thead tr").cells;
-            const targetCell = headerCells[index + 1];
-
-            if (targetCell) {
-                // Desplazamiento
-                scrollContainer.scrollTo({
-                    left: targetCell.offsetLeft - scrollContainer.offsetLeft,
-                    behavior: 'smooth'
-                });
-                
-                // Resaltado
-                tabla.querySelectorAll('.hora-actual').forEach(c => c.classList.remove('hora-actual'));
-                const filas = tabla.rows;
-                for (let i = 0; i < filas.length; i++) {
-                    const celdaActual = filas[i].cells[index + 1];
-                    if (celdaActual) celdaActual.classList.add("hora-actual");
-                }
-            }
-        }
-    }
-    
-    // --- NUEVO DESPLAZAMIENTO HORIZONTAL (SE DETIENE AL FINAL) ---
-    function startAutoScrollHorizontal() {
-        clearInterval(autoScrollInterval);
-        autoScrollInterval = setInterval(() => {
-            const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-            // Si el scroll llega al final, detener el intervalo.
-            if (scrollContainer.scrollLeft >= maxScroll - 1) {
-                clearInterval(autoScrollInterval);
-            } else {
-                scrollContainer.scrollLeft += 1; // Ajusta este valor para cambiar la velocidad
-            }
-        }, 50); // Velocidad del scroll
-    }
-
-    function stopAutoScroll() {
-        clearInterval(autoScrollInterval);
-    }
-
-    // --- INICIALIZACIÓN ---
-    // Reloj
+    // --- INICIALIZACIÓN GENERAL ---
     setInterval(actualizarReloj, 1000);
     actualizarReloj();
     
-    // Filtros
-    restringirFechaPorSemestre(); // Aplicar restricción al cargar la página
+    restringirFechaPorSemestre();
     if (semestreInput) {
         semestreInput.addEventListener('change', restringirFechaPorSemestre);
     }
 
-    // Scroll
-    scrollToCurrentHour();
-    setTimeout(startAutoScrollHorizontal, 3000); // Iniciar scroll después de 3 segundos
 
-    // Detener scroll con la interacción del usuario
-    scrollContainer.addEventListener('wheel', stopAutoScroll, { passive: true });
-    scrollContainer.addEventListener('touchstart', stopAutoScroll, { passive: true });
+    // --- LÓGICA ESPECÍFICA PARA LA VISTA DIARIA ---
+    // La variable 'activeView' viene del script PHP inyectado en el HTML
+    if (typeof activeView !== 'undefined' && activeView === 'diario') {
+        
+        const scrollContainer = document.querySelector(".scroll-container");
+        const tabla = document.getElementById("tablaAulas");
+
+        if (!scrollContainer || !tabla) {
+            console.error("No se encontraron los elementos necesarios para el script de vista diaria.");
+            return;
+        }
+        
+        let autoScrollInterval;
+
+        function scrollToCurrentHour() {
+            if (typeof horasDB === 'undefined' || horasDB.length === 0 || fechaMostrada !== fechaHoy) return;
+            
+            const currentHour = new Date().getHours();
+            const index = horasDB.findIndex(h => parseInt(h) === currentHour);
+
+            if (index > -1) {
+                const headerCells = tabla.querySelector("thead tr").cells;
+                const targetCell = headerCells[index + 1];
+
+                if (targetCell) {
+                    // Desplazamiento
+                    scrollContainer.scrollTo({
+                        left: targetCell.offsetLeft - scrollContainer.offsetLeft,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Resaltado
+                    tabla.querySelectorAll('.hora-actual').forEach(c => c.classList.remove('hora-actual'));
+                    const filas = tabla.rows;
+                    for (let i = 0; i < filas.length; i++) {
+                        const celdaActual = filas[i].cells[index + 1];
+                        if (celdaActual) celdaActual.classList.add("hora-actual");
+                    }
+                }
+            }
+        }
+        
+        function startAutoScrollHorizontal() {
+            clearInterval(autoScrollInterval);
+            autoScrollInterval = setInterval(() => {
+                const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
+                if (scrollContainer.scrollLeft >= maxScroll - 1) {
+                    clearInterval(autoScrollInterval);
+                } else {
+                    scrollContainer.scrollLeft += 1;
+                }
+            }, 50);
+        }
+
+        function stopAutoScroll() {
+            clearInterval(autoScrollInterval);
+        }
+
+        // Inicialización del Scroll
+        scrollToCurrentHour();
+        setTimeout(startAutoScrollHorizontal, 3000);
+
+        scrollContainer.addEventListener('wheel', stopAutoScroll, { passive: true });
+        scrollContainer.addEventListener('touchstart', stopAutoScroll, { passive: true });
+    }
 });

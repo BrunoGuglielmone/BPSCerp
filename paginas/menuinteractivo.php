@@ -67,6 +67,13 @@ include_once("../Php/header.php");
                 </div>
             </a>
 
+            <a href="orientaciones.php" class="tarjeta tarjeta-purpura">
+                <div class="icono"><i class="fa-solid fa-list"></i></div>
+                <div>
+                    <h1>Orientaciones</h1>
+                    <p>Gestiona las orientaciones académicas y sus asignaturas asociadas.</p>
+                </div>
+
             <a href="logout.php" class="tarjeta tarjeta-roja">
                 <div class="icono"><i class="fa-solid fa-right-from-bracket"></i></div>
                 <div>
@@ -74,6 +81,8 @@ include_once("../Php/header.php");
                     <p>Salir de tu cuenta de forma segura y volver a la pantalla de inicio.</p>
                 </div>
             </a>
+
+
         </div>
     </main>
 

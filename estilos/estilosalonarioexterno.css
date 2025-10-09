@@ -22,7 +22,7 @@ body::before {
     z-index: -1;
 }
 
-/* === NUEVO: ENCABEZADO DE PÁGINA === */
+/* === ENCABEZADO DE PÁGINA === */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -53,7 +53,7 @@ body::before {
 
 .main-container {
     max-width: 1400px;
-    height: calc(100vh - 125px); /* Altura ajustada por el nuevo header y filtros */
+    height: calc(100vh - 125px);
     margin: 0 auto;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -64,7 +64,7 @@ body::before {
     flex-direction: column;
 }
 
-/* === NUEVO: CONTENEDOR DE FILTROS === */
+/* === CONTENEDOR DE FILTROS === */
 .filters-container {
     display: flex;
     flex-wrap: wrap;
@@ -128,20 +128,56 @@ body::before {
     opacity: 0.85;
 }
 
-/* === CONTENEDOR DE LA TABLA CON SCROLL OCULTO === */
-.scroll-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    flex-grow: 1;
-    /* Ocultar barra de scroll */
-    scrollbar-width: none; 
-    -ms-overflow-style: none; 
-}
-.scroll-container::-webkit-scrollbar {
-    display: none; 
+/* === NUEVO: SELECTOR DE VISTA === */
+.view-switcher {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    padding: 5px;
+    width: fit-content;
+    align-self: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* === ESTILOS DE TABLA (SIN CAMBIOS SIGNIFICATIVOS) === */
+.view-switcher a {
+    padding: 8px 20px;
+    text-decoration: none;
+    color: #8892b0;
+    font-weight: bold;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.view-switcher a.active {
+    background-color: #64ffda;
+    color: #0a192f;
+    box-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
+}
+
+
+/* === CONTENEDOR DE LA TABLA CON SCROLL === */
+.scroll-container {
+    overflow: auto; /* Usamos auto para ambas vistas */
+    -webkit-overflow-scrolling: touch;
+    flex-grow: 1;
+    scrollbar-width: thin; 
+    scrollbar-color: #64ffda #0a192f;
+}
+.scroll-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+.scroll-container::-webkit-scrollbar-thumb {
+    background-color: #64ffda;
+    border-radius: 4px;
+}
+.scroll-container::-webkit-scrollbar-track {
+    background-color: rgba(0,0,0,0.2);
+}
+
+/* === ESTILOS DE TABLA DIARIA (#tablaAulas) === */
 #tablaAulas {
     width: 100%;
     border-collapse: collapse;
@@ -156,6 +192,24 @@ body::before {
 #tablaAulas td.ocupado div { font-size: 0.75rem; line-height: 1.3; }
 #tablaAulas .hora-actual { background-color: rgba(52, 152, 219, 0.3); border-left: 2px solid #3498db; border-right: 2px solid #3498db; }
 #tablaAulas thead .hora-actual { color: #3498db; }
+
+
+/* === NUEVO: ESTILOS DE TABLA SEMANAL (#tablaSemanal) === */
+#tablaSemanal {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+#tablaSemanal th, #tablaSemanal td { padding: 10px; border: 1px solid rgba(255, 255, 255, 0.15); text-align: center; font-size: 0.8rem; min-width: 160px; vertical-align: top; }
+#tablaSemanal thead th { position: sticky; top: 0; background-color: rgba(10, 25, 47, 0.95); color: #64ffda; z-index: 10; font-size: 0.9rem; }
+#tablaSemanal tbody td:first-child, #tablaSemanal thead th:first-child { position: sticky; left: 0; background-color: rgba(10, 25, 47, 0.95); font-weight: bold; color: #ccd6f6; z-index: 5; min-width: 80px; vertical-align: middle; }
+#tablaSemanal thead th:first-child { z-index: 11; }
+#tablaSemanal td.libre { background-color: rgba(46, 204, 113, 0.05); }
+#tablaSemanal td.ocupado { background-color: rgba(90, 70, 120, 0.2); font-weight: 500; color: #ccd6f6; }
+#tablaSemanal td.ocupado div { font-size: 0.8rem; line-height: 1.4; font-weight: bold; }
+#tablaSemanal td.ocupado div.info-secundaria { font-size: 0.7rem; color: #8892b0; font-weight: normal; }
+#tablaSemanal td.ocupado hr { border: none; height: 1px; background-color: rgba(255, 255, 255, 0.2); margin: 8px 0; }
+
 
 /* === RESPONSIVE DESIGN === */
 @media (max-width: 900px) {
