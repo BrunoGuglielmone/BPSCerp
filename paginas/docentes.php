@@ -1,7 +1,6 @@
 <?php
 include_once("../api/verificar_sesion.php");
 include_once("../Php/header.php");
-// Ya no es necesario conectar a la DB aquí para poblar los selects.
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -19,7 +18,7 @@ include_once("../Php/header.php");
             <div class="formulario-content">
                 <form id="registro-docente-form">
                     <input type="hidden" id="docente_id" name="docente_id">
-                    <h3>Datos del Docente</h3>
+                    <h3 id="form-title">Datos del Docente</h3>
                     <div class="input-group">
                         <label for="nombre">Nombre</label>
                         <input type="text" id="nombre" name="nombre" required>
@@ -29,9 +28,9 @@ include_once("../Php/header.php");
                         <input type="text" id="apellido" name="apellido" required>
                     </div>
                     <div class="input-group">
-                        <label for="cedula">Cédula (7 dígitos, sin puntos ni guion)</label>
+                        <label for="cedula">Cédula (8 dígitos, sin puntos ni guion)</label>
                         <input type="text" id="cedula" name="cedula" required 
-                               maxlength="7" pattern="[0-9]{7}" title="Debe contener exactamente 7 números."
+                               maxlength="8" pattern="[0-9]{8}" title="Debe contener exactamente 8 números."
                                inputmode="numeric">
                     </div>
                     <div class="input-group">
@@ -40,7 +39,7 @@ include_once("../Php/header.php");
                                maxlength="15" pattern="[0-9]+" title="Solo se permiten números."
                                inputmode="numeric">
                     </div>
-                    <button type="submit" class="btn-guardar">Guardar Docente</button>
+                    <button type="submit" class="btn-guardar" id="btn-guardar-texto">Guardar Docente</button>
                 </form>
             </div>
         </aside>
@@ -71,11 +70,23 @@ include_once("../Php/header.php");
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        </tbody>
                 </table>
             </div>
         </section>
     </main>
+
+    <div id="modal-notificacion" class="modal-overlay">
+        <div class="modal-dialog">
+            <h3 id="notificacion-titulo"></h3>
+            <p id="notificacion-mensaje"></p>
+            <div class="modal-actions">
+                <button id="notificacion-btn-aceptar" class="btn btn-primary">Aceptar</button>
+                <button id="notificacion-btn-cancelar" class="btn btn-secondary" style="display:none;">Cancelar</button>
+            </div>
+        </div>
+    </div>
 
     <script src="../js/docentes.js"></script>
     <script>

@@ -1,14 +1,14 @@
 <?php
-// Incluimos el archivo de conexión a la base de datos.
+// archivo de conexión a la base de datos.
 include_once 'conexion.php';
 
-// Establecemos que la respuesta será en formato JSON.
+//la respuesta será en formato JSON.
 header('Content-Type: application/json; charset=utf-8');
 
-// Obtenemos el método de la petición (GET, POST, DELETE).
+// método de la petición (GET, POST, DELETE).
 $metodo = $_SERVER['REQUEST_METHOD'];
 
-// Usamos una estructura switch para manejar cada tipo de petición.
+
 switch ($metodo) {
     // CASO GET: Se usa para obtener los salones.
     case 'GET':
@@ -24,9 +24,8 @@ switch ($metodo) {
         }
         break;
 
-    // CASO POST: Se usa para crear un nuevo salón o actualizar uno existente.
+    // CASO POST: crear un nuevo salón o actualizar uno existente.
     case 'POST':
-        // Verificamos que los datos necesarios lleguen.
         if (!isset($_POST['nombre']) || !isset($_POST['capacidad'])) {
             http_response_code(400); // Bad Request
             echo json_encode(["success" => false, "message" => "Faltan datos requeridos."]);
@@ -65,7 +64,6 @@ switch ($metodo) {
 
     // CASO DELETE: Se usa para eliminar uno o más salones.
     case 'DELETE':
-        // Leemos el cuerpo de la petición, que viene en formato JSON.
         $datos = json_decode(file_get_contents('php://input'), true);
         
         if (empty($datos['ids']) || !is_array($datos['ids'])) {
@@ -75,14 +73,11 @@ switch ($metodo) {
         }
 
         $ids = $datos['ids'];
-        // Creamos una cadena de '?' para la consulta preparada (ej: ?,?,?).
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        // Creamos una cadena con los tipos de datos (ej: 'iii' para 3 IDs).
         $tipos = str_repeat('i', count($ids));
 
         try {
             $stmt = $conn->prepare("DELETE FROM salones WHERE id IN ($placeholders)");
-            // Usamos ...$ids para pasar los elementos del array como argumentos individuales.
             $stmt->bind_param($tipos, ...$ids);
             
             if ($stmt->execute()) {

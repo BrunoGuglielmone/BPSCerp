@@ -1,9 +1,9 @@
 <?php
 // Configuración de la conexión a la base de datos
-$servername = "localhost"; // Generalmente es 'localhost'
-$username = "root";      // Usuario por defecto de XAMPP/WAMP
-$password = "";          // Contraseña por defecto de XAMPP/WAMP es vacía
-$dbname = "bpsc_erp";      // Nombre de tu base de datos
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "bpsc_erp";
 
 // Crear la conexión
 $conn = new mysqli($servername, $username, $password, $dbname);

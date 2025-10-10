@@ -1,188 +1,88 @@
-/* === ESTILOS GENERALES === */
+/* === ESTILOS GENERALES Y ENCABEZADO === */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #0a192f;
+    margin: 0; padding: 20px; background-color: #0a192f;
     background-image: url('../imagenes/fondocerp.jpeg'); 
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    background-attachment: fixed;
-    color: #fff;
-    box-sizing: border-box;
+    background-repeat: no-repeat; background-position: center;
+    background-size: cover; background-attachment: fixed;
+    color: #fff; box-sizing: border-box;
 }
-
 body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
+    content: ''; position: fixed; inset: 0;
     background: rgba(10, 25, 47, 0.85);
-    backdrop-filter: blur(5px);
-    z-index: -1;
+    backdrop-filter: blur(5px); z-index: -1;
 }
-
-/* === ENCABEZADO DE PÁGINA === */
 .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 10px 20px 10px;
-    max-width: 1400px;
-    margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 10px 20px 10px; max-width: 1400px; margin: 0 auto;
 }
-
-.logo-container img {
-    height: 60px;
-    display: block;
-}
-
-.header-controls {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
+.logo-container img { height: 60px; display: block; }
+.header-controls { display: flex; align-items: center; gap: 25px; }
 .reloj {
-    font-size: 1.8rem;
-    font-weight: bold;
-    font-family: 'Courier New', Courier, monospace;
-    color: #ccd6f6;
-    letter-spacing: 1.5px;
+    font-size: 1.8rem; font-weight: bold; font-family: 'Courier New', Courier, monospace;
+    color: #ccd6f6; letter-spacing: 1.5px;
 }
-
 .main-container {
-    max-width: 1400px;
-    height: calc(100vh - 125px);
-    margin: 0 auto;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
+    max-width: 1400px; height: calc(100vh - 125px); margin: 0 auto;
+    background: rgba(23, 42, 69, 0.7); border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    display: flex; flex-direction: column;
 }
 
 /* === CONTENEDOR DE FILTROS === */
 .filters-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex; flex-wrap: wrap; gap: 15px;
+    padding-bottom: 20px; border-bottom: 1px solid rgba(100, 255, 218, 0.3);
     align-items: flex-end;
 }
-
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.filter-group { display: flex; flex-direction: column; gap: 5px; }
+.filter-group label { font-size: 0.8rem; color: #8892b0; font-weight: bold; }
+.filter-group input, .filter-group select {
+    background-color: #112240; border: 1px solid #233554;
+    color: #ccd6f6; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem;
 }
-
-.filter-group label {
-    font-size: 0.8rem;
-    color: #8892b0;
-    font-weight: bold;
-}
-
-.filter-group input,
-.filter-group select {
-    background-color: rgba(0,0,0,0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #ccd6f6;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-}
-
-.filter-group input[type="date"] {
-    color-scheme: dark;
-}
-
-.filter-actions {
-    display: flex;
-    gap: 10px;
-    margin-left: auto; /* Alinea los botones a la derecha */
-}
-
+.filter-actions { display: flex; gap: 10px; margin-left: auto; }
 .filter-button {
-    padding: 8px 20px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-    text-decoration: none;
-    color: #0a192f;
-    background-color: #64ffda;
-    font-size: 0.9rem;
+    padding: 8px 20px; border-radius: 6px; border: none; cursor: pointer;
+    font-weight: bold; transition: background-color 0.3s ease; text-decoration: none;
+    color: #0a192f; background-color: #64ffda; font-size: 0.9rem;
 }
+.filter-button.clear { background-color: #8892b0; }
+.filter-button:hover { opacity: 0.85; }
 
-.filter-button.clear {
-    background-color: #8892b0;
-    color: #0a192f;
-}
-
-.filter-button:hover {
-    opacity: 0.85;
-}
-
-/* === NUEVO: SELECTOR DE VISTA === */
+/* === SELECTOR DE VISTA Y BOTÓN DE DESCARGA === */
 .view-switcher {
-    display: flex;
-    justify-content: center;
-    margin: 15px 0;
-    background-color: rgba(0,0,0,0.2);
-    border-radius: 8px;
-    padding: 5px;
-    width: fit-content;
-    align-self: center;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    display: flex; justify-content: center; align-items: center; margin: 15px 0;
+    background-color: #112240; border-radius: 8px; padding: 5px;
+    width: fit-content; align-self: center; border: 1px solid #233554;
 }
-
 .view-switcher a {
-    padding: 8px 20px;
-    text-decoration: none;
-    color: #8892b0;
-    font-weight: bold;
-    border-radius: 6px;
-    transition: all 0.3s ease;
+    padding: 8px 20px; text-decoration: none; color: #8892b0;
+    font-weight: bold; border-radius: 6px; transition: all 0.3s ease;
 }
-
 .view-switcher a.active {
-    background-color: #64ffda;
-    color: #0a192f;
+    background-color: #64ffda; color: #0a192f;
     box-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
 }
+.download-button {
+    background: transparent; border: none; color: #64ffda; cursor: pointer;
+    margin-left: 15px; font-size: 1.2rem; padding: 8px 12px; border-radius: 6px;
+    display: flex; align-items: center; gap: 8px; transition: all 0.3s ease;
+}
+.download-button:hover { color: #fff; background-color: rgba(100, 255, 218, 0.1); }
+.download-button:disabled { color: #8892b0; cursor: not-allowed; }
 
-
-/* === CONTENEDOR DE LA TABLA CON SCROLL === */
+/* === CONTENEDOR DE TABLA === */
 .scroll-container {
-    overflow: auto; /* Usamos auto para ambas vistas */
-    -webkit-overflow-scrolling: touch;
-    flex-grow: 1;
-    scrollbar-width: thin; 
+    overflow: auto; flex-grow: 1; scrollbar-width: thin; 
     scrollbar-color: #64ffda #0a192f;
 }
-.scroll-container::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-.scroll-container::-webkit-scrollbar-thumb {
-    background-color: #64ffda;
-    border-radius: 4px;
-}
-.scroll-container::-webkit-scrollbar-track {
-    background-color: rgba(0,0,0,0.2);
-}
+.scroll-container::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-container::-webkit-scrollbar-thumb { background-color: #64ffda; border-radius: 4px; }
+.scroll-container::-webkit-scrollbar-track { background-color: rgba(0,0,0,0.2); }
 
 /* === ESTILOS DE TABLA DIARIA (#tablaAulas) === */
-#tablaAulas {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 1200px;
-}
+#tablaAulas { width: 100%; border-collapse: collapse; min-width: 1200px; }
 #tablaAulas th, #tablaAulas td { padding: 12px 8px; border: 1px solid rgba(255, 255, 255, 0.15); text-align: center; font-size: 0.8rem; min-width: 120px; }
 #tablaAulas thead th { position: sticky; top: 0; background-color: rgba(10, 25, 47, 0.95); color: #64ffda; z-index: 10; font-size: 0.9rem; }
 #tablaAulas tbody td:first-child, #tablaAulas thead th:first-child { position: sticky; left: 0; background-color: rgba(10, 25, 47, 0.95); font-weight: bold; color: #ccd6f6; z-index: 5; min-width: 150px; }
@@ -190,26 +90,18 @@ body::before {
 #tablaAulas td.libre { background-color: rgba(46, 204, 113, 0.1); }
 #tablaAulas td.ocupado { background-color: rgba(231, 76, 60, 0.2); font-weight: 500; color: #f7b2ac; }
 #tablaAulas td.ocupado div { font-size: 0.75rem; line-height: 1.3; }
-#tablaAulas .hora-actual { background-color: rgba(52, 152, 219, 0.3); border-left: 2px solid #3498db; border-right: 2px solid #3498db; }
-#tablaAulas thead .hora-actual { color: #3498db; }
+/* Estilo para resaltar la hora actual en la vista diaria */
+#tablaAulas .hora-actual { background-color: rgba(100, 255, 218, 0.15); border: 1px solid #64ffda; }
 
-
-/* === NUEVO: ESTILOS DE TABLA SEMANAL (#tablaSemanal) === */
-#tablaSemanal {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 900px;
-}
+/* === ESTILOS DE TABLA SEMANAL (#tablaSemanal) === */
+#tablaSemanal { width: 100%; border-collapse: collapse; min-width: 900px; }
 #tablaSemanal th, #tablaSemanal td { padding: 10px; border: 1px solid rgba(255, 255, 255, 0.15); text-align: center; font-size: 0.8rem; min-width: 160px; vertical-align: top; }
-#tablaSemanal thead th { position: sticky; top: 0; background-color: rgba(10, 25, 47, 0.95); color: #64ffda; z-index: 10; font-size: 0.9rem; }
+#tablaSemanal thead th { position: sticky; top: 0; background-color: rgba(10, 25, 47, 0.95); color: #64ffda; z-index: 10; font-size: 1rem; }
 #tablaSemanal tbody td:first-child, #tablaSemanal thead th:first-child { position: sticky; left: 0; background-color: rgba(10, 25, 47, 0.95); font-weight: bold; color: #ccd6f6; z-index: 5; min-width: 80px; vertical-align: middle; }
-#tablaSemanal thead th:first-child { z-index: 11; }
 #tablaSemanal td.libre { background-color: rgba(46, 204, 113, 0.05); }
-#tablaSemanal td.ocupado { background-color: rgba(90, 70, 120, 0.2); font-weight: 500; color: #ccd6f6; }
-#tablaSemanal td.ocupado div { font-size: 0.8rem; line-height: 1.4; font-weight: bold; }
-#tablaSemanal td.ocupado div.info-secundaria { font-size: 0.7rem; color: #8892b0; font-weight: normal; }
+#tablaSemanal td.ocupado { background-color: rgba(90, 70, 120, 0.2); font-weight: 500; color: #ccd6f6; text-align: left; }
+#tablaSemanal td.ocupado div { font-size: 0.8rem; line-height: 1.4; font-weight: normal; }
 #tablaSemanal td.ocupado hr { border: none; height: 1px; background-color: rgba(255, 255, 255, 0.2); margin: 8px 0; }
-
 
 /* === RESPONSIVE DESIGN === */
 @media (max-width: 900px) {

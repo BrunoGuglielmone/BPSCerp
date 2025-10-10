@@ -11,14 +11,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.querySelector('.toggle-form-btn');
     const cedulaInput = document.getElementById('cedula');
     const telefonoInput = document.getElementById('telefono');
+    const formTitle = document.getElementById('form-title');
+    const btnGuardarTexto = document.getElementById('btn-guardar-texto');
+
+    // Selectores para Modales de Notificación
+    const modalNotificacion = document.getElementById('modal-notificacion');
+    const notificacionTitulo = document.getElementById('notificacion-titulo');
+    const notificacionMensaje = document.getElementById('notificacion-mensaje');
+    const notificacionBtnAceptar = document.getElementById('notificacion-btn-aceptar');
+    const notificacionBtnCancelar = document.getElementById('notificacion-btn-cancelar');
     
     let docentesData = [];
     const API_URL = '../api/gestionar_docentes.php';
 
-    // --- FUNCIONES ---
+    // --- FUNCIONES PARA MODALES ---
+    const mostrarNotificacion = (titulo, mensaje, tipo = 'alerta') => {
+        notificacionTitulo.textContent = titulo;
+        notificacionMensaje.innerHTML = mensaje; // Usamos innerHTML para posibles <br>
+        modalNotificacion.classList.add('visible');
+        
+        return new Promise(resolve => {
+            if (tipo === 'confirmacion') {
+                notificacionBtnCancelar.style.display = 'inline-flex';
+                notificacionBtnAceptar.textContent = 'Confirmar';
+                
+                notificacionBtnAceptar.onclick = () => {
+                    modalNotificacion.classList.remove('visible');
+                    resolve(true);
+                };
+                notificacionBtnCancelar.onclick = () => {
+                    modalNotificacion.classList.remove('visible');
+                    resolve(false);
+                };
+            } else {
+                notificacionBtnCancelar.style.display = 'none';
+                notificacionBtnAceptar.textContent = 'Aceptar';
+                notificacionBtnAceptar.onclick = () => {
+                    modalNotificacion.classList.remove('visible');
+                    resolve(true);
+                };
+            }
+        });
+    }
 
-    const mostrarNotificacion = (message) => alert(message);
-
+    // --- FUNCIONES PRINCIPALES ---
     const cargarDocentes = async () => {
         try {
             const response = await fetch(API_URL);
@@ -71,15 +107,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
+
+        // --- VALIDACIONES DE CÉDULA ANTES DE ENVIAR ---
+        if (cedulaInput.value.length !== 8) {
+            await mostrarNotificacion('Error de Validación', 'La cédula debe contener exactamente 8 dígitos numéricos.');
+            return;
+        }
+
+        // Si es un nuevo docente (no hay ID), verificar si la cédula ya existe
+        if (!hiddenDocenteId.value) {
+            const cedulaExistente = docentesData.some(doc => doc.cedula === cedulaInput.value);
+            if (cedulaExistente) {
+                await mostrarNotificacion('Error de Duplicidad', `La cédula ${cedulaInput.value} ya se encuentra registrada.`);
+                return;
+            }
+        }
+
+        // Enviar datos
         const response = await fetch(API_URL, { method: 'POST', body: new FormData(form) });
         const result = await response.json();
-        mostrarNotificacion(result.message);
+        
+        await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
+
         if (response.ok && result.success) {
-            form.reset();
-            hiddenDocenteId.value = '';
+            resetearFormulario();
             if (formContent.classList.contains('abierto')) toggleBtn.click();
-            cargarDocentes();
+            await cargarDocentes();
         }
+    };
+    
+    const resetearFormulario = () => {
+        form.reset();
+        hiddenDocenteId.value = '';
+        cedulaInput.disabled = false; // Re-habilitar la cédula
+        formTitle.textContent = 'Datos del Docente';
+        btnGuardarTexto.textContent = 'Guardar Docente';
     };
 
     const iniciarEdicion = (id) => {
@@ -92,14 +154,22 @@ document.addEventListener('DOMContentLoaded', () => {
         form.querySelector('#apellido').value = docente.apellido;
         form.querySelector('#cedula').value = docente.cedula || '';
         form.querySelector('#telefono').value = docente.telefono || '';
+        
+        cedulaInput.disabled = true; // Deshabilitar cédula en modo edición
 
         if (!formContent.classList.contains('abierto')) toggleBtn.click();
-        form.querySelector('h3').textContent = 'Editar Datos del Docente';
-        form.querySelector('.btn-guardar').textContent = 'Actualizar Docente';
+        formTitle.textContent = 'Editar Datos del Docente';
+        btnGuardarTexto.textContent = 'Actualizar Docente';
     };
 
     const eliminarDocentes = async (ids) => {
-        if (ids.length === 0 || !confirm(`¿Está seguro de eliminar ${ids.length} docente(s)?`)) return;
+        if (ids.length === 0) return;
+        const confirmado = await mostrarNotificacion(
+            'Confirmar Eliminación',
+            `¿Está seguro de que desea eliminar ${ids.length} docente(s)? Esta acción no se puede deshacer.`,
+            'confirmacion'
+        );
+        if (!confirmado) return;
 
         try {
             const response = await fetch(API_URL, {
@@ -108,10 +178,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ ids })
             });
             const result = await response.json();
-            mostrarNotificacion(result.message);
-            if (result.success) cargarDocentes();
+            await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
+            if (result.success) await cargarDocentes();
         } catch (error) {
-            mostrarNotificacion('Ocurrió un error de red al intentar eliminar.', true);
+            await mostrarNotificacion('Error de Conexión', 'Ocurrió un error de red al intentar eliminar.');
         }
     };
     
@@ -122,50 +192,42 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- VALIDACIONES DE INPUT EN TIEMPO REAL ---
-
-    cedulaInput.addEventListener('input', (e) => {
-        let value = e.target.value;
-        // Reemplazar cualquier caracter que no sea un número
-        value = value.replace(/[^0-9]/g, '');
-        // Limitar la longitud a 7 caracteres
-        if (value.length > 7) {
-            value = value.slice(0, 7);
+    const limitarInputNumerico = (e, maxLength) => {
+        let value = e.target.value.replace(/[^0-9]/g, '');
+        if (value.length > maxLength) {
+            value = value.slice(0, maxLength);
         }
         e.target.value = value;
-    });
+    };
 
-    telefonoInput.addEventListener('input', (e) => {
-        let value = e.target.value;
-        // Reemplazar cualquier caracter que no sea un número
-        value = value.replace(/[^0-9]/g, '');
-        // Limitar la longitud a 15 caracteres
-        if (value.length > 15) {
-            value = value.slice(0, 15);
-        }
-        e.target.value = value;
-    });
+    cedulaInput.addEventListener('input', (e) => limitarInputNumerico(e, 8));
+    telefonoInput.addEventListener('input', (e) => limitarInputNumerico(e, 15));
 
-
-    // --- EVENT LISTENERS (sin cambios, excepto en el toggleBtn) ---
+    // --- EVENT LISTENERS ---
     form.addEventListener('submit', handleFormSubmit);
     filtroInputs.forEach(input => input.addEventListener('input', aplicarFiltros));
+    
     btnEliminarSeleccionado.addEventListener('click', () => {
         const ids = Array.from(tbody.querySelectorAll('.seleccionar-fila:checked')).map(cb => cb.closest('tr').dataset.id);
         eliminarDocentes(ids);
     });
+
     btnEditarSeleccionado.addEventListener('click', () => {
         const id = tbody.querySelector('.seleccionar-fila:checked').closest('tr').dataset.id;
         iniciarEdicion(id);
     });
+
     seleccionarTodosCheckbox.addEventListener('change', (e) => {
         tbody.querySelectorAll('.seleccionar-fila').forEach(cb => cb.checked = e.target.checked);
         actualizarEstadoBotones();
     });
+
     tbody.addEventListener('change', e => {
         if (e.target.matches('.seleccionar-fila')) {
             actualizarEstadoBotones();
         }
     });
+
     tbody.addEventListener('click', e => {
         const fila = e.target.closest('tr');
         if (!fila) return;
@@ -173,12 +235,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.closest('.btn-editar')) iniciarEdicion(id);
         if (e.target.closest('.btn-eliminar')) eliminarDocentes([id]);
     });
+
     toggleBtn.addEventListener('click', () => {
+        // Si el formulario se está abriendo (y no está ya abierto), resetealo.
         if (!formContent.classList.contains('abierto')) {
-            form.reset();
-            hiddenDocenteId.value = '';
-            form.querySelector('h3').textContent = 'Datos del Docente';
-            form.querySelector('.btn-guardar').textContent = 'Guardar Docente';
+            resetearFormulario();
         }
     });
 

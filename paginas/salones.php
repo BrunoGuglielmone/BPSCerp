@@ -22,7 +22,7 @@ include_once("../Php/header.php");
             <div class="formulario-content">
                 <form id="registro-salon-form">
                     <input type="hidden" id="salon_id" name="salon_id">
-                    <h3>Datos del Salón</h3>
+                    <h3 id="form-title">Datos del Salón</h3>
                     <div class="input-group">
                         <label for="nombre">Nombre del Salón</label>
                         <input type="text" id="nombre" name="nombre" required>
@@ -33,7 +33,7 @@ include_once("../Php/header.php");
                     </div>
                     <div class="input-group">
                         <label for="tipo">Tipo de Salón</label>
-                        <select id="tipo" name="tipo">
+                        <select id="tipo" name="tipo" required>
                             <option value="">Seleccione un tipo...</option>
                             <option value="Común">Común</option>
                             <option value="Sala informática">Sala informática</option>
@@ -41,7 +41,7 @@ include_once("../Php/header.php");
                             <option value="Laboratorio Física">Laboratorio Física</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn-guardar">Guardar Salón</button>
+                    <button type="submit" class="btn-guardar" id="btn-guardar-texto">Guardar Salón</button>
                 </form>
             </div>
         </aside>
@@ -86,9 +86,19 @@ include_once("../Php/header.php");
         </section>
     </main>
 
+    <div id="modal-notificacion" class="modal-overlay">
+        <div class="modal-dialog">
+            <h3 id="notificacion-titulo"></h3>
+            <p id="notificacion-mensaje"></p>
+            <div class="modal-actions">
+                <button id="notificacion-btn-aceptar" class="btn btn-primary">Aceptar</button>
+                <button id="notificacion-btn-cancelar" class="btn btn-secondary" style="display:none;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/salones.js"></script>
     <script>
-        // Script para el botón de desplegar formulario
         document.querySelector('.toggle-form-btn').addEventListener('click', e => {
             const formContent = document.querySelector('.formulario-content');
             formContent.classList.toggle('abierto');

@@ -19,7 +19,6 @@ if ($metodo == 'POST') {
     }
 
     // Preparar la consulta SQL para insertar o actualizar si la clave ya existe
-    // Esto es más eficiente que hacer un SELECT y luego un UPDATE o INSERT
     $sql = "INSERT INTO configuracion (clave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = VALUES(valor)";
     $stmt = $conn->prepare($sql);
 
@@ -52,7 +51,7 @@ if ($metodo == 'POST') {
     $stmt->close();
 
 } else {
-    // --- LÓGICA PARA OBTENER LAS FECHAS (POR DEFECTO) ---
+    // --- OBTENER LAS FECHAS  ---
     $sql = "SELECT clave, valor FROM configuracion WHERE clave LIKE 'semestre%'";
     $result = $conn->query($sql);
     

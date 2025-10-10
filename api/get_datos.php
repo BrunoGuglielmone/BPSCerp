@@ -1,77 +1,56 @@
 <?php
+// api/get_datos.php
 include 'conexion.php';
 header('Content-Type: application/json; charset=utf-8');
 
-$fecha = $_GET['fecha'] ?? date("Y-m-d");
+$fecha = $_GET['fecha'] ?? date('Y-m-d');
+$response = [];
 
-// Array para la respuesta final
-$response = [
-    'salones' => [],
-    'horarios' => [],
-    'docentes' => [],
-    'asignaciones' => [],
-    'configuracion' => [] 
-];
+try {
+    // 1. Obtener Salones
+    $response['salones'] = $conn->query("SELECT id, nombre FROM salones ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
 
-// 1. Obtener Salones
-$resultSalones = $conn->query("SELECT id, nombre FROM salones ORDER BY id ASC");
-while ($row = $resultSalones->fetch_assoc()) {
-    $response['salones'][] = $row;
+    // 2. Obtener Horarios
+    $response['horarios'] = $conn->query("SELECT id, hora FROM horarios ORDER BY id ASC")->fetch_all(MYSQLI_ASSOC);
+
+    // 3. Obtener TODAS las asignaturas (para el modal)
+    $response['asignaturas'] = $conn->query("SELECT id, nombre FROM asignaturas ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
+    
+    // 4. Obtener Asignaciones para la fecha específica (con JOINs)
+    // MODIFICADO: Se añade LEFT JOIN a carrera_asignatura para obtener el año.
+    $sql_asig = "SELECT 
+                    ag.salon_id,
+                    ag.horario_id,
+                    ag.docente_id,
+                    ag.asignatura_id,
+                    CONCAT(d.nombre, ' ', d.apellido) as docente_nombre,
+                    a.nombre as asignatura_nombre,
+                    ca.ano_cursado 
+                FROM asignaciones ag
+                JOIN docentes d ON ag.docente_id = d.id
+                JOIN asignaturas a ON ag.asignatura_id = a.id
+                LEFT JOIN carrera_asignatura ca ON ag.asignatura_id = ca.asignatura_id 
+                WHERE ag.fecha = ?
+                GROUP BY ag.salon_id, ag.horario_id"; 
+    
+    $stmt = $conn->prepare($sql_asig);
+    $stmt->bind_param("s", $fecha);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    
+    $asignaciones_procesadas = [];
+    while ($row = $resultado->fetch_assoc()) {
+        $key = $row['salon_id'] . '-' . $row['horario_id'];
+        $asignaciones_procesadas[$key] = $row;
+    }
+    $response['asignaciones'] = $asignaciones_procesadas;
+
+    echo json_encode($response);
+
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => true, 'message' => 'Error al obtener datos: ' . $e->getMessage()]);
 }
 
-// 2. Obtener Horarios
-$resultHorarios = $conn->query("SELECT id, hora FROM horarios ORDER BY hora ASC");
-while ($row = $resultHorarios->fetch_assoc()) {
-    $response['horarios'][] = $row;
-}
-
-// 3. Obtener Docentes
-$sqlDocentes = "
-    SELECT d.id, d.nombre, d.apellido, a.nombre AS asignatura, d.ano_cursado 
-    FROM docentes d
-    LEFT JOIN asignaturas a ON d.asignatura_id = a.id
-    ORDER BY d.apellido ASC, d.nombre ASC
-";
-$resultDocentes = $conn->query($sqlDocentes);
-while ($row = $resultDocentes->fetch_assoc()) {
-    $row['nombre_completo'] = $row['nombre'] . ' ' . $row['apellido'];
-    $response['docentes'][] = $row;
-}
-
-// 4. Obtener Asignaciones para la fecha
-$sqlAsignaciones = "
-    SELECT a.salon_id, a.horario_id, d.id AS docente_id,
-           CONCAT(d.nombre, ' ', d.apellido) AS nombre,
-           asig.nombre AS asignatura, d.ano_cursado AS anio
-    FROM asignaciones a
-    JOIN docentes d ON a.docente_id = d.id
-    LEFT JOIN asignaturas asig ON d.asignatura_id = asig.id
-    WHERE a.fecha = ?
-";
-$stmtAsignaciones = $conn->prepare($sqlAsignaciones);
-$stmtAsignaciones->bind_param("s", $fecha);
-$stmtAsignaciones->execute();
-$resultAsignaciones = $stmtAsignaciones->get_result();
-$asignacionesHoy = [];
-while ($row = $resultAsignaciones->fetch_assoc()) {
-    $key = $row['salon_id'] . '-' . $row['horario_id'];
-    $asignacionesHoy[$key] = [
-        'docente_id' => $row['docente_id'], 'nombre' => $row['nombre'],
-        'asignatura' => $row['asignatura'], 'anio' => $row['anio']
-    ];
-}
-$response['asignaciones'] = $asignacionesHoy;
-$stmtAsignaciones->close();
-
-// 5. NUEVO: Obtener la configuración de semestres
-$resultConfig = $conn->query("SELECT clave, valor FROM configuracion WHERE clave LIKE 'semestre%'");
-$configData = [];
-while ($row = $resultConfig->fetch_assoc()) {
-    $configData[$row['clave']] = $row['valor'];
-}
-$response['configuracion'] = $configData;
-
-// Devolver todos los datos
-echo json_encode($response);
 $conn->close();
 ?>

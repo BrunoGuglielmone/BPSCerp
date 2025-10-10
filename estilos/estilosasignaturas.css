@@ -1,39 +1,247 @@
-/* --- Contenedor Principal y Layout --- */
-.main-container { display: flex; flex: 1; padding: 20px; gap: 20px; flex-direction: row; }
-.formulario-container, .lista-container { background-color: rgba(0, 25, 51, 0.4); border-radius: 8px; padding: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+/* ==========================================================================
+   ESTILOS UNIFICADOS PARA LA PÁGINA DE ASIGNATURAS
+   ========================================================================== */
 
-/* --- Formulario --- */
-.formulario-container { flex: 1; min-width: 320px; align-self: flex-start; }
-.toggle-form-btn { width: 100%; padding: 12px; background-color: rgba(0, 86, 179, 0.5); color: white; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 6px; cursor: pointer; font-size: 1rem; text-align: left; transition: background-color 0.3s ease; }
-.toggle-form-btn:hover { background-color: rgba(0, 68, 148, 0.9); }
-.formulario-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out, margin-top 0.5s ease-out; }
-.formulario-content.abierto { max-height: 1000px; margin-top: 15px; }
-.input-group { margin-bottom: 15px; }
-.input-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-.input-group input { width: 100%; padding: 10px; border: none; border-bottom: 2px solid rgba(255, 255, 255, 0.7); background: transparent; color: #fff; font-size: 0.9rem; outline: none; box-sizing: border-box; }
-.btn-guardar { width: 100%; padding: 12px; background-color: rgba(40, 167, 69, 0.7); color: white; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: background-color 0.3s ease; margin-top: 10px; }
-.btn-guardar:hover { background-color: rgba(33, 136, 56, 0.9); }
+/* --- Layout Principal --- */
+.main-container {
+    display: flex;
+    flex: 1;
+    padding: 20px;
+    gap: 20px;
+    flex-direction: row;
+}
 
-/* --- Lista y Tabla --- */
-.lista-container { flex: 3; display: flex; flex-direction: column; }
-.toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 20px; }
-.actions .btn-accion { padding: 8px 15px; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 6px; background-color: transparent; color: #fff; cursor: pointer; transition: background-color 0.3s ease; }
-.actions .btn-accion:hover:not(:disabled) { background-color: rgba(255, 255, 255, 0.1); }
-.actions .btn-accion:disabled { opacity: 0.5; cursor: not-allowed; }
-.tabla-responsive { overflow-x: auto; }
-#tabla-asignaturas, #tabla-carreras { width: 100%; white-space: nowrap; border-collapse: collapse; color: #fff; }
-#tabla-asignaturas th, #tabla-asignaturas td, #tabla-carreras th, #tabla-carreras td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.2); vertical-align: middle; }
-#tabla-asignaturas thead, #tabla-carreras thead { background-color: rgba(255, 255, 255, 0.1); }
-.filtros-fila th { padding: 8px 15px; }
-.filtro-input { width: 100%; padding: 6px 8px; background-color: rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; border-radius: 4px; font-size: 0.8rem; }
-#tabla-asignaturas tbody tr:hover, #tabla-carreras tbody tr:hover { background-color: rgba(255, 255, 255, 0.15); }
-.acciones-celda { display: flex; gap: 10px; }
-.btn-accion-fila { background: none; border: none; cursor: pointer; font-size: 1rem; color: #ddd; transition: color 0.2s ease; }
-.btn-accion-fila.btn-editar:hover { color: #58a6ff; }
-.btn-accion-fila.btn-eliminar:hover { color: #ff7b72; }
+/* --- Panel del Formulario --- */
+.formulario-container {
+    flex: 1;
+    min-width: 320px;
+    align-self: flex-start;
+    background: rgba(10, 25, 47, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+}
 
-/* --- Responsive --- */
+.toggle-form-btn {
+    width: 100%;
+    padding: 12px 20px;
+    background-color: transparent;
+    color: #64ffda;
+    border: 1px solid #64ffda;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: left;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle-form-btn:hover {
+    background-color: rgba(100, 255, 218, 0.1);
+}
+
+.formulario-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out, margin-top 0.5s ease-out;
+}
+
+.formulario-content.abierto {
+    max-height: 1000px;
+    margin-top: 20px;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #a8b2d1;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #233554;
+    border-radius: 6px;
+    background: #112240;
+    color: #e6f1ff;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: #64ffda;
+}
+
+.btn-guardar {
+    width: 100%;
+    padding: 12px;
+    background-color: #64ffda;
+    color: #0a192f;
+    border: 1px solid #64ffda;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-guardar:hover {
+    background-color: #a7ffeb;
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
+}
+
+/* --- Panel de la Lista --- */
+.lista-container {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    background: rgba(10, 25, 47, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    min-width: 0;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(100, 255, 218, 0.3);
+}
+
+.toolbar h3 {
+    color: #64ffda;
+}
+
+.actions .btn-accion {
+    padding: 8px 15px;
+    border: 1px solid #8892b0;
+    border-radius: 6px;
+    background-color: transparent;
+    color: #8892b0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.actions .btn-accion:not(:disabled):hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #e6f1ff;
+    border-color: #e6f1ff;
+}
+.actions .btn-accion:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* --- Tabla --- */
+.tabla-responsive {
+    overflow-x: auto;
+}
+
+#tabla-asignaturas {
+    width: 100%;
+    border-collapse: collapse;
+    color: #e6f1ff;
+}
+
+#tabla-asignaturas th,
+#tabla-asignaturas td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+}
+
+#tabla-asignaturas thead {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+#tabla-asignaturas tbody tr:hover {
+    background-color: rgba(100, 255, 218, 0.08);
+}
+
+.filtros-fila input.filtro-input {
+    width: 100%;
+    padding: 8px 10px;
+    background-color: #112240;
+    border: 1px solid #233554;
+    border-radius: 4px;
+    color: #e6f1ff;
+    font-size: 0.9rem;
+}
+.filtros-fila input.filtro-input::placeholder {
+    color: #8892b0;
+}
+.filtros-fila input.filtro-input:focus {
+    outline: none;
+    border-color: #64ffda;
+}
+.filtros-fila th {
+    padding: 8px;
+}
+
+
+.acciones-celda {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-accion-fila {
+    background: none; border: none; cursor: pointer;
+    font-size: 1.1rem; color: #8892b0; transition: color 0.2s ease;
+}
+.btn-accion-fila.btn-editar:hover { color: #64ffda; }
+.btn-accion-fila.btn-eliminar:hover { color: #e34040; }
+
+
+/* --- Estilos para Modales --- */
+.modal-overlay {
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px); z-index: 2000;
+    display: none; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.3s ease;
+}
+.modal-overlay.visible { display: flex; opacity: 1; }
+.modal-dialog {
+    background: #0a192f; color: #e6f1ff;
+    padding: 30px; border-radius: 12px; border: 1px solid rgba(100, 255, 218, 0.3);
+    width: 90%; max-width: 450px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-align: center;
+    transform: scale(0.95); transition: transform 0.3s ease;
+}
+.modal-overlay.visible .modal-dialog { transform: scale(1); }
+.modal-dialog h3 { margin-top: 0; font-size: 1.5rem; color: #64ffda; }
+.modal-dialog p { margin: 15px 0 25px 0; font-size: 1rem; color: #a8b2d1; line-height: 1.6; }
+.modal-actions { display: flex; gap: 15px; justify-content: center; }
+.modal-actions .btn { min-width: 120px; }
+.btn-primary { background-color: #64ffda; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-secondary { background-color: #8892b0; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+/* --- Media Queries --- */
 @media (max-width: 992px) {
     .main-container { flex-direction: column; align-items: center; }
     .formulario-container, .lista-container { width: 100%; max-width: 700px; }
+}
+@media (max-width: 576px) {
+    .toolbar { flex-direction: column; align-items: stretch; }
 }

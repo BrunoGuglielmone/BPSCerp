@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ESTILOS COMPLETOS PARA LA PÁGINA DE SALONARIO
+   ESTILOS UNIFICADOS PARA LA PÁGINA DE SALONARIO
    ========================================================================== */
 
 /* --- Contenedor Principal --- */
@@ -9,83 +9,78 @@
     flex-direction: column;
     padding: 20px;
     gap: 20px;
-    background-color: rgba(0, 25, 51, 0.4);
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: rgba(10, 25, 47, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
     overflow: hidden;
 }
 
-/* --- Controles del Calendario (Toolbar) --- */
+/* --- Barra de Controles Superior --- */
 .calendario-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Permite que se reordenen si no hay espacio */
+    flex-wrap: wrap;
     gap: 20px;
     padding-bottom: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(100, 255, 218, 0.3);
 }
 
-/* --- Contenedor de Botones de la Semana --- */
 .semana-botones {
     display: flex;
-    gap: 8px; /* Espacio entre botones */
-    flex-wrap: wrap; /* Para que se adapte en pantallas pequeñas */
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .semana-botones button {
     padding: 10px 18px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    background-color: rgba(0, 86, 179, 0.5);
-    color: #fff;
+    border: 1px solid #64ffda;
+    background-color: transparent;
+    color: #64ffda;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.95rem;
     font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .semana-botones button:hover {
-    background-color: rgba(0, 68, 148, 0.9);
-    transform: translateY(-2px);
+    background-color: rgba(100, 255, 218, 0.1);
 }
 
-/* Botón del día actual o seleccionado */
 .semana-botones button.activo {
-    background-color: #ffffff;
-    color: #001933;
-    border-color: #ffffff;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    background-color: #64ffda;
+    color: #0a192f;
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
 }
 
-/* --- Selector de fecha específica --- */
 .fecha-especifica {
     display: flex;
     align-items: center;
     gap: 10px;
+    color: #ccd6f6;
 }
 
 .fecha-especifica input[type="date"] {
-    padding: 7px;
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    background-color: rgba(0, 0, 0, 0.2);
-    color: #fff;
-    color-scheme: dark; /* Ayuda a que el selector de fecha sea oscuro */
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #233554;
+    background-color: #112240;
+    color: #e6f1ff;
+    color-scheme: dark;
+}
+.fecha-especifica input[type="date"]:focus {
+    outline: none;
+    border-color: #64ffda;
 }
 
-/* --- Contenedor para el botón de configurar semestres --- */
 .configuracion-semestre .btn-animado {
     height: 42px;
     padding: 0 20px;
 }
 
-.configuracion-semestre .btn-animado i {
-    margin-right: 8px;
-}
-
-
-/* --- Acciones de la tabla --- */
+/* --- Acciones de la Tabla --- */
 .acciones-tabla {
     display: flex;
     gap: 15px;
@@ -96,36 +91,55 @@
 .acciones-tabla .btn-animado {
     height: 40px;
     padding: 0 20px;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
-/* --- Estilos de la Tabla de Horarios --- */
+.acciones-tabla button:disabled {
+    border-color: #8892b0 !important;
+    cursor: not-allowed;
+}
+
+.acciones-tabla button:disabled span {
+    color: #8892b0 !important;
+}
+
+.acciones-tabla button:disabled:hover::before,
+.acciones-tabla button:disabled:hover::after {
+    width: 0 !important; /* Desactiva la animación */
+}
+
+/* --- Tabla de Horarios --- */
 .tabla-container {
     flex: 1;
-    overflow: auto; /* Permite scroll si la tabla es muy ancha */
+    overflow: auto; /* Permite scroll */
 }
+/* Scrollbar personalizado */
+.tabla-container::-webkit-scrollbar { width: 8px; height: 8px; }
+.tabla-container::-webkit-scrollbar-track { background: transparent; }
+.tabla-container::-webkit-scrollbar-thumb { background: #8892b0; border-radius: 4px; }
+.tabla-container::-webkit-scrollbar-thumb:hover { background: #64ffda; }
+
 
 #tablaHorarios {
     width: 100%;
     border-collapse: collapse;
-    color: #fff;
+    color: #e6f1ff;
 }
 
 #tablaHorarios th,
 #tablaHorarios td {
-    padding: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(136, 146, 176, 0.3);
     text-align: center;
-    min-width: 120px;
+    min-width: 140px;
+    padding: 10px;
     transition: background-color 0.2s ease;
 }
 
-/* Cabecera y Celdas Fijas (Sticky) */
 #tablaHorarios thead th {
     position: sticky;
     top: 0;
-    background-color: rgba(0, 25, 51, 0.9); /* Más opaco para mejor visibilidad */
-    color: #fff;
+    background-color: #0a192f;
+    color: #64ffda;
     font-weight: bold;
     z-index: 10;
 }
@@ -134,246 +148,84 @@
 #tablaHorarios thead th:first-child {
     position: sticky;
     left: 0;
-    background-color: rgba(0, 25, 51, 0.9);
+    background-color: #0a192f;
     font-weight: bold;
-    color: #fff;
+    color: #ccd6f6;
     min-width: 150px;
     z-index: 9;
 }
 
-#tablaHorarios thead th:first-child {
-    z-index: 11; /* Asegura que esté por encima de la primera columna */
-}
+#tablaHorarios thead th:first-child { z-index: 11; }
 
-/* Estados de las Celdas */
-#tablaHorarios td.libre {
-    background-color: rgba(40, 167, 69, 0.2); /* Verde sutil */
-    cursor: pointer;
-}
-#tablaHorarios td.libre:hover {
-    background-color: rgba(40, 167, 69, 0.4);
-}
+#tablaHorarios td.libre { background-color: rgba(100, 255, 218, 0.05); cursor: pointer; }
+#tablaHorarios td.libre:hover { background-color: rgba(100, 255, 218, 0.15); }
+#tablaHorarios td.libre .plus { color: #64ffda; font-size: 1.5rem; opacity: 0.5; transition: opacity 0.3s ease; }
+#tablaHorarios td.libre:hover .plus { opacity: 1; }
+#tablaHorarios td.ocupado { background-color: rgba(227, 64, 64, 0.1); position: relative; padding: 8px; }
+#tablaHorarios td.seleccionado { border: 2px solid #64ffda; background-color: rgba(100, 255, 218, 0.2); }
 
-#tablaHorarios td.ocupado {
-    background-color: rgba(220, 53, 69, 0.3); /* Rojo sutil */
-    position: relative;
-    padding-top: 25px; /* espacio para el botón de quitar */
-    color: #f0f0f0;
-}
+/* Contenido de celda ocupada */
+.ocupado .asignatura-nombre { font-weight: bold; font-size: 0.9em; color: #ccd6f6; }
+.ocupado .docente-nombre { font-size: 0.8em; color: #8892b0; margin-top: 4px; }
+.ocupado .ano-cursado { font-size: 0.75em; font-weight: bold; color: #64ffda; margin-top: 5px; }
 
-#tablaHorarios td.seleccionado {
-    border: 2px solid #58a6ff; /* Borde azul brillante para destacar */
-    box-shadow: 0 0 8px rgba(88, 166, 255, 0.5);
-    background-color: rgba(88, 166, 255, 0.2);
-}
-
-/* Botón para quitar asignación dentro de la celda */
 .btn-quitar {
-    position: absolute;
-    top: 3px;
-    right: 5px;
-    color: #ff7b72;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 123, 114, 0.5);
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 16px;
-    line-height: 20px;
-    font-weight: bold;
-    user-select: none;
+    position: absolute; top: 4px; right: 4px; color: #e34040; background-color: rgba(227, 64, 64, 0.2);
+    border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; font-size: 16px; line-height: 20px; font-weight: bold;
     transition: all 0.2s ease;
 }
+.btn-quitar:hover { background-color: #e34040; color: #fff; transform: scale(1.1); }
 
-.btn-quitar:hover {
-    background-color: #dc3545;
-    color: #fff;
-    transform: scale(1.1);
+/* --- Estilos Unificados para Modales --- */
+.modal-overlay {
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 2000;
+    display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;
 }
+.modal-overlay.visible { display: flex; opacity: 1; }
 
-/* ============================================= */
-/* ==       ESTILOS PARA LOS MODALES          == */
-/* ============================================= */
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px);
-    justify-content: center;
-    align-items: center;
+.modal-dialog {
+    background: #0a192f; color: #e6f1ff; padding: 25px 30px; border-radius: 12px;
+    border: 1px solid rgba(100, 255, 218, 0.3); width: 90%; max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.3s ease;
+    position: relative; display: flex; flex-direction: column;
 }
+.modal-overlay.visible .modal-dialog { transform: scale(1); }
+.modal-dialog h3 { margin-top: 0; font-size: 1.5rem; color: #64ffda; margin-bottom: 20px; text-align: center; }
+.modal-dialog .cerrar { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: #8892b0; cursor: pointer; transition: color 0.3s ease; }
+.modal-dialog .cerrar:hover { color: #e6f1ff; }
 
-.modal-content {
-    background: #fff;
-    color: #222;
-    border-radius: 10px;
-    padding: 25px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+/* Contenido de formularios en modales */
+.form-group, .form-semestre { margin-bottom: 18px; }
+.modal-dialog label, .modal-dialog legend { display: block; margin-bottom: 8px; font-weight: bold; color: #a8b2d1; text-align: left; }
+.modal-dialog input[type="date"], .modal-dialog select {
+    width: 100%; padding: 12px; border: 1px solid #233554; border-radius: 6px;
+    background: #112240; color: #e6f1ff; font-size: 1rem;
 }
-
-.cerrar {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: #888;
-    transition: color 0.2s;
+.modal-dialog fieldset { border: 1px solid #233554; border-radius: 8px; padding: 15px; margin-top: 10px; }
+.modal-dialog legend { padding: 0 10px; color: #64ffda; }
+.modal-dialog #info-celda { background: rgba(100, 255, 218, 0.1); padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 15px; color: #64ffda; }
+.modal-dialog button {
+    width: 100%; padding: 12px; border-radius: 6px; cursor: pointer;
+    font-size: 1rem; font-weight: bold; transition: all 0.3s ease; margin-top: 10px;
+    border: 1px solid #64ffda; background-color: #64ffda; color: #0a192f;
 }
-.cerrar:hover {
-    color: #333;
-}
+.modal-dialog button:hover:not(:disabled) { background-color: #a7ffeb; box-shadow: 0 0 15px rgba(100, 255, 218, 0.4); }
+.modal-dialog button:disabled { background: #8892b0; border-color: #8892b0; color: #0a192f; cursor: not-allowed; opacity: 0.7; }
 
-.modal-content h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: #003366;
-    text-align: center;
-}
+/* Modal de Notificación Genérico */
+#modal-notificacion .modal-dialog { text-align: center; }
+#modal-notificacion p { margin: 15px 0 25px 0; font-size: 1rem; color: #a8b2d1; line-height: 1.6; }
+.modal-actions { display: flex; gap: 15px; justify-content: center; }
+.modal-actions .btn-primary { background-color: #64ffda; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; min-width: 120px; }
+.modal-actions .btn-secondary { background-color: #8892b0; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; min-width: 120px;}
 
-/* --- Modal: Lista de Profesores --- */
-#listaProfesores {
-    max-height: 250px;
-    overflow-y: auto;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 5px;
-    background-color: #f9f9f9;
-}
-
-.prof-item {
-    padding: 8px 10px;
-    border-bottom: 1px solid #eee;
-    color: #003366;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-.prof-item:last-child { border-bottom: none; }
-.prof-item:hover, .prof-item.seleccionado { background-color: #e2efff; }
-
-.modal-filtros {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 15px;
-    justify-content: space-between;
-}
-
-.modal-filtros label { display: flex; align-items: center; gap: 5px; }
-.modal-filtros input, .modal-filtros select {
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-#confirmarAsignacionBtn {
-    background-color: #0056b3;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 15px;
-    cursor: pointer;
-    font-size: 1rem;
-    width: 100%;
-    transition: background-color 0.3s ease;
-}
-#confirmarAsignacionBtn:disabled { background-color: #cccccc; cursor: not-allowed; }
-#confirmarAsignacionBtn:hover:not(:disabled) { background-color: #004494; }
-
-
-/* --- Modal: Configuración de Semestres --- */
-.modal-content .form-semestre {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin: 20px 0;
-}
-
-.modal-content fieldset {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 15px;
-}
-
-.modal-content legend {
-    padding: 0 10px;
-    font-weight: bold;
-    color: #0056b3;
-}
-
-.modal-content .form-semestre label {
-    display: block;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    font-size: 0.9rem;
-    color: #333;
-}
-
-.modal-content .form-semestre input[type="date"] {
-    width: 100%;
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-}
-
-#guardarFechasSemestreBtn {
-    background-color: #28a745; /* Verde para guardar */
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 15px;
-    cursor: pointer;
-    font-size: 1rem;
-    width: 100%;
-    transition: background-color 0.3s ease;
-}
-
-#guardarFechasSemestreBtn:hover {
-    background-color: #218838;
-}
-
-/* ============================================= */
-/* ==           MEDIA QUERIES                 == */
-/* ============================================= */
-
+/* Media Queries */
 @media (max-width: 900px) {
-    .main-container {
-        padding: 10px;
-    }
-    .modal-filtros {
-        flex-direction: column;
-        align-items: stretch; /* Para que los inputs ocupen todo el ancho */
-    }
-    .modal-filtros label {
-        justify-content: space-between;
-    }
+    .main-container { padding: 10px; }
 }
 
 @media (max-width: 768px) {
-    .calendario-container {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 15px;
-    }
-
-    .semana-botones {
-        justify-content: center;
-    }
-    
-    .fecha-especifica {
-        justify-content: center;
-    }
+    .calendario-container { flex-direction: column; align-items: stretch; gap: 15px; }
+    .semana-botones, .fecha-especifica { justify-content: center; }
 }

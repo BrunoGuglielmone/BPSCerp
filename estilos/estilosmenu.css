@@ -1,183 +1,155 @@
 /* ==========================================================================
-   ESTILOS PARA LA PÁGINA DEL MENÚ PRINCIPAL
-   ========================================================================== */
+   ESTILOS MEJORADOS PARA LA PÁGINA DEL MENÚ PRINCIPAL
+   ========================================================================== */
 
 /* --- Estilos Globales y Fondo --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
 }
 
 body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background: url('../imagenes/fondocerp.jpeg') center/cover no-repeat fixed;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px); 
+    background-color: #192433;
+    color: #fff;
 }
 
+/* 1. Ajuste clave: Aumentar la opacidad de la imagen de fondo (fondo menos oscuro) */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url('../imagenes/fondocerp.jpeg') center/cover no-repeat;
+    opacity: 0.35; /* Aumentado de 0.1 a 0.35 para hacer la imagen más visible */
+    z-index: -2;
+    
+}
+
+/* 2. Ajuste clave: Reducir la oscuridad del filtro y el efecto blur */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    /* Reducido el alpha (transparencia) del color de 0.74 a 0.5 */
+    background: rgba(14, 28, 49, 0.253); 
+    /* Opcional: Reducido el blur o eliminado si quieres que se vea más nítido */
+    backdrop-filter: blur(2px); 
+    z-index: -1;
+}
+
+
 main {
-    flex: 1; /* Asegura que el contenido principal ocupe el espacio disponible */
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 a {
     text-decoration: none;
-    color: #fff;
+    color: inherit;
 }
 
-/* --- Header y Footer (Sin cambios) --- */
-.header-docentes {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: rgba(0, 25, 51, 0.6);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 10px 20px;
-    position: relative;
-    color: #fff;
-}
-/* ... (otros estilos de header y footer que ya tenías) ... */
-
-
-/* --- Contenedor de Tarjetas de Menú --- */
+/* Contenedor de Tarjetas de Menú  */
 .contenedor {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
     padding: 20px;
-    flex-wrap: wrap; /* Permite que las tarjetas se ajusten en pantallas pequeñas */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+
 }
+
+/* --- ESTILOS DE TARJETA (SIN CAMBIOS) --- */
 
 .tarjeta {
-    flex: 1;
-    min-width: 400px;
-    max-width: 1600px;
-    padding: 30px;
+    padding: 25px;
     border-radius: 10px;
-    color: #fff;             
-    font-family: Arial, sans-serif;
-    font-size: 1.2em;
-    font-weight: bold;
-    text-decoration: none;
+    color: #fff;
     display: flex;
-    gap: 15px;
-    align-items: center; /* Centra verticalmente el icono y el texto */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+    gap: 20px;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.418);
+    backdrop-filter: blur(5px);
+
 }
 
 .tarjeta:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
     cursor: pointer;
 }
 
 .icono {
-    font-size: 2.5em;
+    font-size: 2.8em;
     min-width: 60px; 
     text-align: center;
+    color: #ccd6f6;
+    transition: color 0.3s ease;
+}
+
+.tarjeta:hover .icono {
+    color: #fff;
 }
 
 .tarjeta h1 {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     margin: 0;
-    text-align: left;
+    color: #ccd6f6;
+    transition: color 0.3s ease;
+}
+
+.tarjeta:hover h1 {
     color: #fff;
 }
 
 .tarjeta p {
     font-size: 0.9rem;
     margin-top: 5px;
-    color: #e0e0e0;
+    color: #8892b0; 
     font-weight: normal; 
-    text-align: left;
+    line-height: 1.5;
 }
 
-/* === COLORES PARA LAS TARJETAS === */
-.tarjeta-azul { background-color: rgba(18, 75, 112, 0.7); }
-.tarjeta-celeste { background-color: rgba(18, 75, 112, 0.7); }
-.tarjeta-verde { background-color: rgba(18, 75, 112, 0.7); }
-.tarjeta-morada { background-color: rgba(18, 75, 112, 0.7); }
-.tarjeta-naranja { background-color: rgba(18, 75, 112, 0.7); } 
-.tarjeta-amarillo { background-color: rgba(18, 75, 112, 0.7); }
-.tarjeta-roja { background-color: rgba(112, 18, 18, 0.7); }
-.tarjeta-purpura { background-color: rgba(18, 75, 112, 0.7); }
-
-/* --- Botón Animado --- */
-.btn-animado {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    height: 40px;
-    padding: 0 25px;
-    border-radius: 10px;
-    background-color: transparent;
-    border: 1px solid #fff;
-    outline: none;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s ease;
-    z-index: 1;
-}
-
-/* --- Botón Animado Reutilizable --- */
-.btn-animado {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    height: 40px;
-    padding: 0 25px;
-    border-radius: 10px;
-    background-color: transparent;
-    border: 1px solid #fff;
-    outline: none;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.4s ease;
-    z-index: 1;
-}
-
-.btn-animado span {
-    color: #fff;
-    font-size: 1rem;
-    font-weight: bold;
-    transition: color 0.3s ease-in;
-}
-
-.btn-animado:hover span {
-    color: #e0aaff;
-    transition-delay: 0.1s;
-}
-
-.btn-animado::before,
-.btn-animado::after {
+/*  COLORES TARJETAS  */
+.tarjeta::after {
     content: '';
     position: absolute;
-    top: 0;
-    width: 0;
-    height: 100%;
-    transform: skew(15deg);
-    transition: all 0.8s;
-    overflow: hidden;
+    inset: 0;
+    border-radius: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
     z-index: -1;
 }
 
-.btn-animado::before {
-    left: -10%;
-    background: #4F4B31;
+.tarjeta:hover::after {
+    opacity: 0.7;
 }
 
-.btn-animado::after {
-    right: -10%;
-    background: #181D1B;
-}
+.tarjeta-purpura:hover .icono { color: #d8b4fe; }
+.tarjeta-purpura:hover::after { background: radial-gradient(circle at top left, #a855f7, transparent 70%); }
 
-.btn-animado:hover::before,
-.btn-animado:hover::after {
-    width: 60%;
-}
+.tarjeta-celeste:hover .icono { color: #7dd3fc; }
+.tarjeta-celeste:hover::after { background: radial-gradient(circle at top left, #0ea5e9, transparent 70%); }
+
+.tarjeta-azul:hover .icono { color: #93c5fd; }
+.tarjeta-azul:hover::after { background: radial-gradient(circle at top left, #3b82f6, transparent 70%); }
+
+.tarjeta-verde:hover .icono { color: #86efac; }
+.tarjeta-verde:hover::after { background: radial-gradient(circle at top left, #22c55e, transparent 70%); }
+
+.tarjeta-amarillo:hover .icono { color: #fde047; }
+.tarjeta-amarillo:hover::after { background: radial-gradient(circle at top left, #eab308, transparent 70%); }
+
+.tarjeta-naranja:hover .icono { color: #fdba74; }
+.tarjeta-naranja:hover::after { background: radial-gradient(circle at top left, #f97316, transparent 70%); }
+
+.tarjeta-roja:hover .icono { color: #fca5a5; }
+.tarjeta-roja:hover::after { background: radial-gradient(circle at top left, #ef4444, transparent 70%); }

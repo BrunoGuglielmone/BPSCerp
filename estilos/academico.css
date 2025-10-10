@@ -1,0 +1,191 @@
+/* ==========================================================================
+   ESTILOS MEJORADOS V3 PARA GESTIÓN ACADÉMICA
+   ========================================================================== */
+
+/* --- Layout Principal --- */
+main { display: flex; gap: 20px; padding: 20px; height: calc(100vh - 125px); }
+
+.carreras-panel, .plan-estudio-panel {
+    background: rgba(10, 25, 47, 0.85); border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px; padding: 20px; display: flex;
+    flex-direction: column; overflow: hidden; backdrop-filter: blur(10px);
+}
+.carreras-panel { flex: 1; min-width: 320px; max-width: 400px; }
+.plan-estudio-panel { flex: 3; overflow-y: auto; }
+
+/* Scrollbar personalizado */
+.plan-estudio-panel::-webkit-scrollbar { width: 8px; }
+.plan-estudio-panel::-webkit-scrollbar-track { background: transparent; }
+.plan-estudio-panel::-webkit-scrollbar-thumb { background: #8892b0; border-radius: 4px; }
+.plan-estudio-panel::-webkit-scrollbar-thumb:hover { background: #64ffda; }
+
+
+/* --- Panel Izquierdo (Orientaciones) --- */
+.carreras-panel h2 {
+    color: #64ffda; margin-top: 0; margin-bottom: 15px; padding-bottom: 10px;
+    border-bottom: 1px solid rgba(100, 255, 218, 0.3);
+}
+#lista-carreras { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex-grow: 1; }
+#lista-carreras li {
+    padding: 15px; margin-bottom: 10px; border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.07);
+    color: #e6f1ff; cursor: pointer; transition: all 0.3s ease;
+    border-left: 5px solid var(--carrera-color, #8892b0);
+    /* MODIFICADO: Añadido para alinear el tag de turno */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+#lista-carreras li:hover { background-color: rgba(100, 255, 218, 0.1); transform: translateX(5px); }
+#lista-carreras li.activa {
+    background-color: var(--carrera-color, #64ffda);
+    color: #0a192f; font-weight: bold; border-color: transparent;
+    box-shadow: 0 0 15px var(--carrera-color, rgba(100, 255, 218, 0.5));
+}
+.carreras-panel .panel-footer { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.2); }
+
+/* --- Panel Derecho (Plan de Estudio) --- */
+#plan-estudio-titulo { display: flex; align-items: center; gap: 15px; color: #ccd6f6; }
+#plan-estudio-placeholder {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; color: #8892b0; text-align: center;
+}
+#plan-estudio-placeholder i { font-size: 4rem; margin-bottom: 20px; }
+.anos-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+.loader { width: 50px; height: 50px; border: 5px solid #334b6e; border-top-color: #64ffda; border-radius: 50%; animation: spin 1s linear infinite; margin: 50px auto; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- Tarjeta de Año Mejorada --- */
+.ano-card {
+    background-color: rgba(0,0,0,0.3); border-radius: 8px;
+    padding: 15px; border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex; flex-direction: column;
+    transition: all 0.3s ease;
+}
+.ano-card:hover { border-color: rgba(100, 255, 218, 0.5); box-shadow: 0 0 20px rgba(100, 255, 218, 0.1); }
+.ano-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #64ffda; padding-bottom: 10px; margin-bottom: 15px;
+}
+.ano-header h3 { margin: 0; color: #64ffda; font-size: 1.2rem; }
+.ano-actions { display: flex; align-items: center; gap: 5px; }
+.ano-actions .btn-icon { font-size: 1.3rem; }
+
+.asignaturas-lista { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+.asignatura-item { 
+    background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 4px; 
+    margin-bottom: 10px; border-left: 3px solid #8892b0;
+}
+.asignatura-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.asignatura-info strong { color: #e6f1ff; }
+.btn-quitar-asignatura { background: none; border: none; color: #8892b0; cursor: pointer; transition: color 0.3s ease; }
+.btn-quitar-asignatura:hover { color: #e34040; }
+.docentes-asignados { margin-bottom: 10px; }
+.docentes-asignados .tag { background: #233554; color: #a8b2d1; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px; }
+.docentes-asignados em { color: #8892b0; font-style: italic; font-size: 0.9em; }
+.no-asignaturas { font-size: 0.9em; color: #8892b0; text-align: center; padding: 20px 0; }
+
+/* --- Estilos de Botones --- */
+.btn {
+    padding: 10px 20px; border: 1px solid transparent; border-radius: 6px;
+    font-weight: bold; font-size: 0.95rem; cursor: pointer;
+    transition: all 0.3s ease; text-decoration: none;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background-color: #64ffda; color: #0a192f; border-color: #64ffda; }
+.btn-primary:hover:not(:disabled) { background-color: #a7ffeb; border-color: #a7ffeb; box-shadow: 0 0 15px rgba(100, 255, 218, 0.4); }
+.btn-secondary { background: transparent; color: #64ffda; border: 1px solid #64ffda; }
+.btn-secondary:hover { background: rgba(100, 255, 218, 0.1); }
+.btn-sm { padding: 5px 10px; font-size: 0.8rem; }
+.btn-icon { background: none; border: none; color: #8892b0; font-size: 1.2rem; cursor: pointer; transition: color 0.3s ease; padding: 5px; }
+.btn-icon:hover { color: #64ffda; }
+.ano-actions .btn-icon:hover { color: #64ffda; }
+.ano-actions .btn-limpiar-ano:hover { color: #e34040; }
+
+/* --- Estilos para Modales --- */
+.modal-overlay {
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px); z-index: 2000;
+    display: none; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.3s ease;
+}
+.modal-overlay.visible { display: flex; opacity: 1; }
+.modal-dialog {
+    background: #0a192f; color: #e6f1ff;
+    padding: 25px 30px; border-radius: 12px; border: 1px solid rgba(100, 255, 218, 0.3);
+    width: 90%; max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transform: scale(0.95); transition: transform 0.3s ease;
+    position: relative; display: flex; flex-direction: column;
+}
+.modal-overlay.visible .modal-dialog { transform: scale(1); }
+.modal-dialog.modal-lg { max-width: 600px; }
+.modal-dialog h3 { margin-top: 0; font-size: 1.5rem; color: #64ffda; margin-bottom: 20px; }
+.modal-dialog .cerrar { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: #8892b0; cursor: pointer; transition: color 0.3s ease; }
+.modal-dialog .cerrar:hover { color: #e6f1ff; }
+.modal-dialog .form-group { margin-bottom: 18px; }
+.modal-dialog label { display: block; margin-bottom: 8px; font-weight: bold; color: #a8b2d1; }
+
+/* MODIFICADO: Estilos unificados para inputs y select */
+.modal-dialog input[type="text"], 
+.modal-dialog input[type="number"],
+.modal-dialog select {
+    width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #233554;
+    background: #112240; color: #e6f1ff; font-size: 1rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+.modal-dialog select {
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364ffda%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 15px top 50%;
+    background-size: .65em auto;
+}
+.modal-dialog select option {
+    background-color: #0a192f;
+}
+.modal-dialog input[type="text"]:focus, 
+.modal-dialog input[type="number"]:focus,
+.modal-dialog select:focus {
+    border-color: #64ffda; outline: none; 
+}
+.modal-dialog input[type="color"] { width: 100%; height: 45px; padding: 5px; border-radius: 6px; }
+
+/* Estilos específicos para Buscadores en Modales */
+.search-container { position: relative; }
+.search-container .fa-search { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #8892b0; }
+.search-container input { padding-left: 40px; }
+.results-list {
+    max-height: 250px; overflow-y: auto; border: 1px solid #233554;
+    border-radius: 6px; background: #112240; margin-top: 10px;
+}
+.results-list.checkbox-list { padding: 10px; }
+.result-item { padding: 12px 15px; cursor: pointer; transition: background-color 0.2s ease; border-bottom: 1px solid #233554; }
+.result-item:last-child { border-bottom: none; }
+.result-item:hover { background-color: rgba(100, 255, 218, 0.1); }
+.checkbox-list label { display: flex; align-items: center; padding: 8px; font-weight: normal; border-radius: 4px; cursor: pointer; transition: background-color 0.2s ease; }
+.checkbox-list label:hover { background-color: rgba(100, 255, 218, 0.1); }
+.checkbox-list input[type="checkbox"] { width: 1.2em; height: 1.2em; margin-right: 12px; cursor: pointer; }
+.empty-state { color: #8892b0; padding: 20px; text-align: center; }
+.instruccion-texto { color: #a8b2d1; margin: 15px 0 5px; }
+.selection-info { background: rgba(100, 255, 218, 0.1); border: 1px solid #64ffda; border-radius: 6px; padding: 10px; margin-top: 15px; }
+.selection-info p { margin: 0; }
+.selection-info strong { color: #64ffda; }
+
+/* AÑADIDO: Estilos para la etiqueta de turno */
+.tag-turno {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    color: #0a192f;
+    flex-shrink: 0; /* Evita que el tag se encoja si el nombre es largo */
+}
+
+.tag-turno.matutino { background-color: #f1c40f; } /* Amarillo Sol */
+.tag-turno.vespertino { background-color: #e67e22; } /* Naranja Atardecer */
+.tag-turno.nocturno { background-color: #3498db; } /* Azul Noche */
