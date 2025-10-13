@@ -24,54 +24,27 @@ document.addEventListener('DOMContentLoaded', () => {
     let docentesData = [];
     const API_URL = '../api/gestionar_docentes.php';
 
-    // --- FUNCIONES PARA MODALES ---
-    const mostrarNotificacion = (titulo, mensaje, tipo = 'alerta') => {
-        notificacionTitulo.textContent = titulo;
-        notificacionMensaje.innerHTML = mensaje; // Usamos innerHTML para posibles <br>
-        modalNotificacion.classList.add('visible');
-        
-        return new Promise(resolve => {
-            if (tipo === 'confirmacion') {
-                notificacionBtnCancelar.style.display = 'inline-flex';
-                notificacionBtnAceptar.textContent = 'Confirmar';
-                
-                notificacionBtnAceptar.onclick = () => {
-                    modalNotificacion.classList.remove('visible');
-                    resolve(true);
-                };
-                notificacionBtnCancelar.onclick = () => {
-                    modalNotificacion.classList.remove('visible');
-                    resolve(false);
-                };
-            } else {
-                notificacionBtnCancelar.style.display = 'none';
-                notificacionBtnAceptar.textContent = 'Aceptar';
-                notificacionBtnAceptar.onclick = () => {
-                    modalNotificacion.classList.remove('visible');
-                    resolve(true);
-                };
-            }
-        });
-    }
+    // --- FUNCIONES ---
 
-    // --- FUNCIONES PRINCIPALES ---
+    const mostrarNotificacion = (message) => alert(message);
+
     const cargarDocentes = async () => {
         try {
             const response = await fetch(API_URL);
             if (!response.ok) throw new Error(`Error de red: ${response.status}`);
             docentesData = await response.json();
             renderizarTabla(docentesData);
-            aplicarFiltros();
+            aplicarFiltros(); // Re-aplica filtros por si había algo escrito
         } catch (error) {
             console.error('Error al cargar los docentes:', error);
-            tbody.innerHTML = `<tr><td colspan="5">Error al cargar los datos. Verifique la consola.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7">Error al cargar los datos. Verifique la consola.</td></tr>`;
         }
     };
 
     const renderizarTabla = (docentes) => {
         tbody.innerHTML = '';
         if (docentes.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5">No se encontraron docentes.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7">No se encontraron docentes con los filtros aplicados.</td></tr>`;
             return;
         }
         docentes.forEach(docente => {
@@ -80,8 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
             fila.innerHTML = `
                 <td><input type="checkbox" class="seleccionar-fila"></td>
                 <td>${docente.nombre} ${docente.apellido}</td>
-                <td>${docente.cedula || 'N/A'}</td>
-                <td>${docente.telefono || 'N/A'}</td>
+                <td>${docente.asignatura_nombre || 'N/A'}</td>
+                <td>${docente.ano_cursado}º Año</td>
+                <td>${docente.carreras_nombres || 'N/A'}</td>
+                <td>C.I: ${docente.cedula || 'N/A'}</td>
                 <td class="acciones-celda">
                     <button class="btn-accion-fila btn-editar" title="Editar"><i class="fa-solid fa-pencil"></i></button>
                     <button class="btn-accion-fila btn-eliminar" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
@@ -98,29 +73,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const docentesFiltrados = docentesData.filter(docente => {
             const nombreCompleto = `${docente.nombre} ${docente.apellido}`.toLowerCase();
+            const otrosDatos = `C.I: ${docente.cedula || ''}`.toLowerCase();
+            
             return (filtros.nombre_completo ? nombreCompleto.includes(filtros.nombre_completo) : true) &&
-                   (filtros.cedula ? (docente.cedula || '').toLowerCase().includes(filtros.cedula) : true) &&
-                   (filtros.telefono ? (docente.telefono || '').toLowerCase().includes(filtros.telefono) : true);
+                   (filtros.asignatura_nombre ? (docente.asignatura_nombre || '').toLowerCase().includes(filtros.asignatura_nombre) : true) &&
+                   (filtros.ano_cursado ? String(docente.ano_cursado).includes(filtros.ano_cursado) : true) &&
+                   (filtros.carreras_nombres ? (docente.carreras_nombres || '').toLowerCase().includes(filtros.carreras_nombres) : true) &&
+                   (filtros.otros_datos ? otrosDatos.includes(filtros.otros_datos) : true);
         });
         renderizarTabla(docentesFiltrados);
     };
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-
-        // --- VALIDACIONES DE CÉDULA ANTES DE ENVIAR ---
-        if (cedulaInput.value.length !== 8) {
-            await mostrarNotificacion('Error de Validación', 'La cédula debe contener exactamente 8 dígitos numéricos.');
-            return;
-        }
-
-        // Si es un nuevo docente (no hay ID), verificar si la cédula ya existe
-        if (!hiddenDocenteId.value) {
-            const cedulaExistente = docentesData.some(doc => doc.cedula === cedulaInput.value);
-            if (cedulaExistente) {
-                await mostrarNotificacion('Error de Duplicidad', `La cédula ${cedulaInput.value} ya se encuentra registrada.`);
-                return;
-            }
+        const response = await fetch(API_URL, { method: 'POST', body: new FormData(form) });
+        const result = await response.json();
+        mostrarNotificacion(result.message);
+        if (result.success) {
+            form.reset();
+            hiddenDocenteId.value = '';
+            if (formContent.classList.contains('abierto')) toggleBtn.click();
+            cargarDocentes();
         }
 
         // Enviar datos
@@ -148,28 +121,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const docente = docentesData.find(d => d.id == id);
         if (!docente) return;
         
-        form.reset();
+        form.reset(); // Limpia el formulario y los checkboxes
         hiddenDocenteId.value = docente.id;
         form.querySelector('#nombre').value = docente.nombre;
         form.querySelector('#apellido').value = docente.apellido;
+        form.querySelector('#asignatura_id').value = docente.asignatura_id;
+        form.querySelector('#ano_cursado').value = docente.ano_cursado;
         form.querySelector('#cedula').value = docente.cedula || '';
         form.querySelector('#telefono').value = docente.telefono || '';
         
         cedulaInput.disabled = true; // Deshabilitar cédula en modo edición
 
+        // Marcar los checkboxes de las carreras correspondientes
+        if (docente.carreras_ids) {
+            const carrerasIds = docente.carreras_ids.split(',');
+            carrerasIds.forEach(carreraId => {
+                const checkbox = form.querySelector(`input[name="carreras[]"][value="${carreraId}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+
         if (!formContent.classList.contains('abierto')) toggleBtn.click();
-        formTitle.textContent = 'Editar Datos del Docente';
-        btnGuardarTexto.textContent = 'Actualizar Docente';
+        form.querySelector('h3').textContent = 'Editar Datos del Docente';
+        form.querySelector('.btn-guardar').textContent = 'Actualizar Docente';
     };
 
     const eliminarDocentes = async (ids) => {
-        if (ids.length === 0) return;
-        const confirmado = await mostrarNotificacion(
-            'Confirmar Eliminación',
-            `¿Está seguro de que desea eliminar ${ids.length} docente(s)? Esta acción no se puede deshacer.`,
-            'confirmacion'
-        );
-        if (!confirmado) return;
+        if (ids.length === 0 || !confirm(`¿Está seguro de eliminar ${ids.length} docente(s)?`)) return;
 
         try {
             const response = await fetch(API_URL, {
@@ -178,10 +156,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ ids })
             });
             const result = await response.json();
-            await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
-            if (result.success) await cargarDocentes();
+            mostrarNotificacion(result.message);
+            if (result.success) cargarDocentes();
         } catch (error) {
-            await mostrarNotificacion('Error de Conexión', 'Ocurrió un error de red al intentar eliminar.');
+            mostrarNotificacion('Ocurrió un error de red al intentar eliminar.', true);
         }
     };
     
@@ -205,13 +183,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- EVENT LISTENERS ---
     form.addEventListener('submit', handleFormSubmit);
+
     filtroInputs.forEach(input => input.addEventListener('input', aplicarFiltros));
     
     btnEliminarSeleccionado.addEventListener('click', () => {
         const ids = Array.from(tbody.querySelectorAll('.seleccionar-fila:checked')).map(cb => cb.closest('tr').dataset.id);
         eliminarDocentes(ids);
     });
-
+    
     btnEditarSeleccionado.addEventListener('click', () => {
         const id = tbody.querySelector('.seleccionar-fila:checked').closest('tr').dataset.id;
         iniciarEdicion(id);
@@ -227,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
             actualizarEstadoBotones();
         }
     });
-
+    
     tbody.addEventListener('click', e => {
         const fila = e.target.closest('tr');
         if (!fila) return;
@@ -237,9 +216,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     toggleBtn.addEventListener('click', () => {
-        // Si el formulario se está abriendo (y no está ya abierto), resetealo.
+        // Si el formulario se va a abrir, nos aseguramos que esté en modo "Registro"
         if (!formContent.classList.contains('abierto')) {
-            resetearFormulario();
+            form.reset();
+            hiddenDocenteId.value = '';
+            form.querySelector('h3').textContent = 'Datos del Docente';
+            form.querySelector('.btn-guardar').textContent = 'Guardar Docente';
         }
     });
 

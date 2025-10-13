@@ -1,45 +1,62 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // === ESTADO DE LA APLICACIÓN ===
-    let horarios = [], salones = [], asignaturas = [], configSemestre = {};
-    let asignacionesDelDia = {};
-    let selectedDate;
-    let celdasSeleccionadas = [];
+// === ESTADO DE LA APLICACIÓN ===
+let horarios = [];
+let salones = [];
+let profesores = [];
+let asignaciones = {};
+let selectedDate;
+let celdasSeleccionadas = [];
+let salonSeleccionado = null;
+let currentYear = new Date().getFullYear();
 
-    // === ELEMENTOS DOM ===
-    const tabla = document.getElementById("tablaHorarios");
-    const tbody = tabla.querySelector("tbody");
-    const fechaInput = document.getElementById("fechaInput");
-    const semanaBotonesContainer = document.getElementById("semana-botones");
-    
-    // Modales de la página
-    const modalAsignacion = document.getElementById("modal-asignacion");
-    const cerrarModalBtn = document.getElementById("cerrarModal");
-    const infoCeldaEl = document.getElementById("info-celda");
-    const asignaturaSelect = document.getElementById("modal-asignatura-select");
-    const docenteSelect = document.getElementById("modal-docente-select");
-    const confirmarAsignacionBtn = document.getElementById("confirmarAsignacionBtn");
+// === ELEMENTOS DOM ===
+const tabla = document.getElementById("tablaHorarios");
+const tbody = tabla.querySelector("tbody");
+const modal = document.getElementById("modal");
+const listaProfesoresDiv = document.getElementById("listaProfesores");
+const cerrarModalBtn = document.getElementById("cerrarModal");
+const confirmarAsignacionBtn = document.getElementById("confirmarAsignacionBtn");
+const filtroAnio = document.getElementById("filtroAnio");
+const filtroAsignatura = document.getElementById("filtroAsignatura");
+const asignarProfesorBtn = document.getElementById("asignarProfesorBtn");
+const exportarCSVBtn = document.getElementById("exportarCSVBtn");
+const fechaInput = document.getElementById("fechaInput");
+const semestreToggle = document.getElementById("semestreToggleInput");
+const asignarSemestreBtn = document.getElementById("asignarSemestreBtn");
 
-    const modalSemestre = document.getElementById("modalSemestre");
-    const cerrarModalSemestreBtn = document.getElementById("cerrarModalSemestre");
-    const guardarFechasSemestreBtn = document.getElementById("guardarFechasSemestreBtn");
-    const configSemestreBtn = document.getElementById("configSemestreBtn");
+// === FUNCIONES DE API ===
 
-    // Modal de Notificación Genérico
-    const modalNotificacion = document.getElementById('modal-notificacion');
-    const notificacionTitulo = document.getElementById('notificacion-titulo');
-    const notificacionMensaje = document.getElementById('notificacion-mensaje');
-    const notificacionBtnAceptar = document.getElementById('notificacion-btn-aceptar');
-    const notificacionBtnCancelar = document.getElementById('notificacion-btn-cancelar');
+async function cargarDatos(fecha) {
+    try {
+        const response = await fetch(`../api/get_datos.php?fecha=${fecha}`);
+        if (!response.ok) throw new Error('Error en la red al cargar datos.');
+        const data = await response.json();
 
-    // Botones de acción
-    const asignarACeldaBtn = document.getElementById("asignarACeldaBtn");
-    const asignarSemestreBtn = document.getElementById("asignarSemestreBtn");
-    
-    // === APIs ===
-    const API_GET_DATOS = '../api/get_datos.php';
-    const API_ASIGNACIONES = '../api/manejar_asignaciones.php';
-    const API_ACADEMICO = '../api/gestionar_academico.php';
-    const API_CONFIG = '../api/manejar_configuracion.php';
+        salones = data.salones || [];
+        horarios = data.horarios || [];
+        profesores = data.docentes || [];
+
+        asignaciones = {};
+        asignaciones[fecha] = data.asignaciones || {};
+
+        renderTabla();
+    } catch (error) {
+        console.error("Error al cargar datos iniciales:", error);
+        alert("No se pudieron cargar los datos del servidor. Revise la consola.");
+        const thead = tabla.querySelector("thead tr");
+        thead.innerHTML = "<th>Error</th>";
+        tbody.innerHTML = `<tr><td>No se pudieron cargar los datos. Verifique la conexión y la consola de errores (F12).</td></tr>`;
+    }
+}
+
+async function manejarAsignacionAPI(payload) {
+    try {
+        const response = await fetch('../api/manejar_asignaciones.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error('Error en la red al guardar.');
+        const result = await response.json();
 
     // === FUNCIÓN PARA MODALES ===
     const mostrarNotificacion = (titulo, mensaje, tipo = 'alerta') => {
@@ -76,115 +93,41 @@ document.addEventListener('DOMContentLoaded', () => {
             throw error;
         }
     }
+}
 
-    // === LÓGICA DE INICIALIZACIÓN Y CARGA DE DATOS ===
-    async function init() {
-        try {
-            configSemestre = await fetchJSON(API_CONFIG) || {};
-            const hoy = new Date();
-            if (hoy.getDay() === 0) hoy.setDate(hoy.getDate() + 1);
-            actualizarVistaPorFecha(toYYYYMMDD(hoy));
-        } catch (error) {
-            console.error("No se pudo inicializar el salonario.");
-        }
+// === LÓGICA DE RENDERIZADO Y EVENTOS ===
+
+function renderTabla() {
+    const thead = tabla.querySelector("thead tr");
+
+    if (!selectedDate) {
+        thead.innerHTML = "<th>Aviso</th>";
+        tbody.innerHTML = '<tr><td>Por favor, seleccione una fecha para ver los horarios.</td></tr>';
+        return;
     }
-
-    async function cargarDatosDelDia(fecha) {
-        try {
-            const data = await fetchJSON(`${API_GET_DATOS}?fecha=${fecha}`);
-            salones = data.salones || [];
-            horarios = data.horarios || [];
-            asignaturas = data.asignaturas || [];
-            asignacionesDelDia = data.asignaciones || {};
-            renderTabla();
-        } catch (error) {
-            tbody.innerHTML = `<tr><td colspan="${(horarios.length || 1) + 1}">No se pudieron cargar los datos del día.</td></tr>`;
-        }
-    }
-
-    // === RENDERIZADO Y MANEJO DE LA TABLA ===
-    function renderTabla() {
-        const thead = tabla.querySelector("thead tr");
-        thead.innerHTML = "<th>Salón</th>" + horarios.map(h => `<th>${h.hora}</th>`).join("");
-        tbody.innerHTML = "";
     
-        salones.forEach(salon => {
-            const fila = document.createElement("tr");
-            fila.dataset.salonId = salon.id;
-            const celdasHorario = horarios.map(hora => {
-                const key = `${salon.id}-${hora.id}`;
-                const asignacion = asignacionesDelDia[key];
-                if (asignacion) {
-                    const anoHtml = asignacion.ano_cursado ? `<div class="ano-cursado">${asignacion.ano_cursado}º Año</div>` : '';
-                    return `<td class="ocupado" data-salon-id="${salon.id}" data-horario-id="${hora.id}">
-                                <span class="btn-quitar" title="Quitar asignación">×</span>
-                                <div class="asignatura-nombre">${asignacion.asignatura_nombre}</div>
-                                <div class="docente-nombre">${asignacion.docente_nombre}</div>
-                                ${anoHtml}
-                            </td>`;
-                } else {
-                    return `<td class="libre" data-salon-id="${salon.id}" data-horario-id="${hora.id}"><span class="plus">+</span></td>`;
-                }
-            }).join("");
-            fila.innerHTML = `<td>${salon.nombre}</td>${celdasHorario}`;
-            tbody.appendChild(fila);
-        });
-        attachEventosCeldas();
+    if (salones.length === 0 || horarios.length === 0) {
+        thead.innerHTML = "<th>Aviso</th>";
+        tbody.innerHTML = '<tr><td>No hay salones u horarios registrados en el sistema. Por favor, agréguelos desde el panel de administración para poder continuar.</td></tr>';
+        return;
     }
 
-    function attachEventosCeldas() {
-        tbody.querySelectorAll("td[data-salon-id]").forEach(td => {
-            if (td.classList.contains('libre')) {
-                td.onclick = () => manejarSeleccionCelda(td);
-            } else {
-                td.querySelector('.btn-quitar')?.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    quitarAsignacion(td);
-                });
-            }
-        });
-    }
-
-    function manejarSeleccionCelda(td) {
-        td.classList.toggle("seleccionado");
-        const key = `${td.dataset.salonId}-${td.dataset.horarioId}`;
-        const index = celdasSeleccionadas.indexOf(key);
-        if (index > -1) celdasSeleccionadas.splice(index, 1);
-        else celdasSeleccionadas.push(key);
-        asignarACeldaBtn.disabled = celdasSeleccionadas.length === 0;
-    }
-
-    // === LÓGICA DE MODALES ===
-    function abrirModal(modal) { modal.classList.add('visible'); }
-    function cerrarModalElem(modal) { modal.classList.remove('visible'); }
-
-    function abrirModalAsignacion() {
-        if (celdasSeleccionadas.length === 0) return;
-        const [salonId, horarioId] = celdasSeleccionadas[0].split('-');
-        const salonNombre = salones.find(s => s.id == salonId)?.nombre || 'Desconocido';
-        const horarioNombre = horarios.find(h => h.id == horarioId)?.hora || 'Desconocido';
-        infoCeldaEl.textContent = `${salonNombre} - ${horarioNombre}` + (celdasSeleccionadas.length > 1 ? ` (+${celdasSeleccionadas.length - 1} más)` : '');
-        asignaturaSelect.innerHTML = '<option value="">-- Elija una asignatura --</option>' + asignaturas.map(a => `<option value="${a.id}">${a.nombre}</option>`).join('');
-        docenteSelect.innerHTML = '<option value="">-- Esperando asignatura --</option>';
-        docenteSelect.disabled = true;
-        confirmarAsignacionBtn.disabled = true;
-        abrirModal(modalAsignacion);
-    }
-
-    async function cargarDocentesParaAsignatura(asignaturaId) {
-        docenteSelect.innerHTML = '<option value="">Cargando...</option>';
-        docenteSelect.disabled = true;
-        confirmarAsignacionBtn.disabled = true;
-        if (!asignaturaId) {
-            docenteSelect.innerHTML = '<option value="">-- Esperando asignatura --</option>';
-            return;
-        }
-        try {
-            const docentes = await fetchJSON(`${API_ACADEMICO}?accion=listar_docentes_por_asignatura&asignatura_id=${asignaturaId}`);
-            docenteSelect.innerHTML = '<option value="">-- Seleccione un docente --</option>';
-            if (docentes.length > 0) {
-                docenteSelect.innerHTML += docentes.map(d => `<option value="${d.id}">${d.nombre_completo}</option>`).join('');
-                docenteSelect.disabled = false;
+    const asignacionesDelDia = asignaciones[selectedDate] || {};
+    thead.innerHTML = "<th>Salón</th>" + horarios.map(h => `<th>${h.hora}:00</th>`).join("");
+    tbody.innerHTML = "";
+    
+    salones.forEach(salon => {
+        const fila = document.createElement("tr");
+        const celdasHorario = horarios.map(hora => {
+            const key = `${salon.id}-${hora.id}`;
+            const asignacion = asignacionesDelDia[key];
+            if (asignacion) {
+                return `<td class="ocupado" data-salon-id="${salon.id}" data-horario-id="${hora.id}">
+                            <span class="btn-quitar" title="Quitar asignación">×</span>
+                            <div>${asignacion.nombre}</div>
+                            <div>${asignacion.asignatura}</div>
+                            <div>${asignacion.anio}º Año</div>
+                        </td>`;
             } else {
                 docenteSelect.innerHTML = '<option value="">No hay docentes habilitados</option>';
             }
@@ -302,12 +245,114 @@ document.addEventListener('DOMContentLoaded', () => {
     // === LÓGICA DE FECHAS Y SEMANA ===
     function toYYYYMMDD(date) { return date.toISOString().split('T')[0]; }
 
-    function actualizarVistaPorFecha(fechaStr) {
-        if (!fechaStr || fechaStr === selectedDate) return;
-        selectedDate = fechaStr;
-        fechaInput.value = selectedDate;
-        actualizarBotonesSemana(new Date(fechaStr + 'T12:00:00'));
-        cargarDatosDelDia(selectedDate);
+// === NUEVA LÓGICA PARA SEMESTRES Y RESTRICCIONES DE FECHA ===
+
+function actualizarRestriccionesYFecha() {
+    const esSegundoSemestre = semestreToggle.checked;
+    
+    const primerSemestreMax = `${currentYear}-07-27`;
+    const segundoSemestreMin = `${currentYear}-07-28`;
+
+    if (esSegundoSemestre) {
+        fechaInput.min = segundoSemestreMin;
+        fechaInput.max = ''; 
+        if (fechaInput.value < segundoSemestreMin) {
+            fechaInput.value = segundoSemestreMin;
+        }
+    } else { // Primer semestre
+        fechaInput.min = '';
+        fechaInput.max = primerSemestreMax;
+        if (fechaInput.value > primerSemestreMax) {
+            fechaInput.value = primerSemestreMax;
+        }
+    }
+    // evento de cambio para recargar la tabla con la fecha potencialmente ajustada
+    fechaInput.dispatchEvent(new Event('change'));
+}
+
+// === FUNCIÓN PARA ASIGNAR A TODO EL SEMESTRE ===
+asignarSemestreBtn.onclick = async () => {
+    const asignacionesDelDia = asignaciones[selectedDate];
+    if (!asignacionesDelDia || Object.keys(asignacionesDelDia).length === 0) {
+        return alert("No hay ninguna asignación en la fecha seleccionada para copiar.");
+    }
+
+    const esSegundoSemestre = semestreToggle.checked;
+    const semestreTexto = esSegundoSemestre ? "segundo" : "primer";
+    const diaSemana = new Date(selectedDate + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long' });
+
+    const confirmacion = confirm(
+        `Esto copiará TODAS las asignaciones del día ${selectedDate} (${diaSemana}) a todos los ${diaSemana}s correspondientes del ${semestreTexto} semestre.\n\n¿Estás seguro de que deseas continuar? Esta acción es irreversible.`
+    );
+
+    if (!confirmacion) return;
+    
+    alert("Iniciando asignación masiva. Este proceso puede tardar un momento. Se te notificará al finalizar.");
+
+    const payload = {
+        accion: 'guardar_semestre',
+        fecha_base: selectedDate,
+        semestre: esSegundoSemestre ? 2 : 1
+    };
+
+    const exito = await manejarAsignacionAPI(payload);
+
+    if (exito) {
+        alert("¡Éxito! Todas las asignaciones se han copiado al semestre completo.");
+        cargarDatos(selectedDate);
+    } else {
+        alert("Ocurrió un error durante la asignación masiva. Revisa la consola para más detalles.");
+    }
+};
+
+// === EVENT LISTENERS y FUNCIONES AUXILIARES ===
+document.addEventListener('DOMContentLoaded', () => {
+    const hoy = new Date();
+    // La fecha de corte es el 28 de Julio (mes 6 en JS)
+    semestreToggle.checked = hoy >= new Date(currentYear, 6, 28);
+
+    selectedDate = toYYYYMMDD(hoy);
+    fechaInput.value = selectedDate;
+
+    // 1. Aplicamos las restricciones de fecha (min/max) al cargar.
+    const esSegundoSemestre = semestreToggle.checked;
+    if (esSegundoSemestre) {
+        fechaInput.min = `${currentYear}-07-28`;
+        fechaInput.max = '';
+    } else {
+        fechaInput.min = '';
+        fechaInput.max = `${currentYear}-07-27`;
+    }
+
+    // 2. Cargamos los datos para la fecha de hoy.
+    cargarDatos(selectedDate);
+});
+
+fechaInput.addEventListener("change", () => {
+    selectedDate = fechaInput.value;
+    cargarDatos(selectedDate);
+});
+
+// Listener para el nuevo interruptor de semestre
+semestreToggle.addEventListener('change', actualizarRestriccionesYFecha);
+
+
+function toYYYYMMDD(date) { return date.toISOString().split('T')[0]; }
+
+function limpiarSeleccion() {
+    tbody.querySelectorAll("td.seleccionado").forEach(td => td.classList.remove("seleccionado"));
+    celdasSeleccionadas = [];
+    salonSeleccionado = null;
+    asignarProfesorBtn.disabled = true;
+}
+
+function renderListaProfesores() {
+    const filtrados = filtrarProfesores();
+    listaProfesoresDiv.innerHTML = "";
+    if (filtrados.length === 0) {
+        listaProfesoresDiv.innerHTML = "<em>No hay docentes que coincidan con el filtro.</em>";
+        confirmarAsignacionBtn.disabled = true;
+        return;
     }
 
     function actualizarBotonesSemana(fechaDeReferencia) {
@@ -347,6 +392,22 @@ document.addEventListener('DOMContentLoaded', () => {
              if (e.target.id === 'modal-asignacion') cerrarModalAsignacion();
         }
     });
-    
-    init();
-});
+}
+
+function filtrarProfesores() {
+    const anioF = filtroAnio.value;
+    const asignaturaF = filtroAsignatura.value.trim().toLowerCase();
+    return profesores.filter(p => 
+        (anioF === "" || p.ano_cursado == anioF) && 
+        (asignaturaF === "" || p.asignatura.toLowerCase().includes(asignaturaF))
+    );
+}
+
+function abrirModal() { renderListaProfesores(); modal.style.display = "flex"; confirmarAsignacionBtn.disabled = true; }
+function cerrarModal() { modal.style.display = "none"; limpiarSeleccion(); }
+
+filtroAnio.onchange = renderListaProfesores;
+filtroAsignatura.oninput = renderListaProfesores;
+cerrarModalBtn.onclick = cerrarModal;
+window.onclick = e => { if (e.target === modal) cerrarModal(); };
+asignarProfesorBtn.onclick = () => { if (celdasSeleccionadas.length > 0) abrirModal(); };

@@ -29,8 +29,10 @@ include_once("../Php/header.php");
 <body>
     <div class="fondo-transparente" aria-hidden="true"></div>
 
+    <!-- ===== INICIO DEL CAMBIO IMPORTANTE ===== -->
     <main>
         <section>
+            <!-- El formulario ahora apunta a "procesar_login.php" y usa el método POST -->
             <form action="../api/procesar_login.php" method="POST">
                 <div class="titulo-con-logo">
                     <img src="../imagenes/logo_cerp_3d.png" alt="Logo de Salones CerP 2025" class="logo-cabecera">

@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // === SELECTORES DE ELEMENTOS ===
     const form = document.getElementById('registro-salon-form');
     const tbody = document.querySelector('#tabla-salones tbody');
-    const filtroInputs = document.querySelectorAll('.filtro-input');
+    const filtroInputs = document.querySelectorAll('.filtro-input'); // NUEVO: Selector de filtros
     const seleccionarTodosCheckbox = document.getElementById('seleccionar-todos');
     const btnEliminarSeleccionado = document.querySelector('.btn-eliminar-seleccionado');
     const btnEditarSeleccionado = document.querySelector('.btn-editar-seleccionado');
@@ -20,39 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const notificacionBtnCancelar = document.getElementById('notificacion-btn-cancelar');
     
     let salonesData = [];
+
     const API_URL = '../api/gestionar_salones.php';
 
-    // === FUNCIÓN PARA MODALES ===
-    const mostrarNotificacion = (titulo, mensaje, tipo = 'alerta') => {
-        notificacionTitulo.textContent = titulo;
-        notificacionMensaje.innerHTML = mensaje;
-        modalNotificacion.classList.add('visible');
-        
-        return new Promise(resolve => {
-            if (tipo === 'confirmacion') {
-                notificacionBtnCancelar.style.display = 'inline-flex';
-                notificacionBtnAceptar.textContent = 'Confirmar';
-                
-                notificacionBtnAceptar.onclick = () => {
-                    modalNotificacion.classList.remove('visible');
-                    resolve(true);
-                };
-                notificacionBtnCancelar.onclick = () => {
-                    modalNotificacion.classList.remove('visible');
-                    resolve(false);
-                };
-            } else {
-                notificacionBtnCancelar.style.display = 'none';
-                notificacionBtnAceptar.textContent = 'Aceptar';
-                notificacionBtnAceptar.onclick = () => {
-                    modalNotificacion.classList.remove('visible');
-                    resolve(true);
-                };
-            }
-        });
-    }
+    const mostrarNotificacion = (message, isError = false) => alert(message);
 
-    // === FUNCIONES PRINCIPALES ===
     const cargarSalones = async () => {
         try {
             const response = await fetch(API_URL);
@@ -67,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderizarTabla = (salones) => {
+        // Limpiamos solo el cuerpo, no los filtros de la cabecera
         tbody.innerHTML = ''; 
         if (salones.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5">No se encontraron salones.</td></tr>`;
@@ -88,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // NUEVO: Función central para aplicar todos los filtros
     const aplicarFiltros = () => {
         const filtros = {};
         filtroInputs.forEach(input => {
@@ -97,19 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const salonesFiltrados = salonesData.filter(salon => {
             return Object.keys(filtros).every(columna => {
                 const valorFiltro = filtros[columna];
-                if (!valorFiltro) return true;
+                if (!valorFiltro) return true; // Si el filtro está vacío, no se aplica
+
+                // Asegurarse de que el valor del salón exista y convertirlo a string
                 const valorSalon = salon[columna] ? String(salon[columna]).toLowerCase() : '';
+                
                 return valorSalon.includes(valorFiltro);
             });
         });
         renderizarTabla(salonesFiltrados);
-    };
-
-    const resetearFormulario = () => {
-        form.reset();
-        hiddenSalonId.value = '';
-        formTitle.textContent = 'Datos del Salón';
-        btnGuardarTexto.textContent = 'Guardar Salón';
     };
 
     const handleFormSubmit = async (e) => {
@@ -146,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hiddenSalonId.value = salon.id;
         form.querySelector('#nombre').value = salon.nombre;
         form.querySelector('#capacidad').value = salon.capacidad;
+        // CAMBIO: Asignar valor al select
         form.querySelector('#tipo').value = salon.tipo || '';
         
         if (!formContent.classList.contains('abierto')) toggleBtn.click();
@@ -190,9 +161,10 @@ document.addEventListener('DOMContentLoaded', () => {
         btnEditarSeleccionado.disabled = seleccionados !== 1;
     };
     
-    // === LISTENERS DE EVENTOS ===
+    // --- Listeners de eventos ---
     form.addEventListener('submit', handleFormSubmit);
 
+    // NUEVO: Listener para todos los inputs de filtro
     filtroInputs.forEach(input => {
         input.addEventListener('input', aplicarFiltros);
     });

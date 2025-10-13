@@ -23,7 +23,7 @@ body {
   
   /* Propiedades de fondo consolidadas */
   background: url('../imagenes/fondocerp.jpeg') center/cover repeat;
-  position: relative; 
+  position: relative; /* Necesario para el pseudo-elemento de filtro */
 }
 
 /* Capa de filtro blur sobre el fondo */
@@ -104,14 +104,14 @@ main {
 }
 
 .footer-contacto a:hover {
-  color: #1da1f2; 
+  color: #1da1f2; /* Color específico para Twitter/X, considera usar un color genérico */
 }
 
 /* ============================================= */
 /* ==   COMPONENTES REUTILIZABLES (BOTONES)   == */
 /* ============================================= */
 
-/* Estilo para el botón de menú */
+/* Estilo para el botón de menú (si es único) */
 .menu-button {
   height: 40px;
   padding: 0 20px;
@@ -146,7 +146,7 @@ main {
   color: #e0aaff;
 }
 
-/* elementos para el efecto de barrido */
+/* Pseudo-elementos para el efecto de barrido */
 .btn-animado::before,
 .btn-animado::after {
   content: '';
@@ -155,7 +155,7 @@ main {
   width: 0;
   height: 100%;
   transform: skew(15deg);
-  transition: width 0.8s;
+  transition: width 0.8s; /* Simplificada la transición */
   z-index: -1;
 }
 

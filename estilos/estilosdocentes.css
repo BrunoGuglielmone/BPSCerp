@@ -1,8 +1,8 @@
 /* ==========================================================================
-   ESTILOS MEJORADOS PARA LA PÁGINA DE DOCENTES
+   ESTILOS PARA LA PÁGINA DE DOCENTES (CON ESTILO UNIFICADO)
    ========================================================================== */
 
-/* --- Layout Principal --- */
+/* --- Contenedor Principal (Layout General) --- */
 .main-container {
     display: flex;
     flex: 1;
@@ -11,24 +11,24 @@
     flex-direction: row;
 }
 
-/* --- Panel del Formulario --- */
+/* --- Lado del Formulario --- */
 .formulario-container {
-    flex: 1;
-    min-width: 320px;
-    align-self: flex-start;
-    background: rgba(10, 25, 47, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
+    flex: 1; /* Ocupa 1 parte del espacio */
+    min-width: 320px; /* Ancho mínimo para mantener la forma */
+    align-self: flex-start; /* Se alinea arriba */
+    background-color: rgba(0, 25, 51, 0.4);
+    border-radius: 8px;
     padding: 20px;
-    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Botón para desplegar el formulario */
 .toggle-form-btn {
     width: 100%;
-    padding: 12px 20px;
-    background-color: transparent;
-    color: #64ffda;
-    border: 1px solid #64ffda;
+    padding: 12px;
+    background-color: rgba(0, 86, 179, 0.5);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 6px;
     cursor: pointer;
     font-size: 1rem;
@@ -41,9 +41,10 @@
 }
 
 .toggle-form-btn:hover {
-    background-color: rgba(100, 255, 218, 0.1);
+    background-color: rgba(0, 68, 148, 0.9);
 }
 
+/* Contenido del formulario (colapsable) */
 .formulario-content {
     max-height: 0;
     overflow: hidden;
@@ -51,12 +52,12 @@
 }
 
 .formulario-content.abierto {
-    max-height: 1000px;
-    margin-top: 20px;
+    max-height: 1000px; /* Altura suficiente para el contenido */
+    margin-top: 15px;
 }
 
 .input-group {
-    margin-bottom: 18px;
+    margin-bottom: 15px;
 }
 
 .input-group label {
@@ -68,24 +69,18 @@
 
 .input-group input {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #233554;
-    border-radius: 6px;
-    background: #112240;
-    color: #e6f1ff;
-    font-size: 1rem;
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+    background: transparent;
+    color: #fff;
+    font-size: 0.9rem;
     outline: none;
-    transition: border-color 0.3s ease;
+    box-sizing: border-box;
 }
 
-.input-group input:focus {
-    border-color: #64ffda;
-}
-
-.input-group input:disabled {
-    background-color: #233554;
-    cursor: not-allowed;
-    opacity: 0.7;
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .btn-guardar {
@@ -98,7 +93,7 @@
     cursor: pointer;
     font-size: 1rem;
     font-weight: bold;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
     margin-top: 10px;
 }
 
@@ -107,19 +102,19 @@
     box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
 }
 
-/* --- Panel de la Lista de Docentes --- */
+/* --- Lado de la Lista/Tabla de Docentes --- */
 .lista-container {
-    flex: 3;
+    flex: 3; /* Ocupa 3 partes del espacio, es más grande */
     display: flex;
     flex-direction: column;
-    background: rgba(10, 25, 47, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
+    background-color: rgba(0, 25, 51, 0.4);
+    border-radius: 8px;
     padding: 20px;
-    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     min-width: 0;
 }
 
+/* Barra de herramientas (Búsqueda y Acciones) */
 .toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -131,124 +126,180 @@
     border-bottom: 1px solid rgba(100, 255, 218, 0.3);
 }
 
-.toolbar h3 {
-    color: #64ffda;
+.search-bar {
+    position: relative;
+}
+
+.search-bar i { /* Para un ícono de lupa, si lo agregas en el HTML */
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.search-bar input {
+    padding: 10px 15px 10px 40px; /* Espacio para el ícono a la izquierda */
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background: transparent;
+    color: #fff;
+    min-width: 250px;
+}
+
+.search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .actions .btn-accion {
     padding: 8px 15px;
-    border: 1px solid #8892b0;
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 6px;
     background-color: transparent;
-    color: #8892b0;
+    color: #fff;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    transition: background-color 0.3s ease;
 }
 
-.actions .btn-accion:not(:disabled):hover {
+.actions .btn-accion:hover {
     background-color: rgba(255, 255, 255, 0.1);
-    color: #e6f1ff;
-    border-color: #e6f1ff;
-}
-.actions .btn-accion:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
-/* --- Tabla --- */
+/* Contenedor para que la tabla sea responsive en horizontal */
 .tabla-responsive {
-    overflow-x: auto;
+    overflow-x: hidden; 
+    
 }
 
 #tabla-docentes {
     width: 100%;
     border-collapse: collapse;
-    color: #e6f1ff;
+    color: #fff; /* Texto blanco para que contraste con el fondo oscuro */
+    
 }
 
 #tabla-docentes th,
 #tabla-docentes td {
+    max-width: 150px;
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    white-space: nowrap;
+    white-space: nowrap; /* Evita que el texto de las celdas se parta */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Añade "..." si el texto es muy largo */
+    vertical-align: sub;
 }
 
 #tabla-docentes thead {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.1); /* Fondo sutil para la cabecera */
+}
+
+#tabla-docentes th a {
+    text-decoration: none;
+    color: #fff; /* Color de los enlaces en la cabecera */
+    font-weight: bold;
+}
+
+#tabla-docentes tbody tr {
+    transition: background-color 0.2s ease;
 }
 
 #tabla-docentes tbody tr:hover {
-    background-color: rgba(100, 255, 218, 0.08);
+    background-color: rgba(255, 255, 255, 0.15); /* Resalta la fila al pasar el mouse */
 }
 
-/* --- NUEVO: Estilos para los filtros de la tabla --- */
-.filtros-fila input.filtro-input {
-    width: 100%;
-    padding: 8px 10px;
-    background-color: #112240;
-    border: 1px solid #233554;
-    border-radius: 4px;
-    color: #e6f1ff;
-    font-size: 0.9rem;
-}
-.filtros-fila input.filtro-input::placeholder {
-    color: #8892b0;
-}
-.filtros-fila input.filtro-input:focus {
-    outline: none;
-    border-color: #64ffda;
-}
-.filtros-fila th {
-    padding: 8px;
-}
-
-
+/* Celda para botones de editar/eliminar en la tabla */
 .acciones-celda {
     display: flex;
     gap: 10px;
 }
 
 .btn-accion-fila {
-    background: none; border: none; cursor: pointer;
-    font-size: 1.1rem; color: #8892b0; transition: color 0.2s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #ddd;
+    transition: color 0.2s ease;
 }
-.btn-accion-fila.btn-editar:hover { color: #64ffda; }
-.btn-accion-fila.btn-eliminar:hover { color: #e34040; }
 
-
-/* --- NUEVO: Estilos para Modales --- */
-.modal-overlay {
-    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px); z-index: 2000;
-    display: none; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.3s ease;
+.btn-accion-fila.btn-editar:hover {
+    color: #58a6ff; /* Azul para editar */
 }
-.modal-overlay.visible { display: flex; opacity: 1; }
-.modal-dialog {
-    background: #0a192f; color: #e6f1ff;
-    padding: 30px; border-radius: 12px; border: 1px solid rgba(100, 255, 218, 0.3);
-    width: 90%; max-width: 450px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    text-align: center;
-    transform: scale(0.95); transition: transform 0.3s ease;
-}
-.modal-overlay.visible .modal-dialog { transform: scale(1); }
-.modal-dialog h3 { margin-top: 0; font-size: 1.5rem; color: #64ffda; }
-.modal-dialog p { margin: 15px 0 25px 0; font-size: 1rem; color: #a8b2d1; line-height: 1.6; }
-.modal-actions { display: flex; gap: 15px; justify-content: center; }
-.modal-actions .btn { min-width: 120px; }
-.btn-primary { background-color: #64ffda; color: #0a192f; border-color: #64ffda; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.btn-secondary { background-color: #8892b0; color: #0a192f; border-color: #8892b0; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
-/* --- Media Queries --- */
+.btn-accion-fila.btn-eliminar:hover {
+    color: #ff7b72; /* Rojo para eliminar */
+}
+
+/* --- Media Queries para Diseño Responsivo --- */
 @media (max-width: 992px) {
-    .main-container { flex-direction: column; align-items: center; }
-    .formulario-container, .lista-container { width: 100%; max-width: 700px; }
+    .main-container {
+        flex-direction: column; /* Apila los contenedores verticalmente */
+        align-items: center;
+    }
+    .formulario-container,
+    .lista-container {
+        width: 100%;
+        max-width: 700px; /* Limita el ancho en pantallas medianas */
+    }
 }
+
 @media (max-width: 576px) {
-    .toolbar { flex-direction: column; align-items: stretch; }
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch; /* Estira los elementos de la barra de herramientas */
+    }
+}
+
+
+/* ... (Todos tus estilos anteriores) ... */
+
+/* === NUEVO: Estilos para el select personalizado === */
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+    background: transparent;
+    color: #fff;
+    font-size: 0.9rem;
+    outline: none;
+    box-sizing: border-box;
+    /* Quitar apariencia nativa */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* Flecha personalizada */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: .65em auto;
+    padding-right: 30px; /* Espacio para la flecha */
+}
+.input-group select option {
+    background-color: #0a192f;
+    color: #fff;
+}
+
+/* === NUEVO: Estilos para el grupo de checkboxes de carreras === */
+.checkbox-group {
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 10px;
+    background-color: rgba(0,0,0,0.2);
+}
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.checkbox-item input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+.checkbox-item label {
+    margin-bottom: 0;
+    font-weight: normal;
 }

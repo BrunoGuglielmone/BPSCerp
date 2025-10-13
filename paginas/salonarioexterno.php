@@ -1,98 +1,66 @@
 <?php
-// =================================================================
-// CÓDIGO FINAL CORREGIDO - SIN a.id Y CON GROUP BY CORRECTO
-// =================================================================
-
-// 1. INCLUDES Y CONFIGURACIÓN INICIAL
+// 1. INCLUIMOS LA CONEXIÓN Y OBTENEMOS LOS DATOS PARA LOS FILTROS
 include_once __DIR__ . "/../api/conexion.php";
-include_once __DIR__ . "/../api/verificar_sesion.php";
 header_remove('Content-Type');
 
-// 2. OBTENCIÓN DE DATOS PARA LOS MENÚS DE FILTROS
+// --- Obtenemos los datos para poblar los desplegables de los filtros ---
 $salones_list = $conn->query("SELECT id, nombre FROM salones ORDER BY id ASC")->fetch_all(MYSQLI_ASSOC);
-$anios_list_res = $conn->query("SELECT DISTINCT ano_cursado FROM carrera_asignatura WHERE ano_cursado IS NOT NULL ORDER BY ano_cursado ASC");
+$anios_list_res = $conn->query("SELECT DISTINCT ano_cursado FROM docentes WHERE ano_cursado IS NOT NULL ORDER BY ano_cursado ASC");
 $anios_list = $anios_list_res->fetch_all(MYSQLI_ASSOC);
-$horarios_res = $conn->query("SELECT id, hora FROM horarios ORDER BY id ASC");
-$horarios = $horarios_res->fetch_all(MYSQLI_ASSOC);
-$carreras_list = $conn->query("SELECT id, nombre FROM carreras ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
 
-// 3. MANEJO DE PARÁMETROS DE ENTRADA (FILTROS)
-$view = $_GET['view'] ?? 'diario';
-$filtro_fecha = $_GET['fecha'] ?? date("Y-m-d");
+// 2. MANEJO DE FILTROS DESDE LA URL (GET)
+$filtro_fecha = $_GET['fecha'] ?? date("Y-m-d"); // Default: hoy
 $filtro_salon = $_GET['salon_id'] ?? '';
 $filtro_anio = $_GET['ano_cursado'] ?? '';
+$filtro_asignatura = $_GET['asignatura'] ?? '';
 $filtro_semestre = $_GET['semestre'] ?? '';
-$filtro_carrera = $_GET['carrera_id'] ?? '';
 
-// Preparamos los parámetros para los enlaces de cambio de vista
-$get_params = $_GET;
-unset($get_params['view']);
-$query_string_filtros = http_build_query($get_params);
+// 3. CONSTRUCCIÓN DE LA CONSULTA SQL DINÁMICA (CORREGIDA)
+$sql = "SELECT a.salon_id, a.horario_id, d.ano_cursado,
+               CONCAT(d.nombre, ' ', d.apellido) AS docente, 
+               asig.nombre AS asignatura_nombre -- CORREGIDO: Seleccionamos el nombre desde la tabla 'asignaturas'
+        FROM asignaciones a
+        JOIN docentes d ON a.docente_id = d.id
+        LEFT JOIN asignaturas asig ON d.asignatura_id = asig.id -- CORREGIDO: Nos unimos a la tabla 'asignaturas'
+        WHERE a.fecha = ?";
+$params = ["s", $filtro_fecha];
 
-// 4. LÓDICA DE CONSULTA A LA BASE DE DATOS
-$asignaciones_filtradas = [];
-$fecha_lunes = null;
-
-$joins_carrera = "LEFT JOIN carrera_asignatura ca ON a.asignatura_id = ca.asignatura_id
-                  LEFT JOIN carreras c ON ca.carrera_id = c.id";
-
-if ($view === 'semanal') {
-    $fecha_base = new DateTime($filtro_fecha);
-    $dia_semana_num = $fecha_base->format('N');
-    $fecha_lunes = clone $fecha_base;
-    $fecha_lunes->modify('-' . ($dia_semana_num - 1) . ' days');
-    $fecha_sabado = clone $fecha_lunes;
-    $fecha_sabado->modify('+5 days');
-
-    // CORREGIDO: Se quitó 'a.id' del SELECT
-    $sql = "SELECT a.salon_id, a.horario_id, a.fecha, CONCAT(d.nombre, ' ', d.apellido) AS docente, asig.nombre AS asignatura_nombre, ca.ano_cursado, s.nombre AS salon_nombre
-            FROM asignaciones a
-            JOIN docentes d ON a.docente_id = d.id
-            JOIN asignaturas asig ON a.asignatura_id = asig.id
-            JOIN salones s ON a.salon_id = s.id
-            $joins_carrera
-            WHERE a.fecha BETWEEN ? AND ?";
-    $params = ["ss", $fecha_lunes->format('Y-m-d'), $fecha_sabado->format('Y-m-d')];
-} else { // Vista Diaria
-    // CORREGIDO: Se quitó 'a.id' del SELECT
-    $sql = "SELECT a.salon_id, a.horario_id, CONCAT(d.nombre, ' ', d.apellido) AS docente, asig.nombre AS asignatura_nombre, ca.ano_cursado
-            FROM asignaciones a
-            JOIN docentes d ON a.docente_id = d.id
-            JOIN asignaturas asig ON a.asignatura_id = asig.id
-            $joins_carrera
-            WHERE a.fecha = ?";
-    $params = ["s", $filtro_fecha];
+if (!empty($filtro_salon)) {
+    $sql .= " AND a.salon_id = ?";
+    $params[0] .= "i";
+    $params[] = $filtro_salon;
+}
+if (!empty($filtro_anio)) {
+    $sql .= " AND d.ano_cursado = ?";
+    $params[0] .= "i";
+    $params[] = $filtro_anio;
+}
+if (!empty($filtro_asignatura)) {
+    // CORREGIDO: El filtro de asignatura ahora busca en la tabla de asignaturas
+    $sql .= " AND asig.nombre LIKE ?";
+    $params[0] .= "s";
+    $params[] = "%" . $filtro_asignatura . "%";
 }
 
-// Aplicar filtros adicionales a la consulta
-if (!empty($filtro_salon) && $view === 'diario') { $sql .= " AND a.salon_id = ?"; $params[0] .= "i"; $params[] = $filtro_salon; }
-if (!empty($filtro_anio)) { $sql .= " AND ca.ano_cursado = ?"; $params[0] .= "i"; $params[] = $filtro_anio; }
-if (!empty($filtro_carrera)) { $sql .= " AND c.id = ?"; $params[0] .= "i"; $params[] = $filtro_carrera; }
-
-// CORREGIDO: Se usa el GROUP BY correcto con la clave primaria compuesta
-$sql .= " GROUP BY a.fecha, a.salon_id, a.horario_id";
-
-// 5. EJECUCIÓN Y PROCESAMIENTO DE RESULTADOS
 $stmt = $conn->prepare($sql);
 if ($stmt) {
     $stmt->bind_param(...$params);
     $stmt->execute();
     $result = $stmt->get_result();
+    $asignaciones_filtradas = [];
     while ($row = $result->fetch_assoc()) {
-        if ($view === 'semanal') {
-            $key = $row['fecha'] . '-' . $row['horario_id'];
-            $contenido_celda = '<div>' . htmlspecialchars($row['asignatura_nombre']) . ' (' . htmlspecialchars($row['ano_cursado'] ?? '?') . '°)</div>' . 
-                               '<div>' . htmlspecialchars($row['docente']) . '</div>' .
-                               '<div><i class="fa-solid fa-person-shelter" style="opacity: 0.8; margin-right: 5px;"></i>' . htmlspecialchars($row['salon_nombre']) . '</div>';
-        } else { // Vista diaria
-            $key = $row['salon_id'] . '-' . $row['horario_id'];
-            $contenido_celda = '<div>' . htmlspecialchars($row['asignatura_nombre']) . ' (' . htmlspecialchars($row['ano_cursado'] ?? '?') . '°)</div>' . 
-                               '<div>' . htmlspecialchars($row['docente']) . '</div>';
-        }
-        $asignaciones_filtradas[$key][] = $contenido_celda;
+        // CORREGIDO: Usamos la nueva columna 'asignatura_nombre'
+        $asignaciones_filtradas[$row['salon_id']][$row['horario_id']] = '<div>' . htmlspecialchars($row['docente']) . '</div><div>' . htmlspecialchars($row['asignatura_nombre']) . ' (' . htmlspecialchars($row['ano_cursado']) . '°)</div>';
     }
     $stmt->close();
+} else {
+    die("Error en la consulta de asignaciones: " . $conn->error);
 }
+
+// --- Obtenemos todos los horarios (sin cambios) ---
+$horarios_res = $conn->query("SELECT id, hora FROM horarios ORDER BY FIELD(hora, 7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,0)");
+$horarios = $horarios_res->fetch_all(MYSQLI_ASSOC);
+
 $conn->close();
 ?>
 <!DOCTYPE html>
@@ -114,51 +82,88 @@ $conn->close();
         </div>
     </header>
 
+    <header class="page-header">
+        <div class="logo-container">
+            <img src="../imagenes/logo_cerp_3d.png" alt="Logo CERP">
+        </div>
+        <div class="header-controls">
+            <span id="reloj" class="reloj"></span>
+            <a href="../paginas/menuinteractivo.php" class="menu-button btn-animado">
+                <span>Volver</span>
+            </a>
+        </div>
+    </header>
+
     <main class="main-container">
         <form class="filters-container" method="GET" action="salonarioexterno.php">
-            <input type="hidden" name="view" value="<?php echo htmlspecialchars($view); ?>">
-            <div class="filter-group"><label for="fecha">Fecha:</label><input type="date" id="fecha" name="fecha" value="<?php echo htmlspecialchars($filtro_fecha); ?>"></div>
-            <div class="filter-group"><label for="semestre">Semestre:</label><select id="semestre" name="semestre"><option value="" <?php echo ($filtro_semestre == '') ? 'selected' : ''; ?>>Ambos</option><option value="1" <?php echo ($filtro_semestre == '1') ? 'selected' : ''; ?>>1er Semestre</option><option value="2" <?php echo ($filtro_semestre == '2') ? 'selected' : ''; ?>>2do Semestre</option></select></div>
-            <?php if ($view === 'diario'): ?>
-            <div class="filter-group"><label for="salon_id">Salón:</label><select id="salon_id" name="salon_id"><option value="">Todos</option><?php foreach ($salones_list as $salon): ?><option value="<?php echo $salon['id']; ?>" <?php echo ($filtro_salon == $salon['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($salon['nombre']); ?></option><?php endforeach; ?></select></div>
-            <?php endif; ?>
-            <div class="filter-group"><label for="ano_cursado">Año:</label><select id="ano_cursado" name="ano_cursado"><option value="">Todos</option><?php foreach ($anios_list as $anio): ?><option value="<?php echo $anio['ano_cursado']; ?>" <?php echo ($filtro_anio == $anio['ano_cursado']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($anio['ano_cursado']); ?>°</option><?php endforeach; ?></select></div>
-            
             <div class="filter-group">
-                <label for="carrera_id">Carrera / Orientación:</label>
-                <select id="carrera_id" name="carrera_id">
-                    <option value="">Todas</option>
-                    <?php foreach ($carreras_list as $carrera): ?>
-                        <option value="<?php echo $carrera['id']; ?>" <?php echo ($filtro_carrera == $carrera['id']) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($carrera['nombre']); ?>
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" name="fecha" value="<?php echo htmlspecialchars($filtro_fecha); ?>">
+            </div>
+            <div class="filter-group">
+                <label for="semestre">Semestre:</label>
+                <select id="semestre" name="semestre">
+                    <option value="" <?php echo ($filtro_semestre == '') ? 'selected' : ''; ?>>Ambos</option>
+                    <option value="1" <?php echo ($filtro_semestre == '1') ? 'selected' : ''; ?>>1er Semestre</option>
+                    <option value="2" <?php echo ($filtro_semestre == '2') ? 'selected' : ''; ?>>2do Semestre</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="salon_id">Salón:</label>
+                <select id="salon_id" name="salon_id">
+                    <option value="">Todos</option>
+                    <?php foreach ($salones_list as $salon): ?>
+                        <option value="<?php echo $salon['id']; ?>" <?php echo ($filtro_salon == $salon['id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($salon['nombre']); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
             </div>
-            
-            <div class="filter-actions"><button type="submit" class="filter-button">Filtrar</button><a href="salonarioexterno.php?view=<?php echo $view; ?>" class="filter-button clear">Limpiar</a></div>
+            <div class="filter-group">
+                <label for="ano_cursado">Año:</label>
+                <select id="ano_cursado" name="ano_cursado">
+                    <option value="">Todos</option>
+                     <?php foreach ($anios_list as $anio): ?>
+                        <option value="<?php echo $anio['ano_cursado']; ?>" <?php echo ($filtro_anio == $anio['ano_cursado']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($anio['ano_cursado']); ?>°
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="asignatura">Asignatura:</label>
+                <input type="text" id="asignatura" name="asignatura" placeholder="Buscar..." value="<?php echo htmlspecialchars($filtro_asignatura); ?>">
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="filter-button">Filtrar</button>
+                <a href="salonarioexterno.php" class="filter-button clear">Limpiar</a>
+            </div>
         </form>
 
-        <div class="view-switcher">
-            <a href="?view=diario&<?php echo $query_string_filtros; ?>" class="<?php echo ($view === 'diario') ? 'active' : ''; ?>">Vista Diaria</a>
-            <a href="?view=semanal&<?php echo $query_string_filtros; ?>" class="<?php echo ($view === 'semanal') ? 'active' : ''; ?>">Vista Semanal</a>
-            <?php if ($view === 'semanal'): ?>
-                <button type="button" id="downloadPdfBtn" class="download-button" title="Descargar horario semanal en PDF"><i class="fa-solid fa-download"></i></button>
-            <?php endif; ?>
-        </div>
-
         <section id="horarios" class="scroll-container">
-            <?php if ($view === 'diario'): ?>
-                <table id="tablaAulas">
-                    <thead><tr><th>Salón</th><?php foreach ($horarios as $hora): ?><th><?php echo htmlspecialchars($hora['hora']); ?></th><?php endforeach; ?></tr></thead>
-                    <tbody>
+            <table id="tablaAulas">
+                <thead>
+                    <tr>
+                        <th>Salón</th>
+                        <?php foreach ($horarios as $hora): ?>
+                            <th><?php echo htmlspecialchars($hora['hora']) . ':00'; ?></th>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($salones_list)): ?>
+                        <tr><td colspan="<?php echo count($horarios) + 1; ?>">No hay salones para mostrar.</td></tr>
+                    <?php else: ?>
                         <?php foreach ($salones_list as $salon): ?>
-                            <tr><td><?php echo htmlspecialchars($salon['nombre']); ?></td>
-                                <?php foreach ($horarios as $hora): 
-                                    $key = $salon['id'] . '-' . $hora['id'];
-                                    $contenido = isset($asignaciones_filtradas[$key]) ? implode('<hr>', $asignaciones_filtradas[$key]) : '';
-                                ?>
-                                    <td class="<?php echo $contenido ? 'ocupado' : 'libre'; ?>"><?php echo $contenido; ?></td>
+                            <tr>
+                                <td><?php echo htmlspecialchars($salon['nombre']); ?></td>
+                                <?php foreach ($horarios as $hora): ?>
+                                    <?php
+                                    $esOcupado = isset($asignaciones_filtradas[$salon['id']][$hora['id']]);
+                                    $clase_css = $esOcupado ? 'ocupado' : 'libre';
+                                    $contenido = $esOcupado ? $asignaciones_filtradas[$salon['id']][$hora['id']] : '';
+                                    ?>
+                                    <td class="<?php echo $clase_css; ?>"><?php echo $contenido; ?></td>
                                 <?php endforeach; ?>
                             </tr>
                         <?php endforeach; ?>
@@ -200,7 +205,6 @@ $conn->close();
     </main>
 
     <script>
-        const activeView = "<?php echo $view; ?>";
         const horasDB = <?php echo json_encode(array_column($horarios, 'hora')); ?>;
         const fechaMostrada = "<?php echo $filtro_fecha; ?>";
         const fechaHoy = "<?php echo date("Y-m-d"); ?>";

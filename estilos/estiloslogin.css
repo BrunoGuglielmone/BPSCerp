@@ -6,10 +6,11 @@
 }
 
 /* --- ESTRUCTURA PRINCIPAL Y FONDO --- */
+/* Unificamos las reglas del body en un solo lugar */
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; 
+    min-height: 100vh; /* Clave: El body ocupa como mínimo el 100% de la altura de la pantalla */
     background-image: url('../imagenes/fondocerp.jpeg');
     background-repeat: repeat;
     background-position: center;
@@ -18,7 +19,7 @@ body {
     font-size: 0.7rem;
 }
 
-
+/* Clave: El main crece para ocupar el espacio disponible, empujando el footer hacia abajo */
 main {
     flex: 1;
 }
@@ -59,9 +60,10 @@ main {
 
 
 /* --- VENTANA DE LOGIN (SECTION) --- */
+/* Unificamos todas las reglas de 'section' en una sola para evitar conflictos */
 section {
     /* Layout y Posicionamiento */
-    position: relative; 
+    position: relative; /* Necesario para el pseudo-elemento ::before */
     z-index: 1;
     display: flex;
     justify-content: center;
@@ -99,7 +101,7 @@ section::before {
     background: rgba(0, 25, 51, 0.3);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border-radius: 12px; 
+    border-radius: 12px; /* Hereda el border-radius del contenedor si es necesario */
 }
 
 
@@ -132,7 +134,7 @@ h1 {
 .inputbox {
     position: relative;
     margin: 30px 0;
-    width: 310px; /* Ancho fijo para alinear con el botón */
+    width: 310px; /* Usamos width en vez de max-width para consistencia */
     border-bottom: 2px solid #fff;
 }
 
@@ -173,8 +175,8 @@ input:valid ~ label {
 }
 
 .forget {
-    margin: -15px 0 30px; 
-    font-size: 0.9rem; 
+    margin: -15px 0 30px; /* Ajustamos el margen */
+    font-size: 0.9rem; /* Ligeramente más pequeño */
     color: #fff;
     display: flex;
     justify-content: center;
@@ -203,21 +205,21 @@ a:hover {
 
 /* --- BOTÓN DE LOGIN --- */
 .button {
-    width: 100%; 
-    height: 45px; 
-    border: 1px solid rgba(255, 255, 255, 0.5); 
-    border-radius: 6px; 
-    background-color: rgba(0, 86, 179, 0.5); 
+    width: 100%; /* Mantenemos el ancho completo para el formulario */
+    height: 45px; /* Una altura cómoda y definida */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Estilo de borde de 'volver' */
+    border-radius: 6px; /* Bordes menos redondeados, como en 'volver' */
+    background-color: rgba(0, 86, 179, 0.5); /* Color de fondo azulado de 'volver' */
     color: #fff;
     cursor: pointer;
     font-size: 1rem;
     font-weight: bold;
-    transition: background-color 0.3s ease; 
-    outline: none; 
+    transition: background-color 0.3s ease; /* Transición suave de 'volver' */
+    outline: none; /* Buena práctica quitar el outline por defecto si hay hover */
 }
 
 .button:hover {
-    background-color: rgba(0, 68, 148, 0.9); /* Efecto hover de 'volver' */
+    background-color: rgba(0, 68, 148, 0.9); /* Efecto hover de 'volver', sin sombra */
 }
 
 
@@ -231,8 +233,8 @@ a:hover {
     border-top: 1px solid rgba(255, 255, 255, 0.3);
     padding: 15px 20px;
     color: #fff;
-    overflow: hidden; 
-    flex-shrink: 0; 
+    overflow: hidden; /* Para que el ::before no se salga */
+    flex-shrink: 0; /* Clave: Evita que el footer se encoja */
 }
 
 .footer-info {
@@ -242,7 +244,7 @@ a:hover {
 
 .footer-contacto {
     display: flex;
-    gap: 15px; 
+    gap: 15px; /* Espacio entre iconos de redes sociales */
 }
 
 .footer-contacto a {
@@ -252,5 +254,5 @@ a:hover {
 }
 
 .footer-contacto a:hover {
-    color: #1da1f2; 
+    color: #1da1f2; /* Color de Twitter/X como ejemplo */
 }

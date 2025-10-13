@@ -1,8 +1,37 @@
 /* ==========================================================================
-   ESTILOS UNIFICADOS PARA LA PÁGINA DE SALONES
+   ESTILOS PARA LA PÁGINA DE SALONES (CON ESTILO DE DOCENTES)
    ========================================================================== */
 
-/* --- Layout Principal --- */
+/* --- Estilos Globales y Fondo --- */
+html, body {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: url('../imagenes/fondocerp.jpeg') center/cover repeat fixed;
+    color: #fff;
+    font-size: 1rem;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    backdrop-filter: blur(7px);
+    z-index: -1;
+}
+
+main {
+    flex: 1;
+}
+
+/* --- Contenedor Principal  --- */
 .main-container {
     display: flex;
     flex: 1;
@@ -16,32 +45,27 @@
     flex: 1;
     min-width: 320px;
     align-self: flex-start;
-    background: rgba(10, 25, 47, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
+    background-color: rgba(0, 25, 51, 0.4);
+    border-radius: 8px;
     padding: 20px;
-    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .toggle-form-btn {
     width: 100%;
-    padding: 12px 20px;
-    background-color: transparent;
-    color: #64ffda;
-    border: 1px solid #64ffda;
+    padding: 12px;
+    background-color: rgba(0, 86, 179, 0.5);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 6px;
     cursor: pointer;
     font-size: 1rem;
-    font-weight: bold;
     text-align: left;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    transition: background-color 0.3s ease;
 }
 
 .toggle-form-btn:hover {
-    background-color: rgba(100, 255, 218, 0.1);
+    background-color: rgba(0, 68, 148, 0.9);
 }
 
 .formulario-content {
@@ -52,82 +76,77 @@
 
 .formulario-content.abierto {
     max-height: 1000px;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .input-group {
-    margin-bottom: 18px;
+    margin-bottom: 15px;
 }
 
 .input-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     font-weight: bold;
-    color: #a8b2d1;
 }
 
+/* Estilos unificados para input y select en el formulario */
 .input-group input,
 .input-group select {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #233554;
-    border-radius: 6px;
-    background: #112240;
-    color: #e6f1ff;
-    font-size: 1rem;
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+    background: transparent;
+    color: #fff;
+    font-size: 0.9rem;
     outline: none;
-    transition: border-color 0.3s ease;
-}
-
-.input-group select {
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     appearance: none;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364ffda%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
-    background-repeat: no-repeat;
-    background-position: right 15px top 50%;
-    background-size: .7em auto;
 }
 
-.input-group option {
+/* Estilos para las opciones del select */
+.input-group select option {
     background-color: #0a192f;
+    color: #fff;
 }
 
-.input-group input:focus,
-.input-group select:focus {
-    border-color: #64ffda;
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .btn-guardar {
     width: 100%;
     padding: 12px;
-    background-color: #64ffda;
-    color: #0a192f;
-    border: 1px solid #64ffda;
+    background-color: rgba(40, 167, 69, 0.7);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 6px;
     cursor: pointer;
     font-size: 1rem;
     font-weight: bold;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
     margin-top: 10px;
 }
 
 .btn-guardar:hover {
-    background-color: #a7ffeb;
-    box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
+    background-color: rgba(33, 136, 56, 0.9);
 }
 
 /* --- Panel de la Lista --- */
 .lista-container {
     flex: 3;
+    min-width: 320px;
     display: flex;
     flex-direction: column;
-    background: rgba(10, 25, 47, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
+    background-color: rgba(0, 25, 51, 0.4);
+    border-radius: 8px;
     padding: 20px;
-    backdrop-filter: blur(10px);
-    min-width: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Barra de herramientas simplificada */
 .toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -135,46 +154,36 @@
     align-items: center;
     gap: 15px;
     margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(100, 255, 218, 0.3);
-}
-
-.toolbar h3 {
-    color: #64ffda;
 }
 
 .actions .btn-accion {
     padding: 8px 15px;
-    border: 1px solid #8892b0;
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 6px;
     background-color: transparent;
-    color: #8892b0;
+    color: #fff;
     cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    transition: background-color 0.3s ease;
 }
 
-.actions .btn-accion:not(:disabled):hover {
+.actions .btn-accion:hover:not(:disabled) {
     background-color: rgba(255, 255, 255, 0.1);
-    color: #e6f1ff;
-    border-color: #e6f1ff;
 }
+
 .actions .btn-accion:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-/* --- Tabla --- */
 .tabla-responsive {
     overflow-x: auto;
 }
 
 #tabla-salones {
     width: 100%;
+    white-space: nowrap;
     border-collapse: collapse;
-    color: #e6f1ff;
+    color: #fff;
 }
 
 #tabla-salones th,
@@ -182,37 +191,41 @@
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    white-space: nowrap;
+    vertical-align: middle;
 }
 
 #tabla-salones thead {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* NUEVO: Fila de filtros */
+.filtros-fila th {
+    padding: 8px 15px;
+}
+
+.filtro-input {
+    width: 100%;
+    padding: 6px 8px;
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.filtro-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+.filtro-input option {
+    background-color: #0a192f;
+}
+
+#tabla-salones tbody tr {
+    transition: background-color 0.2s ease;
 }
 
 #tabla-salones tbody tr:hover {
-    background-color: rgba(100, 255, 218, 0.08);
-}
-
-.filtros-fila input.filtro-input,
-.filtros-fila select.filtro-input {
-    width: 100%;
-    padding: 8px 10px;
-    background-color: #112240;
-    border: 1px solid #233554;
-    border-radius: 4px;
-    color: #e6f1ff;
-    font-size: 0.9rem;
-}
-.filtros-fila input.filtro-input::placeholder {
-    color: #8892b0;
-}
-.filtros-fila input.filtro-input:focus,
-.filtros-fila select.filtro-input:focus {
-    outline: none;
-    border-color: #64ffda;
-}
-.filtros-fila th {
-    padding: 8px;
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
 .acciones-celda {
@@ -221,42 +234,69 @@
 }
 
 .btn-accion-fila {
-    background: none; border: none; cursor: pointer;
-    font-size: 1.1rem; color: #8892b0; transition: color 0.2s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #ddd;
+    transition: color 0.2s ease;
 }
-.btn-accion-fila.btn-editar:hover { color: #64ffda; }
-.btn-accion-fila.btn-eliminar:hover { color: #e34040; }
+
+.btn-accion-fila.btn-editar:hover {
+    color: #58a6ff;
+}
+
+.btn-accion-fila.btn-eliminar:hover {
+    color: #ff7b72;
+}
 
 
-/* --- Estilos para Modales --- */
-.modal-overlay {
-    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px); z-index: 2000;
-    display: none; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.3s ease;
-}
-.modal-overlay.visible { display: flex; opacity: 1; }
-.modal-dialog {
-    background: #0a192f; color: #e6f1ff;
-    padding: 30px; border-radius: 12px; border: 1px solid rgba(100, 255, 218, 0.3);
-    width: 90%; max-width: 450px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    text-align: center;
-    transform: scale(0.95); transition: transform 0.3s ease;
-}
-.modal-overlay.visible .modal-dialog { transform: scale(1); }
-.modal-dialog h3 { margin-top: 0; font-size: 1.5rem; color: #64ffda; }
-.modal-dialog p { margin: 15px 0 25px 0; font-size: 1rem; color: #a8b2d1; line-height: 1.6; }
-.modal-actions { display: flex; gap: 15px; justify-content: center; }
-.modal-actions .btn { min-width: 120px; }
-.btn-primary { background-color: #64ffda; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.btn-secondary { background-color: #8892b0; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-
-/* --- Media Queries --- */
+/* --- Media Queries para Diseño Responsivo --- */
 @media (max-width: 992px) {
-    .main-container { flex-direction: column; align-items: center; }
-    .formulario-container, .lista-container { width: 100%; max-width: 700px; }
+    .main-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    .formulario-container,
+    .lista-container {
+        width: 100%;
+        max-width: 700px;
+    }
 }
+
 @media (max-width: 576px) {
-    .toolbar { flex-direction: column; align-items: stretch; }
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* --- Estilos para el Pie de Página --- */
+.footer-docentes {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: rgba(0, 25, 51, 0.7);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 20px;
+    color: #fff;
+    flex-wrap: wrap;
+    width: 100%;
+    font-size: 0.8rem;
+}
+
+.footer-info {
+    max-width: 60%;
+    font-size: 0.8rem;
+}
+
+.footer-contacto a {
+    margin-left: 10px;
+    color: #fff;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.footer-contacto a:hover {
+    color: #1da1f2;
 }

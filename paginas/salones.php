@@ -33,7 +33,7 @@ include_once("../Php/header.php");
                     </div>
                     <div class="input-group">
                         <label for="tipo">Tipo de Salón</label>
-                        <select id="tipo" name="tipo" required>
+                        <select id="tipo" name="tipo">
                             <option value="">Seleccione un tipo...</option>
                             <option value="Común">Común</option>
                             <option value="Sala informática">Sala informática</option>
