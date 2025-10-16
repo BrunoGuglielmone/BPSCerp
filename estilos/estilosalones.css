@@ -31,7 +31,7 @@ main {
     flex: 1;
 }
 
-/* --- Contenedor Principal (Layout General) --- */
+/* --- Contenedor Principal  --- */
 .main-container {
     display: flex;
     flex: 1;
@@ -40,7 +40,7 @@ main {
     flex-direction: row;
 }
 
-/* --- Lado del Formulario --- */
+/* --- Panel del Formulario --- */
 .formulario-container {
     flex: 1;
     min-width: 320px;
@@ -134,7 +134,7 @@ main {
     background-color: rgba(33, 136, 56, 0.9);
 }
 
-/* --- Lado de la Lista/Tabla --- */
+/* --- Panel de la Lista --- */
 .lista-container {
     flex: 3;
     min-width: 320px;

@@ -1,8 +1,6 @@
 <?php
-// Incluir el archivo de conexión
+// api/manejar_asignaciones.php
 include 'conexion.php';
-
-// Establecer la cabecera para devolver respuestas en formato JSON
 header('Content-Type: application/json; charset=utf-8');
 
 // Leer los datos JSON enviados desde el frontend
@@ -67,7 +65,6 @@ if ($accion === 'guardar') {
         http_response_code(500);
         echo json_encode(['error' => true, 'mensaje' => 'Error al eliminar la asignación: ' . $stmt->error]);
     }
-    $stmt->close();
 
 } elseif ($accion === 'guardar_semestre') {
     // --- NUEVA LÓGICA PARA ASIGNACIÓN MASIVA POR SEMESTRE ---
@@ -169,6 +166,5 @@ if ($accion === 'guardar') {
     echo json_encode(['error' => true, 'mensaje' => 'Acción no reconocida.']);
 }
 
-// Cerrar la conexión
 $conn->close();
 ?>

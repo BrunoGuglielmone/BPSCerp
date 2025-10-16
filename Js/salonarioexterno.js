@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("No se encontraron los elementos necesarios para el script.");
         return;
     }
+    setInterval(actualizarReloj, 1000);
+    actualizarReloj();
     
     let autoScrollInterval;
 
@@ -51,9 +53,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentHour = new Date().getHours();
         const index = horasDB.findIndex(h => parseInt(h) === currentHour);
 
-        if (index > -1) {
-            const headerCells = tabla.querySelector("thead tr").cells;
-            const targetCell = headerCells[index + 1];
+        function scrollToCurrentHour() {
+            if (typeof horasDB === 'undefined' || horasDB.length === 0 || fechaMostrada !== fechaHoy) return;
+            
+            const now = new Date();
+            const currentTime = now.getHours() + (now.getMinutes() / 60);
+            
+            let closestIndex = -1;
+            let smallestDiff = Infinity;
 
             if (targetCell) {
                 // Desplazamiento
@@ -73,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // --- NUEVO DESPLAZAMIENTO HORIZONTAL (SE DETIENE AL FINAL) ---
+    // ---  DESPLAZAMIENTO HORIZONTAL ---
     function startAutoScrollHorizontal() {
         clearInterval(autoScrollInterval);
         autoScrollInterval = setInterval(() => {

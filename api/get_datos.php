@@ -1,5 +1,5 @@
 <?php
-// Incluir el archivo de conexión a la base de datos
+// api/get_datos.php
 include 'conexion.php';
 
 // Establecer la cabera para devolver respuestas en formato JSON
@@ -73,12 +73,6 @@ while ($row = $resultAsignaciones->fetch_assoc()) {
         'anio'       => $row['anio']
     ];
 }
-$response['asignaciones'] = $asignacionesHoy;
 
-// Devolver todos los datos como un único objeto JSON
-echo json_encode($response);
-
-// Cerrar la conexión
-$stmt->close();
 $conn->close();
 ?>

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Selectores de elementos
+    // === SELECTORES DE ELEMENTOS ===
     const form = document.getElementById('registro-salon-form');
     const tbody = document.querySelector('#tabla-salones tbody');
     const filtroInputs = document.querySelectorAll('.filtro-input'); // NUEVO: Selector de filtros
@@ -9,6 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const hiddenSalonId = document.getElementById('salon_id');
     const formContent = document.querySelector('.formulario-content');
     const toggleBtn = document.querySelector('.toggle-form-btn');
+    const formTitle = document.getElementById('form-title');
+    const btnGuardarTexto = document.getElementById('btn-guardar-texto');
+
+    // === SELECTORES PARA MODALES ===
+    const modalNotificacion = document.getElementById('modal-notificacion');
+    const notificacionTitulo = document.getElementById('notificacion-titulo');
+    const notificacionMensaje = document.getElementById('notificacion-mensaje');
+    const notificacionBtnAceptar = document.getElementById('notificacion-btn-aceptar');
+    const notificacionBtnCancelar = document.getElementById('notificacion-btn-cancelar');
     
     let salonesData = [];
 
@@ -22,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(`Error de red: ${response.status}`);
             salonesData = await response.json();
             renderizarTabla(salonesData);
+            aplicarFiltros();
         } catch (error) {
             console.error('Error al cargar los salones:', error);
             tbody.innerHTML = `<tr><td colspan="5">Error al cargar los datos.</td></tr>`;
@@ -75,39 +85,60 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
+
+        // Validar que se haya seleccionado un tipo
+        if (!formData.get('tipo')) {
+            await mostrarNotificacion('Campo Requerido', 'Por favor, seleccione un tipo de salón.');
+            return;
+        }
+
         try {
             const response = await fetch(API_URL, { method: 'POST', body: formData });
             const result = await response.json();
+            
+            await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
+
             if (result.success) {
-                form.reset();
-                hiddenSalonId.value = '';
+                resetearFormulario();
                 if (formContent.classList.contains('abierto')) toggleBtn.click();
-                mostrarNotificacion(result.message);
-                cargarSalones();
-            } else {
-                mostrarNotificacion(result.message, true);
+                await cargarSalones();
             }
         } catch (error) {
-            mostrarNotificacion('Ocurrió un error de red.', true);
+            await mostrarNotificacion('Error de Conexión', 'Ocurrió un error de red. No se pudo guardar el salón.');
         }
     };
 
     const iniciarEdicion = (id) => {
         const salon = salonesData.find(s => s.id == id);
         if (!salon) return;
+        
+        resetearFormulario();
         hiddenSalonId.value = salon.id;
         form.querySelector('#nombre').value = salon.nombre;
         form.querySelector('#capacidad').value = salon.capacidad;
         // CAMBIO: Asignar valor al select
         form.querySelector('#tipo').value = salon.tipo || '';
+        
         if (!formContent.classList.contains('abierto')) toggleBtn.click();
-        form.querySelector('h3').textContent = 'Editar Datos del Salón';
-        form.querySelector('.btn-guardar').textContent = 'Actualizar Salón';
+        
+        formTitle.textContent = 'Editar Datos del Salón';
+        btnGuardarTexto.textContent = 'Actualizar Salón';
     };
 
     const eliminarSalones = async (ids) => {
-        if (ids.length === 0) return mostrarNotificacion('Seleccione al menos un salón.');
-        if (!confirm(`¿Seguro que quiere eliminar ${ids.length} salón(es)?`)) return;
+        if (ids.length === 0) {
+            await mostrarNotificacion('Advertencia', 'Por favor, seleccione al menos un salón para eliminar.');
+            return;
+        }
+
+        const confirmado = await mostrarNotificacion(
+            'Confirmar Eliminación',
+            `¿Está seguro de que desea eliminar ${ids.length} salón(es)?`,
+            'confirmacion'
+        );
+
+        if (!confirmado) return;
+
         try {
             const response = await fetch(API_URL, {
                 method: 'DELETE',
@@ -115,14 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ ids })
             });
             const result = await response.json();
+            await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
             if (result.success) {
-                mostrarNotificacion(result.message);
-                cargarSalones();
-            } else {
-                mostrarNotificacion(result.message, true);
+                await cargarSalones();
             }
         } catch (error) {
-            mostrarNotificacion('Ocurrió un error de red.', true);
+            await mostrarNotificacion('Error de Conexión', 'Ocurrió un error de red al intentar eliminar.');
         }
     };
 
@@ -169,11 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     toggleBtn.addEventListener('click', () => {
-        if (formContent.classList.contains('abierto')) {
-            form.reset();
-            hiddenSalonId.value = '';
-            form.querySelector('h3').textContent = 'Datos del Salón';
-            form.querySelector('.btn-guardar').textContent = 'Guardar Salón';
+        if (!formContent.classList.contains('abierto')) {
+            resetearFormulario();
         }
     });
 

@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const hiddenDocenteId = document.getElementById('docente_id');
     const formContent = document.querySelector('.formulario-content');
     const toggleBtn = document.querySelector('.toggle-form-btn');
+    const cedulaInput = document.getElementById('cedula');
+    const telefonoInput = document.getElementById('telefono');
+    const formTitle = document.getElementById('form-title');
+    const btnGuardarTexto = document.getElementById('btn-guardar-texto');
+
+    // Selectores para Modales de Notificación
+    const modalNotificacion = document.getElementById('modal-notificacion');
+    const notificacionTitulo = document.getElementById('notificacion-titulo');
+    const notificacionMensaje = document.getElementById('notificacion-mensaje');
+    const notificacionBtnAceptar = document.getElementById('notificacion-btn-aceptar');
+    const notificacionBtnCancelar = document.getElementById('notificacion-btn-cancelar');
     
     let docentesData = [];
     const API_URL = '../api/gestionar_docentes.php';
@@ -84,6 +95,26 @@ document.addEventListener('DOMContentLoaded', () => {
             if (formContent.classList.contains('abierto')) toggleBtn.click();
             cargarDocentes();
         }
+
+        // Enviar datos
+        const response = await fetch(API_URL, { method: 'POST', body: new FormData(form) });
+        const result = await response.json();
+        
+        await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
+
+        if (response.ok && result.success) {
+            resetearFormulario();
+            if (formContent.classList.contains('abierto')) toggleBtn.click();
+            await cargarDocentes();
+        }
+    };
+    
+    const resetearFormulario = () => {
+        form.reset();
+        hiddenDocenteId.value = '';
+        cedulaInput.disabled = false; // Re-habilitar la cédula
+        formTitle.textContent = 'Datos del Docente';
+        btnGuardarTexto.textContent = 'Guardar Docente';
     };
 
     const iniciarEdicion = (id) => {
@@ -98,6 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
         form.querySelector('#ano_cursado').value = docente.ano_cursado;
         form.querySelector('#cedula').value = docente.cedula || '';
         form.querySelector('#telefono').value = docente.telefono || '';
+        
+        cedulaInput.disabled = true; // Deshabilitar cédula en modo edición
 
         // Marcar los checkboxes de las carreras correspondientes
         if (docente.carreras_ids) {
@@ -136,8 +169,19 @@ document.addEventListener('DOMContentLoaded', () => {
         btnEditarSeleccionado.disabled = seleccionados !== 1;
     };
 
-    // --- EVENT LISTENERS ---
+    // --- VALIDACIONES DE INPUT EN TIEMPO REAL ---
+    const limitarInputNumerico = (e, maxLength) => {
+        let value = e.target.value.replace(/[^0-9]/g, '');
+        if (value.length > maxLength) {
+            value = value.slice(0, maxLength);
+        }
+        e.target.value = value;
+    };
 
+    cedulaInput.addEventListener('input', (e) => limitarInputNumerico(e, 8));
+    telefonoInput.addEventListener('input', (e) => limitarInputNumerico(e, 15));
+
+    // --- EVENT LISTENERS ---
     form.addEventListener('submit', handleFormSubmit);
 
     filtroInputs.forEach(input => input.addEventListener('input', aplicarFiltros));

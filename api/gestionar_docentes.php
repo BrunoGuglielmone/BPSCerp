@@ -2,7 +2,6 @@
 include_once 'conexion.php';
 header('Content-Type: application/json; charset=utf-8');
 $method = $_SERVER['REQUEST_METHOD'];
-$response = ["success" => false, "message" => "Solicitud no válida."];
 
 switch ($method) {
     case 'GET':
@@ -89,24 +88,22 @@ switch ($method) {
         $data = json_decode(file_get_contents("php://input"), true);
         if (empty($data['ids']) || !is_array($data['ids'])) {
             http_response_code(400);
-            $response["message"] = "No se proporcionaron IDs para eliminar.";
-            break;
+            echo json_encode(["success" => false, "message" => "No se proporcionaron IDs."]);
+            exit;
         }
         
         $placeholders = implode(',', array_fill(0, count($data['ids']), '?'));
         $sql = "DELETE FROM docentes WHERE id IN ($placeholders)";
         $stmt = $conn->prepare($sql);
-        
         $types = str_repeat('i', count($data['ids']));
         $stmt->bind_param($types, ...$data['ids']);
 
         if ($stmt->execute()) {
-            $response = ["success" => true, "message" => "Docente(s) eliminado(s) correctamente."];
+            echo json_encode(["success" => true, "message" => "Docente(s) eliminado(s)."]);
         } else {
             http_response_code(500);
-            $response["message"] = "Error al eliminar: " . $stmt->error;
+            echo json_encode(["success" => false, "message" => "Error al eliminar."]);
         }
-        $stmt->close();
         break;
 
     default:

@@ -71,8 +71,16 @@ $conn->close();
     <title>Ocupación de Salones - CERP Litoral</title>
     <link rel="stylesheet" href="../estilos/estilos.css">
     <link rel="stylesheet" href="../estilos/estilosalonarioexterno.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+    <header class="page-header">
+        <div class="logo-container"><img src="../imagenes/logo_cerp_3d.png" alt="Logo CERP"></div>
+        <div class="header-controls">
+            <span id="reloj" class="reloj"></span>
+            <a href="../paginas/menuinteractivo.php" class="menu-button btn-animado"><span>Volver</span></a>
+        </div>
+    </header>
 
     <header class="page-header">
         <div class="logo-container">
@@ -159,9 +167,40 @@ $conn->close();
                                 <?php endforeach; ?>
                             </tr>
                         <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            <?php else: // VISTA SEMANAL ?>
+                <div id="printable-area">
+                    <table id="tablaSemanal">
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th><th>Sábado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($horarios as $hora): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($hora['hora']); ?></td>
+                                    <?php 
+                                    if ($fecha_lunes) {
+                                        $fecha_iter = clone $fecha_lunes;
+                                        for ($i = 0; $i < 6; $i++):
+                                            $key = $fecha_iter->format('Y-m-d') . '-' . $hora['id'];
+                                            $contenido = isset($asignaciones_filtradas[$key]) ? implode('<hr>', $asignaciones_filtradas[$key]) : '';
+                                    ?>
+                                        <td class="<?php echo $contenido ? 'ocupado' : 'libre'; ?>"><?php echo $contenido; ?></td>
+                                    <?php 
+                                            $fecha_iter->modify('+1 day');
+                                        endfor; 
+                                    }
+                                    ?>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
         </section>
     </main>
 
@@ -170,7 +209,8 @@ $conn->close();
         const fechaMostrada = "<?php echo $filtro_fecha; ?>";
         const fechaHoy = "<?php echo date("Y-m-d"); ?>";
     </script>
-    <script src="../js/salonarioexterno.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="../js/salonarioexterno.js" defer></script>
 </body>
 </html>

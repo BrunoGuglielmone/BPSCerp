@@ -1,4 +1,4 @@
-<?php 
+<?php
 include_once("../api/verificar_sesion.php");
 include_once("../Php/header.php"); 
 ?>
@@ -27,6 +27,9 @@ include_once("../Php/header.php");
                 <label for="fechaInput">Ver fecha:</label>
                 <input type="date" id="fechaInput">
             </div>
+        <div class="fecha-especifica">
+            <label for="fechaInput">Ver fecha:</label>
+            <input type="date" id="fechaInput">
         </div>
 
         <div class="acciones-tabla">
@@ -39,31 +42,26 @@ include_once("../Php/header.php");
             <thead>
                 <tr><th>Salón</th></tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+                </tbody>
         </table>
-    </section>
+    </div>
 </main>
 
-<div id="modal" class="modal">
-    <div class="modal-content">
+<div id="modal-asignacion" class="modal-overlay">
+    <div class="modal-dialog">
         <span id="cerrarModal" class="cerrar">&times;</span>
-        <h3>Seleccionar Docente</h3>
-        <div class="modal-filtros">
-            <label>Año:
-                <select id="filtroAnio">
-                    <option value="">Todos</option>
-                    <option value="1">1° Año</option>
-                    <option value="2">2° Año</option>
-                    <option value="3">3° Año</option>
-                    <option value="4">4° Año</option>
-                </select>
-            </label>
-            <label>Asignatura:
-                <input type="text" id="filtroAsignatura" placeholder="Filtrar por asignatura" />
-            </label>
+        <h3>Nueva Asignación</h3>
+        <p id="info-celda"></p>
+        <div class="form-group">
+            <label for="modal-asignatura-select">1. Seleccione la Asignatura:</label>
+            <select id="modal-asignatura-select"></select>
         </div>
-        <div id="listaProfesores"></div>
-        <button id="confirmarAsignacionBtn" disabled>Confirmar asignación</button>
+        <div class="form-group">
+            <label for="modal-docente-select">2. Seleccione el Docente:</label>
+            <select id="modal-docente-select" disabled></select>
+        </div>
+        <button id="confirmarAsignacionBtn" disabled>Confirmar Asignación</button>
     </div>
 </div>
 
@@ -71,5 +69,7 @@ include_once("../Php/header.php");
 
 <script src="../js/salonario.js"></script>
 
+<?php include_once("../Php/footer.php"); ?>
+<script src="../js/salonario.js"></script>
 </body>
 </html>

@@ -158,13 +158,12 @@ a {
 .btn-animado::before,
 .btn-animado::after {
     content: '';
-    position: absolute;
-    top: 0;
-    width: 0;
-    height: 100%;
-    transform: skew(15deg);
-    transition: all 0.8s;
-    overflow: hidden;
+    position: fixed;
+    inset: 0;
+    /* Reducido el alpha (transparencia) del color de 0.74 a 0.5 */
+    background: rgba(14, 28, 49, 0.253); 
+    /* Opcional: Reducido el blur o eliminado si quieres que se vea más nítido */
+    backdrop-filter: blur(2px); 
     z-index: -1;
 }
 

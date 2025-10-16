@@ -2,7 +2,6 @@
 // Inicia la sesión para poder manejar mensajes de error.
 session_start();
 
-// Incluye el header si lo necesitas.
 include_once("../Php/header.php"); 
 ?>
 

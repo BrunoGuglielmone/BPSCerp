@@ -70,8 +70,10 @@ $conn->close();
                         <input type="number" id="ano_cursado" name="ano_cursado" min="1" max="4" required>
                     </div>
                     <div class="input-group">
-                        <label for="telefono">Teléfono</label>
-                        <input type="tel" id="telefono" name="telefono">
+                        <label for="telefono">Teléfono (hasta 15 dígitos)</label>
+                        <input type="tel" id="telefono" name="telefono" 
+                               maxlength="15" pattern="[0-9]+" title="Solo se permiten números."
+                               inputmode="numeric">
                     </div>
                     <button type="submit" class="btn-guardar">Guardar Docente</button>
                 </form>

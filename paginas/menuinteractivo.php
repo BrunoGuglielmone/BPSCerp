@@ -17,11 +17,12 @@ include_once("../Php/header.php");
 
     <main>
         <div class="contenedor">
-            <a href="docentes.php" class="tarjeta tarjeta-azul">
-                <div class="icono"><i class="fa-solid fa-chalkboard-user"></i></div>
+            
+            <a href="academico.php" class="tarjeta tarjeta-purpura">
+                <div class="icono"><i class="fa-solid fa-sitemap"></i></div>
                 <div>
-                    <h1>Docentes</h1>
-                    <p>Gestiona el listado de docentes: agregar, editar o eliminar registros.</p>
+                    <h1>Planes de Estudio</h1>
+                    <p>Gestiona carreras, planes por año y asigna docentes a las asignaturas.</p>
                 </div>
             </a>
 
@@ -67,6 +68,14 @@ include_once("../Php/header.php");
                 </div>
             </a>
 
+            <a href="asignaturas.php" class="tarjeta tarjeta-naranja">
+                <div class="icono"><i class="fa-solid fa-book"></i></div>
+                <div>
+                    <h1>Asignaturas</h1>
+                    <p>Administra la lista maestra de asignaturas del centro educativo.</p>
+                </div>
+            </a>
+
             <a href="logout.php" class="tarjeta tarjeta-roja">
                 <div class="icono"><i class="fa-solid fa-right-from-bracket"></i></div>
                 <div>
@@ -74,6 +83,7 @@ include_once("../Php/header.php");
                     <p>Salir de tu cuenta de forma segura y volver a la pantalla de inicio.</p>
                 </div>
             </a>
+
         </div>
     </main>
 
