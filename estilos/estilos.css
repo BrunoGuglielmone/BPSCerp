@@ -162,7 +162,7 @@ main {
 /* Barrido desde la izquierda */
 .btn-animado::before {
   left: -10%;
-  background: #4F4B31;
+  background: #0c959b;
 }
 
 /* Barrido desde la derecha */

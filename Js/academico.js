@@ -21,14 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalCarrera = document.getElementById('modal-carrera');
     const formCarrera = document.getElementById('form-carrera');
     const modalCarreraTitulo = document.getElementById('modal-carrera-titulo');
-    const cerrarModalCarreraBtn = document.getElementById('cerrar-modal-carrera');
+    // ELIMINADO: const cerrarModalCarreraBtn = document.getElementById('cerrar-modal-carrera');
+    
     const modalAgregarAsignatura = document.getElementById('modal-agregar-asignatura');
     const formAgregarAsignatura = document.getElementById('form-agregar-asignatura');
-    const cerrarModalAgregarAsignaturaBtn = document.getElementById('cerrar-modal-agregar-asignatura');
+    // ELIMINADO: const cerrarModalAgregarAsignaturaBtn = document.getElementById('cerrar-modal-agregar-asignatura');
+    
     const modalAsignarDocente = document.getElementById('modal-asignar-docente');
     const formAsignarDocente = document.getElementById('form-asignar-docente');
     const modalAsignarDocenteTitulo = document.getElementById('modal-asignar-docente-titulo');
-    const cerrarModalAsignarDocenteBtn = document.getElementById('cerrar-modal-asignar-docente');
+    // ELIMINADO: const cerrarModalAsignarDocenteBtn = document.getElementById('cerrar-modal-asignar-docente');
+    
     const listaDocentesCheckboxesEl = document.getElementById('lista-docentes-checkboxes');
     const buscadorDocenteInput = document.getElementById('buscador-docente');
     const buscadorAsignaturaInput = document.getElementById('buscador-asignatura');
@@ -99,17 +102,22 @@ document.addEventListener('DOMContentLoaded', () => {
             li.className = carrera.id == carreraActivaId ? 'activa' : '';
             li.style.setProperty('--carrera-color', carrera.color);
             
-            // MODIFICADO: Se añade la etiqueta para el turno
             const turnoTag = carrera.turno ? `<span class="tag-turno ${carrera.turno.toLowerCase()}">${carrera.turno}</span>` : '';
-            li.innerHTML = `<span>${carrera.nombre}</span>${turnoTag}`;
             
-            li.addEventListener('click', () => {
-                if (carreraActivaId !== carrera.id) {
-                    carreraActivaId = carrera.id;
-                    renderizarListaCarreras();
-                    cargarPlanDeEstudio(carrera);
-                }
-            });
+            // NUEVO: Añadido wrapper para info y botón de eliminar
+            li.innerHTML = `
+                <div class="carrera-info-wrapper">
+                    <span>${carrera.nombre}</span>
+                    ${turnoTag}
+                </div>
+                <button class="btn-icon btn-eliminar-carrera" title="Eliminar Orientación">
+                    <i class="fa fa-trash-alt"></i>
+                </button>
+            `;
+            
+            // ELIMINADO: li.addEventListener('click', ...)
+            // Se usará delegación de eventos
+            
             listaCarrerasEl.appendChild(li);
         });
     }
@@ -118,11 +126,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const { id, nombre } = carrera;
         placeholderEl.style.display = 'none';
         detalleEl.style.display = 'block';
+        
+        // El botón de editar se añade aquí
         planTituloEl.innerHTML = `${nombre} 
             <button id="btn-editar-carrera-activa" class="btn-icon" title="Editar Orientación">
                 <i class="fa fa-cog"></i>
             </button>`;
         
+        // El listener DEBE añadirse aquí, porque el botón se crea con innerHTML
         document.getElementById('btn-editar-carrera-activa').addEventListener('click', () => abrirModalCarrera(carrera));
         
         anosContainerEl.innerHTML = '<div class="loader"></div>';
@@ -158,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3>${i}º Año</h3>
                         <div class="ano-actions">
                              <button class="btn-icon btn-agregar-asignatura" data-ano="${i}" title="Agregar Asignatura">
-                                <i class="fa fa-plus-circle"></i>
+                                 <i class="fa fa-plus-circle"></i>
                             </button>
                             <button class="btn-icon btn-limpiar-ano" data-ano="${i}" title="Limpiar todas las asignaturas">
                                 <i class="fa fa-trash-alt"></i>
@@ -169,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 anosContainerEl.appendChild(anoCard);
             }
             
+            // Delegación de eventos para los botones dentro del plan
             anosContainerEl.querySelectorAll('.btn-agregar-asignatura').forEach(btn => btn.addEventListener('click', () => abrirModalAgregarAsignatura(btn.dataset.ano)));
             anosContainerEl.querySelectorAll('.btn-limpiar-ano').forEach(btn => btn.addEventListener('click', () => limpiarAno(btn.dataset.ano)));
             anosContainerEl.querySelectorAll('.btn-quitar-asignatura').forEach(btn => btn.addEventListener('click', () => quitarAsignaturaDePlan(btn.closest('.asignatura-item').dataset.asigId)));
@@ -181,89 +193,177 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === LÓGICA DE ACCIONES ===
+
+    /**
+     * NUEVA: Función helper para recargar el plan de estudio activo.
+     */
+    function refrescarPlanActivo() {
+        const carrera = todasLasCarreras.find(c => c.id == carreraActivaId);
+        if (carrera) {
+            cargarPlanDeEstudio(carrera);
+        }
+    }
+
+    /**
+     * REFACTORIZADA: Devuelve el objeto JSON completo de la API o un objeto de error.
+     * Ya no muestra la notificación de éxito/error; eso se hace en la función que la llama.
+     */
     async function peticionAPI(data) {
         try {
             const response = await fetch(API_ACADEMICO, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
             const result = await response.json();
             if (!response.ok) throw new Error(result.message);
-            await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
-            return result.success;
+            return result; // Devuelve el resultado completo
         } catch (error) {
             await mostrarNotificacion('Error de Conexión', error.message || 'No se pudo comunicar con el servidor.');
-            return false;
+            return { success: false, message: error.message }; // Devuelve un objeto de error estándar
         }
     }
     
+    /**
+     * REFACTORIZADA: Lógica de guardado arreglada.
+     * Ya no llama a init(), sino que actualiza el estado local (todasLasCarreras)
+     * con la información devuelta por la API, y recarga solo los componentes necesarios.
+     */
     async function guardarCarrera(e) {
         e.preventDefault();
         const formData = new FormData(formCarrera);
         const idOriginal = formData.get('carrera_id');
-        const success = await peticionAPI({
+        
+        const result = await peticionAPI({
             accion: 'guardar_carrera',
             carrera_id: idOriginal,
             nombre: formData.get('nombre'),
             color: formData.get('color'),
             ano: formData.get('ano'),
-            turno: formData.get('turno') // <-- MODIFICADO: Se envía el turno a la API
+            turno: formData.get('turno')
         });
-        if (success) {
+
+        // La notificación se muestra aquí
+        await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
+
+        if (result.success) {
             cerrarModal(modalCarrera);
-            const idActivoAnterior = carreraActivaId;
-            await init();
-            const nuevaCarreraActiva = todasLasCarreras.find(c => c.id == idActivoAnterior) || todasLasCarreras[todasLasCarreras.length-1];
-            if(nuevaCarreraActiva) {
-                carreraActivaId = nuevaCarreraActiva.id;
-                renderizarListaCarreras();
-                cargarPlanDeEstudio(nuevaCarreraActiva);
+            const carreraGuardada = result.carrera; // Obtenemos la carrera desde la API
+
+            if (idOriginal) { // Estamos editando
+                const index = todasLasCarreras.findIndex(c => c.id == carreraGuardada.id);
+                if (index > -1) {
+                    todasLasCarreras[index] = carreraGuardada;
+                }
+            } else { // Estamos creando
+                todasLasCarreras.push(carreraGuardada);
             }
+            
+            // Establecemos la carrera guardada (nueva o editada) como activa
+            carreraActivaId = carreraGuardada.id;
+            
+            renderizarListaCarreras(); // Recarga la lista izquierda
+            cargarPlanDeEstudio(carreraGuardada); // Carga el plan de la carrera activa
         }
     }
 
+    /**
+     * NUEVA: Función para manejar la eliminación de una carrera.
+     */
+    async function eliminarCarrera(id, nombre) {
+        const confirmado = await mostrarNotificacion(
+            'Confirmar Eliminación', 
+            `¿Seguro que quieres eliminar la orientación "<strong>${nombre}</strong>"?<br><br>Esta acción no se puede deshacer y borrará permanentemente todo su plan de estudios asociado.`, 
+            'confirmacion'
+        );
+        if (!confirmado) return;
+
+        const result = await peticionAPI({ accion: 'eliminar_carrera', carrera_id: id });
+
+        await mostrarNotificacion(result.success ? 'Eliminado' : 'Error', result.message);
+
+        if (result.success) {
+            // Quitar del array local
+            todasLasCarreras = todasLasCarreras.filter(c => c.id != id);
+            
+            if (carreraActivaId == id) {
+                // Si era la activa, limpiar panel derecho
+                carreraActivaId = null;
+                detalleEl.style.display = 'none';
+                placeholderEl.style.display = 'flex'; // Usar flex para centrar
+                planTituloEl.innerHTML = '';
+            }
+            // Renderizar la lista de carreras actualizada
+            renderizarListaCarreras();
+        }
+    }
+
+
+    /**
+     * REFACTORIZADA: Usa la nueva lógica de peticionAPI y la función helper.
+     */
     async function limpiarAno(ano) {
         const confirmado = await mostrarNotificacion('Confirmar Acción', `¿Seguro que quieres eliminar TODAS las asignaturas de ${ano}º Año de este plan? Esta acción no se puede deshacer.`, 'confirmacion');
         if (!confirmado) return;
-        const success = await peticionAPI({ accion: 'limpiar_ano', carrera_id: carreraActivaId, ano_cursado: ano });
-        if (success) {
-            const carrera = todasLasCarreras.find(c => c.id == carreraActivaId);
-            cargarPlanDeEstudio(carrera);
+        
+        const result = await peticionAPI({ accion: 'limpiar_ano', carrera_id: carreraActivaId, ano_cursado: ano });
+        
+        await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
+        
+        if (result.success) {
+            refrescarPlanActivo();
         }
     }
 
+    /**
+     * REFACTORIZADA: Usa la nueva lógica de peticionAPI y la función helper.
+     */
     async function agregarAsignaturaAPlan(e) {
         e.preventDefault();
         const formData = new FormData(formAgregarAsignatura);
-        const success = await peticionAPI({
+        const result = await peticionAPI({
             accion: 'agregar_asignatura_a_plan',
-            carrera_id: formData.get('carrera_id'), asignatura_id: formData.get('asignatura_id'),
+            carrera_id: formData.get('carrera_id'), 
+            asignatura_id: formData.get('asignatura_id'),
             ano_cursado: formData.get('ano_cursado')
         });
-        if (success) {
+
+        await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
+
+        if (result.success) {
             cerrarModal(modalAgregarAsignatura);
-            const carrera = todasLasCarreras.find(c => c.id == carreraActivaId);
-            cargarPlanDeEstudio(carrera);
+            refrescarPlanActivo();
         }
     }
     
+    /**
+     * REFACTORIZADA: Usa la nueva lógica de peticionAPI y la función helper.
+     */
     async function quitarAsignaturaDePlan(asignaturaId) {
         const confirmado = await mostrarNotificacion('Confirmar Acción', '¿Quitar esta asignatura del plan de estudios?', 'confirmacion');
         if (!confirmado) return;
-        const success = await peticionAPI({ accion: 'quitar_asignatura_de_plan', carrera_id: carreraActivaId, asignatura_id: asignaturaId });
-        if (success) {
-            const carrera = todasLasCarreras.find(c => c.id == carreraActivaId);
-            cargarPlanDeEstudio(carrera);
+        
+        const result = await peticionAPI({ accion: 'quitar_asignatura_de_plan', carrera_id: carreraActivaId, asignatura_id: asignaturaId });
+        
+        await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
+        
+        if (result.success) {
+            refrescarPlanActivo();
         }
     }
 
+    /**
+     * REFACTORIZADA: Usa la nueva lógica de peticionAPI y la función helper.
+     */
     async function actualizarDocentesAsignatura(e) {
         e.preventDefault();
         const formData = new FormData(formAsignarDocente);
         const asignaturaId = formData.get('asignatura_id');
         const docenteIds = Array.from(formAsignarDocente.querySelectorAll('input[name="docentes"]:checked')).map(cb => cb.value);
-        const success = await peticionAPI({ accion: 'actualizar_docentes_asignatura', asignatura_id: asignaturaId, docente_ids: docenteIds });
-        if (success) {
+        
+        const result = await peticionAPI({ accion: 'actualizar_docentes_asignatura', asignatura_id: asignaturaId, docente_ids: docenteIds });
+        
+        await mostrarNotificacion(result.success ? 'Éxito' : 'Error', result.message);
+        
+        if (result.success) {
             cerrarModal(modalAsignarDocente);
-            const carrera = todasLasCarreras.find(c => c.id == carreraActivaId);
-            cargarPlanDeEstudio(carrera);
+            refrescarPlanActivo();
         }
     }
 
@@ -279,7 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
             formCarrera.nombre.value = carrera.nombre;
             formCarrera.color.value = carrera.color;
             formCarrera.ano.value = carrera.ano;
-            // MODIFICADO: Se asigna el valor del turno al editar
             formCarrera.turno.value = carrera.turno || 'Matutino';
         } else {
             modalCarreraTitulo.textContent = 'Nueva Orientación';
@@ -314,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const ano in planDeEstudioActivo) {
             const asig = planDeEstudioActivo[ano].find(a => a.asignatura_id == asignaturaId);
             if (asig) {
-                docentesAsignadosIds = asig.docentes.map(d => d.id);
+                docentesAsignadosIds = asig.docentes.map(d => String(d.id)); // Convertir a string para comparación
                 break;
             }
         }
@@ -399,10 +498,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === EVENT LISTENERS GLOBALES ===
+
+    /**
+     * NUEVO: Listener unificado para todos los botones de cerrar modal.
+     * Asegúrate de que tus botones de cerrar (la 'X') en el HTML tengan class="cerrar".
+     */
+    document.querySelectorAll('.modal-dialog .cerrar').forEach(btn => {
+        btn.addEventListener('click', () => {
+            cerrarModal(btn.closest('.modal-overlay'));
+        });
+    });
+    
+    /**
+     * NUEVO: Delegación de eventos para la lista de carreras.
+     * Maneja tanto la selección (clic en <li>) como la eliminación (clic en .btn-eliminar-carrera).
+     */
+    listaCarrerasEl.addEventListener('click', e => {
+        const li = e.target.closest('li[data-id]');
+        if (!li) return; // Clic fuera de un item
+
+        const carreraId = li.dataset.id;
+        const carrera = todasLasCarreras.find(c => c.id == carreraId);
+        if (!carrera) return;
+
+        if (e.target.closest('.btn-eliminar-carrera')) {
+            // Se hizo clic en el botón de eliminar
+            e.stopPropagation(); // Evita que se active el clic del li
+            eliminarCarrera(carrera.id, carrera.nombre);
+        } else {
+            // Se hizo clic en el li para seleccionarlo
+            if (carreraActivaId !== carrera.id) {
+                carreraActivaId = carrera.id;
+                renderizarListaCarreras(); // Re-renderiza para marcar la activa
+                cargarPlanDeEstudio(carrera);
+            }
+        }
+    });
+
     btnCrearCarrera.addEventListener('click', () => abrirModalCarrera());
-    cerrarModalCarreraBtn.addEventListener('click', () => cerrarModal(modalCarrera));
-    cerrarModalAgregarAsignaturaBtn.addEventListener('click', () => cerrarModal(modalAgregarAsignatura));
-    cerrarModalAsignarDocenteBtn.addEventListener('click', () => cerrarModal(modalAsignarDocente));
+
+    // ELIMINADOS: Listeners individuales para cerrar modales
+    // cerrarModalCarreraBtn.addEventListener('click', () => cerrarModal(modalCarrera));
+    // cerrarModalAgregarAsignaturaBtn.addEventListener('click', () => cerrarModal(modalAgregarAsignatura));
+    // cerrarModalAsignarDocenteBtn.addEventListener('click', () => cerrarModal(modalAsignarDocente));
 
     formCarrera.addEventListener('submit', guardarCarrera);
     formAgregarAsignatura.addEventListener('submit', agregarAsignaturaAPlan);

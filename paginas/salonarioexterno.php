@@ -1,7 +1,4 @@
 <?php
-// =================================================================
-// CÓDIGO FINAL CORREGIDO - SIN a.id Y CON GROUP BY CORRECTO
-// =================================================================
 
 // 1. INCLUDES Y CONFIGURACIÓN INICIAL
 include_once __DIR__ . "/../api/conexion.php";

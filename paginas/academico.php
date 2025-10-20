@@ -15,7 +15,9 @@ include_once("../Php/header.php");
 <main>
     <aside class="carreras-panel">
         <h2>Orientaciones</h2>
-        <ul id="lista-carreras"></ul>
+        <ul id="lista-carreras">
+            <!-- Las carreras se cargarán aquí dinámicamente -->
+        </ul>
         <div class="panel-footer">
             <button id="btn-crear-carrera" class="btn btn-primary"><i class="fa fa-plus"></i> Nueva Orientación</button>
         </div>
@@ -36,23 +38,45 @@ include_once("../Php/header.php");
     </section>
 </main>
 
+<!-- ======================= MODALES ======================= -->
+
+<!-- Modal para Crear/Editar Carrera (Orientación) -->
 <div id="modal-carrera" class="modal-overlay">
     <div class="modal-dialog">
-        <span class="cerrar" id="cerrar-modal-carrera">&times;</span>
+        <span class="cerrar">&times;</span>
         <h3 id="modal-carrera-titulo"></h3>
         <form id="form-carrera">
             <input type="hidden" name="carrera_id" id="carrera_id">
-            <div class="form-group"><label for="carrera_nombre">Nombre:</label><input type="text" id="carrera_nombre" name="nombre" required></div>
-            <div class="form-group"><label for="carrera_color">Color:</label><input type="color" id="carrera_color" name="color" value="#4a90e2"></div>
-            <div class="form-group"><label for="carrera_duracion">Duración (años):</label><input type="number" id="carrera_duracion" name="ano" min="1" max="7" value="3"></div>
+            <div class="form-group">
+                <label for="carrera_nombre">Nombre:</label>
+                <input type="text" id="carrera_nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="carrera_color">Color:</label>
+                <input type="color" id="carrera_color" name="color" value="#4a90e2">
+            </div>
+            <div class="form-group">
+                <label for="carrera_ano">Duración (años):</label>
+                <input type="number" id="carrera_ano" name="ano" min="1" max="7" value="3" required>
+            </div>
+            <!-- AÑADIDO: Selector de Turno -->
+            <div class="form-group">
+                <label for="carrera_turno">Turno:</label>
+                <select id="carrera_turno" name="turno">
+                    <option value="Matutino">Matutino</option>
+                    <option value="Vespertino">Vespertino</option>
+                    <option value="Nocturno">Nocturno</option>
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary">Guardar</button>
         </form>
     </div>
 </div>
 
+<!-- Modal para Agregar Asignatura al Plan -->
 <div id="modal-agregar-asignatura" class="modal-overlay">
     <div class="modal-dialog modal-lg">
-        <span class="cerrar" id="cerrar-modal-agregar-asignatura">&times;</span>
+        <span class="cerrar">&times;</span>
         <h3 id="modal-agregar-asignatura-titulo"></h3>
         <form id="form-agregar-asignatura">
             <input type="hidden" name="carrera_id" id="agregar-asig-carrera-id">
@@ -68,7 +92,8 @@ include_once("../Php/header.php");
             </div>
             
             <div id="lista-asignaturas-resultados" class="results-list">
-                </div>
+                <!-- Resultados de búsqueda de asignaturas -->
+            </div>
             
             <div id="asignatura-seleccionada-info" class="selection-info" style="display:none;">
                 <p>Seleccionada: <strong></strong></p>
@@ -79,9 +104,10 @@ include_once("../Php/header.php");
     </div>
 </div>
 
+<!-- Modal para Asignar Docentes a Asignatura -->
 <div id="modal-asignar-docente" class="modal-overlay">
     <div class="modal-dialog modal-lg">
-        <span class="cerrar" id="cerrar-modal-asignar-docente">&times;</span>
+        <span class="cerrar">&times;</span>
         <h3 id="modal-asignar-docente-titulo"></h3>
         <form id="form-asignar-docente">
             <input type="hidden" name="asignatura_id" id="asignar-doc-asignatura-id">
@@ -96,13 +122,15 @@ include_once("../Php/header.php");
             
             <p class="instruccion-texto">Selecciona los docentes habilitados para esta asignatura:</p>
             <div id="lista-docentes-checkboxes" class="results-list checkbox-list">
-                </div>
+                <!-- Checkboxes de docentes -->
+            </div>
             
             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
         </form>
     </div>
 </div>
 
+<!-- Modal Genérico para Notificaciones -->
 <div id="modal-notificacion" class="modal-overlay">
     <div class="modal-dialog">
         <h3 id="notificacion-titulo"></h3>
