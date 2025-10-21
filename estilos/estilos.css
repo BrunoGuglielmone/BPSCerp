@@ -17,12 +17,10 @@ html, body {
 body {
   font-family: Arial, sans-serif;
   color: #fff;
-  font-size: 1rem; /* Aumentado para mejor legibilidad (original era 0.7rem) */
+  font-size: 1rem; 
   display: flex;
   flex-direction: column;
-  
-  /* Propiedades de fondo consolidadas */
-  background: url('../imagenes/fondocerp.jpeg') center/cover repeat;
+    background: url('../imagenes/fondocerp.jpeg') center/cover repeat;
   position: relative; 
 }
 
@@ -69,7 +67,7 @@ main {
   font-weight: bold;
   letter-spacing: 2px;
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  pointer-events: none; /* Evita que el título interfiera con clics */
+  pointer-events: none; 
 }
 
 .reloj-container {

@@ -2,13 +2,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- ELEMENTOS DEL DOM ---
     const relojEl = document.getElementById('reloj');
     const semestreInput = document.getElementById('semestre');
-    const fechaInput = document.getElementById('fecha');
+    const fechaInput = document.getElementById('fecha'); // Se mantiene para el filtro de semestre
 
     // --- LÓGICA DEL RELOJ ---
     function actualizarReloj() {
         if (relojEl) {
             const ahora = new Date();
-            relojEl.textContent = ahora.toLocaleTimeString('es-UY', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            // MODIFICADO: Se añade hour12: false para forzar formato 24h sin AM/PM
+            relojEl.textContent = ahora.toLocaleTimeString('es-UY', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: false 
+            });
         }
     }
     setInterval(actualizarReloj, 1000);
@@ -39,12 +45,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadBtn = document.getElementById('downloadPdfBtn');
     if (downloadBtn) {
         downloadBtn.addEventListener('click', () => {
-            if (typeof jsPDF === 'undefined' || typeof html2canvas === 'undefined') {
+            
+            // CORREGIDO: Se comprueba 'window.jspdf' y 'html2canvas'
+            if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
                 console.error("Librerías jsPDF o html2canvas no están cargadas.");
                 alert("Error: No se puede generar el PDF. Faltan librerías.");
                 return;
             }
 
+            // Ahora esta línea es segura
             const { jsPDF } = window.jspdf;
             const printableArea = document.getElementById('printable-area');
             if (!printableArea) return;
@@ -69,10 +78,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 pdf.setFontSize(16);
                 pdf.text("Horario Semanal - CERP del Litoral", pdfWidth / 2, margin, { align: 'center' });
                 pdf.setFontSize(10);
-                pdf.text(`Semana del: ${fechaInput.value}`, pdfWidth / 2, margin + 5, { align: 'center' });
+                
+                // Se usa la variable 'fechaLunesSemana' definida en el PHP
+                const fechaParaTitulo = (typeof fechaLunesSemana !== 'undefined' && fechaLunesSemana) 
+                                        ? fechaLunesSemana 
+                                        : (fechaInput ? fechaInput.value : 'N/A');
+                
+                pdf.text(`Semana del: ${fechaParaTitulo}`, pdfWidth / 2, margin + 5, { align: 'center' });
                 
                 pdf.addImage(imgData, 'PNG', x, y, finalImgWidth, finalImgHeight);
-                pdf.save(`horario_semanal_${fechaInput.value}.pdf`);
+                pdf.save(`horario_semanal_${fechaParaTitulo}.pdf`);
 
                 downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i>';
                 downloadBtn.disabled = false;

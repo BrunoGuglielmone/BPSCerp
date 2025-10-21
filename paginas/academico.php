@@ -16,7 +16,6 @@ include_once("../Php/header.php");
     <aside class="carreras-panel">
         <h2>Orientaciones</h2>
         <ul id="lista-carreras">
-            <!-- Las carreras se cargarán aquí dinámicamente -->
         </ul>
         <div class="panel-footer">
             <button id="btn-crear-carrera" class="btn btn-primary"><i class="fa fa-plus"></i> Nueva Orientación</button>

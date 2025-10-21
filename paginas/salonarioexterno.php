@@ -10,7 +10,7 @@ $salones_list = $conn->query("SELECT id, nombre FROM salones ORDER BY id ASC")->
 $anios_list_res = $conn->query("SELECT DISTINCT ano_cursado FROM carrera_asignatura WHERE ano_cursado IS NOT NULL ORDER BY ano_cursado ASC");
 $anios_list = $anios_list_res->fetch_all(MYSQLI_ASSOC);
 $horarios_res = $conn->query("SELECT id, hora FROM horarios ORDER BY id ASC");
-$horarios = $horarios_res->fetch_all(MYSQLI_ASSOC);
+$horarios = $horarios_res->fetch_all(MYSQLI_ASSOC); // <--- LISTA ÚNICA Y COMPLETA DE HORAS
 $carreras_list = $conn->query("SELECT id, nombre FROM carreras ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
 
 // 3. MANEJO DE PARÁMETROS DE ENTRADA (FILTROS)
@@ -30,8 +30,23 @@ $query_string_filtros = http_build_query($get_params);
 $asignaciones_filtradas = [];
 $fecha_lunes = null;
 
+// Partes de la consulta basadas en filtros (para reutilizar)
 $joins_carrera = "LEFT JOIN carrera_asignatura ca ON a.asignatura_id = ca.asignatura_id
                   LEFT JOIN carreras c ON ca.carrera_id = c.id";
+$sql_filter_joins = $joins_carrera;
+$sql_filter_where = "";
+$sql_filter_params = [""]; // Iniciar con el string de tipos
+
+if (!empty($filtro_anio)) { 
+    $sql_filter_where .= " AND ca.ano_cursado = ?"; 
+    $sql_filter_params[0] .= "i"; 
+    $sql_filter_params[] = $filtro_anio; 
+}
+if (!empty($filtro_carrera)) { 
+    $sql_filter_where .= " AND c.id = ?"; 
+    $sql_filter_params[0] .= "i"; 
+    $sql_filter_params[] = $filtro_carrera; 
+}
 
 if ($view === 'semanal') {
     $fecha_base = new DateTime($filtro_fecha);
@@ -40,33 +55,47 @@ if ($view === 'semanal') {
     $fecha_lunes->modify('-' . ($dia_semana_num - 1) . ' days');
     $fecha_sabado = clone $fecha_lunes;
     $fecha_sabado->modify('+5 days');
+    $fecha_lunes_str = $fecha_lunes->format('Y-m-d');
+    $fecha_sabado_str = $fecha_sabado->format('Y-m-d');
 
-    // CORREGIDO: Se quitó 'a.id' del SELECT
+    // --- LÓGICA DE RANGO DINÁMICO ELIMINADA ---
+    // Ya no consultamos MIN/MAX horario_id ni filtramos la lista de horas.
+    // Usaremos $horarios (la lista completa) directamente.
+
+    // Consulta principal
     $sql = "SELECT a.salon_id, a.horario_id, a.fecha, CONCAT(d.nombre, ' ', d.apellido) AS docente, asig.nombre AS asignatura_nombre, ca.ano_cursado, s.nombre AS salon_nombre
             FROM asignaciones a
             JOIN docentes d ON a.docente_id = d.id
             JOIN asignaturas asig ON a.asignatura_id = asig.id
             JOIN salones s ON a.salon_id = s.id
-            $joins_carrera
-            WHERE a.fecha BETWEEN ? AND ?";
-    $params = ["ss", $fecha_lunes->format('Y-m-d'), $fecha_sabado->format('Y-m-d')];
+            $sql_filter_joins
+            WHERE a.fecha BETWEEN ? AND ?
+            $sql_filter_where"; // Usar el string de WHERE construido
+    
+    $params = $sql_filter_params;
+    array_splice($params, 1, 0, [$fecha_lunes_str, $fecha_sabado_str]);
+    $params[0] = "ss" . $params[0];
+
 } else { // Vista Diaria
-    // CORREGIDO: Se quitó 'a.id' del SELECT
     $sql = "SELECT a.salon_id, a.horario_id, CONCAT(d.nombre, ' ', d.apellido) AS docente, asig.nombre AS asignatura_nombre, ca.ano_cursado
             FROM asignaciones a
             JOIN docentes d ON a.docente_id = d.id
             JOIN asignaturas asig ON a.asignatura_id = asig.id
-            $joins_carrera
-            WHERE a.fecha = ?";
-    $params = ["s", $filtro_fecha];
+            $sql_filter_joins
+            WHERE a.fecha = ?
+            $sql_filter_where";
+            
+    $params = $sql_filter_params;
+    array_splice($params, 1, 0, [$filtro_fecha]);
+    $params[0] = "s" . $params[0];
+
+    if (!empty($filtro_salon)) { 
+        $sql .= " AND a.salon_id = ?"; 
+        $params[0] .= "i"; 
+        $params[] = $filtro_salon; 
+    }
 }
 
-// Aplicar filtros adicionales a la consulta
-if (!empty($filtro_salon) && $view === 'diario') { $sql .= " AND a.salon_id = ?"; $params[0] .= "i"; $params[] = $filtro_salon; }
-if (!empty($filtro_anio)) { $sql .= " AND ca.ano_cursado = ?"; $params[0] .= "i"; $params[] = $filtro_anio; }
-if (!empty($filtro_carrera)) { $sql .= " AND c.id = ?"; $params[0] .= "i"; $params[] = $filtro_carrera; }
-
-// CORREGIDO: Se usa el GROUP BY correcto con la clave primaria compuesta
 $sql .= " GROUP BY a.fecha, a.salon_id, a.horario_id";
 
 // 5. EJECUCIÓN Y PROCESAMIENTO DE RESULTADOS
@@ -79,12 +108,12 @@ if ($stmt) {
         if ($view === 'semanal') {
             $key = $row['fecha'] . '-' . $row['horario_id'];
             $contenido_celda = '<div>' . htmlspecialchars($row['asignatura_nombre']) . ' (' . htmlspecialchars($row['ano_cursado'] ?? '?') . '°)</div>' . 
-                               '<div>' . htmlspecialchars($row['docente']) . '</div>' .
-                               '<div><i class="fa-solid fa-person-shelter" style="opacity: 0.8; margin-right: 5px;"></i>' . htmlspecialchars($row['salon_nombre']) . '</div>';
+                                '<div>' . htmlspecialchars($row['docente']) . '</div>' .
+                                '<div><i class="fa-solid fa-person-shelter" style="opacity: 0.8; margin-right: 5px;"></i>' . htmlspecialchars($row['salon_nombre']) . '</div>';
         } else { // Vista diaria
             $key = $row['salon_id'] . '-' . $row['horario_id'];
             $contenido_celda = '<div>' . htmlspecialchars($row['asignatura_nombre']) . ' (' . htmlspecialchars($row['ano_cursado'] ?? '?') . '°)</div>' . 
-                               '<div>' . htmlspecialchars($row['docente']) . '</div>';
+                                '<div>' . htmlspecialchars($row['docente']) . '</div>';
         }
         $asignaciones_filtradas[$key][] = $contenido_celda;
     }
@@ -181,7 +210,7 @@ $conn->close();
                                             $key = $fecha_iter->format('Y-m-d') . '-' . $hora['id'];
                                             $contenido = isset($asignaciones_filtradas[$key]) ? implode('<hr>', $asignaciones_filtradas[$key]) : '';
                                     ?>
-                                        <td class="<?php echo $contenido ? 'ocupado' : 'libre'; ?>"><?php echo $contenido; ?></td>
+                                            <td class="<?php echo $contenido ? 'ocupado' : 'libre'; ?>"><?php echo $contenido; ?></td>
                                     <?php 
                                             $fecha_iter->modify('+1 day');
                                         endfor; 
@@ -198,9 +227,12 @@ $conn->close();
 
     <script>
         const activeView = "<?php echo $view; ?>";
+        // horasDB usa la lista completa
         const horasDB = <?php echo json_encode(array_column($horarios, 'hora')); ?>;
         const fechaMostrada = "<?php echo $filtro_fecha; ?>";
         const fechaHoy = "<?php echo date("Y-m-d"); ?>";
+        // Se mantiene la fecha del lunes para el botón de descarga
+        const fechaLunesSemana = "<?php echo $fecha_lunes ? $fecha_lunes->format('Y-m-d') : $filtro_fecha; ?>";
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
