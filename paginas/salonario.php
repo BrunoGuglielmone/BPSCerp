@@ -1,5 +1,6 @@
 <?php
 include_once("../api/verificar_sesion.php");
+$titulo_pagina = "Salonario"; 
 include_once("../Php/header.php");
 ?>
 <!DOCTYPE html>

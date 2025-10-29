@@ -1,5 +1,4 @@
 <?php
-// api/get_datos.php
 include 'conexion.php';
 header('Content-Type: application/json; charset=utf-8');
 
@@ -17,7 +16,6 @@ try {
     $response['asignaturas'] = $conn->query("SELECT id, nombre FROM asignaturas ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
     
     // 4. Obtener Asignaciones para la fecha específica (con JOINs)
-    // MODIFICADO: Se añade LEFT JOIN a carrera_asignatura para obtener el año.
     $sql_asig = "SELECT 
                     ag.salon_id,
                     ag.horario_id,

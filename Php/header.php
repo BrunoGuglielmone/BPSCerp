@@ -17,7 +17,7 @@ $ocultarVolver = in_array($paginaActual, ['menuinteractivo.php', 'login.php']);
     <div class="reloj-container">
         <span id="reloj"></span>
     </div>
-    <span class="titulo-admin"></span>
+    <h1 class="titulo-pagina"><?php echo isset($titulo_pagina) ? $titulo_pagina : ''; ?></h1>
 </header>
 
 <script>

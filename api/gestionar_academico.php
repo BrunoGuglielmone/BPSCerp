@@ -12,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 switch ($accion) {
     case 'listar_carreras':
-        
         $sql = "SELECT id, nombre, color, ano, turno FROM carreras ORDER BY nombre";
         $result = $conn->query($sql);
         echo json_encode($result->fetch_all(MYSQLI_ASSOC));
@@ -29,20 +28,37 @@ switch ($accion) {
             http_response_code(400); echo json_encode(['success' => false, 'message' => 'El nombre y la duración son obligatorios.']); exit;
         }
 
+        $is_new = false; //  saber si es creación
         if ($id) {
-            
             $stmt = $conn->prepare("UPDATE carreras SET nombre = ?, color = ?, ano = ?, turno = ? WHERE id = ?");
             $stmt->bind_param("ssisi", $nombre, $color, $ano, $turno, $id);
             $mensaje = 'Orientación actualizada.';
         } else {
-           
+            // Creación
+            $is_new = true;
             $stmt = $conn->prepare("INSERT INTO carreras (nombre, color, ano, turno) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("ssis", $nombre, $color, $ano, $turno);
             $mensaje = 'Orientación creada.';
         }
         
         if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => $mensaje]);
+            // Si fue una creación, obtenemos el nuevo ID. Si no, usamos el ID existente.
+            $carrera_id = $is_new ? $conn->insert_id : $id;
+
+            $carrera_guardada = [
+                'id' => (int)$carrera_id, 
+                'nombre' => $nombre,
+                'color' => $color,
+                'ano' => (int)$ano, 
+                'turno' => $turno
+            ];
+
+            
+            echo json_encode([
+                'success' => true, 
+                'message' => $mensaje,
+                'carrera' => $carrera_guardada 
+            ]);
         } else {
             http_response_code(500); echo json_encode(['success' => false, 'message' => 'Error al guardar: ' . $stmt->error]);
         }
@@ -56,8 +72,8 @@ switch ($accion) {
         $carrera_id = $_GET['carrera_id'];
         
         $sql = "SELECT ca.ano_cursado, a.id AS asignatura_id, a.nombre AS asignatura_nombre,
-                    GROUP_CONCAT(DISTINCT d.id) AS docentes_ids,
-                    GROUP_CONCAT(DISTINCT CONCAT(d.apellido, ', ', d.nombre) ORDER BY d.apellido) AS docentes_nombres
+                       GROUP_CONCAT(DISTINCT d.id) AS docentes_ids,
+                       GROUP_CONCAT(DISTINCT CONCAT(d.apellido, ', ', d.nombre) ORDER BY d.apellido) AS docentes_nombres
                 FROM carrera_asignatura ca
                 JOIN asignaturas a ON ca.asignatura_id = a.id
                 LEFT JOIN docente_asignatura da ON a.id = da.asignatura_id AND da.ano_lectivo = YEAR(CURDATE())
@@ -81,7 +97,7 @@ switch ($accion) {
                 $nombres = explode(',', $row['docentes_nombres']);
                 for($i=0; $i < count($ids); $i++) {
                     if (isset($ids[$i]) && isset($nombres[$i])) {
-                       $docentes[] = ['id' => $ids[$i], 'nombre' => $nombres[$i]];
+                        $docentes[] = ['id' => $ids[$i], 'nombre' => $nombres[$i]];
                     }
                 }
             }
@@ -108,32 +124,6 @@ switch ($accion) {
         echo json_encode($result->fetch_all(MYSQLI_ASSOC));
         break;
 
-    case 'guardar_carrera':
-        $id = $datos['carrera_id'] ?? null;
-        $nombre = $datos['nombre'] ?? '';
-        $color = $datos['color'] ?? '#4a90e2';
-        $ano = $datos['ano'] ?? 0;
-
-        if (empty($nombre) || empty($ano)) {
-            http_response_code(400); echo json_encode(['success' => false, 'message' => 'El nombre y la duración son obligatorios.']); exit;
-        }
-
-        if ($id) {
-            $stmt = $conn->prepare("UPDATE carreras SET nombre = ?, color = ?, ano = ? WHERE id = ?");
-            $stmt->bind_param("ssii", $nombre, $color, $ano, $id);
-            $mensaje = 'Orientación actualizada.';
-        } else {
-            $stmt = $conn->prepare("INSERT INTO carreras (nombre, color, ano) VALUES (?, ?, ?)");
-            $stmt->bind_param("ssi", $nombre, $color, $ano);
-            $mensaje = 'Orientación creada.';
-        }
-        
-        if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => $mensaje]);
-        } else {
-            http_response_code(500); echo json_encode(['success' => false, 'message' => 'Error al guardar: ' . $stmt->error]);
-        }
-        break;
 
     case 'eliminar_carrera':
         $id = $datos['carrera_id'];
@@ -220,3 +210,4 @@ switch ($accion) {
 }
 $conn->close();
 ?>
+

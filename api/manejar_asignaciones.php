@@ -1,9 +1,8 @@
 <?php
-// api/manejar_asignaciones.php
 include 'conexion.php';
 header('Content-Type: application/json; charset=utf-8');
 
-// Usar un bloque try-catch general para nunca dejar de enviar una respuesta JSON
+// Usamos un bloque try-catch general para nunca dejar de enviar una respuesta JSON
 try {
     $data = json_decode(file_get_contents('php://input'), true);
 

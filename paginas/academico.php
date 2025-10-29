@@ -1,5 +1,6 @@
 <?php
 include_once("../api/verificar_sesion.php");
+$titulo_pagina = "Gestión Académica"; 
 include_once("../Php/header.php");
 ?>
 <!DOCTYPE html>
@@ -8,7 +9,7 @@ include_once("../Php/header.php");
     <meta charset="UTF-8">
     <title>Gestión Académica</title>
     <link rel="stylesheet" href="../estilos/estilos.css">
-    <link rel="stylesheet" href="../estilos/academico.css"> 
+    <link rel="stylesheet" href="../estilos/estilosacademico.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>

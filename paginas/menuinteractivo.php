@@ -1,6 +1,7 @@
 <?php
 // ¡Este es el guardia! Se asegura de que solo usuarios autenticados vean el menú.
 include_once("../api/verificar_sesion.php");
+$titulo_pagina = "Menú Interactivo";
 include_once("../Php/header.php"); 
 ?>
 <!DOCTYPE html>

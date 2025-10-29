@@ -7,7 +7,6 @@ include_once 'conexion.php';
 
 // Verificar que se hayan enviado datos por el método POST.
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
     // Verificar que los campos no estén vacíos.
     if (empty($_POST["usuario"]) || empty($_POST["contrasena"])) {
         $_SESSION['error_login'] = "Por favor, ingrese usuario y contraseña.";

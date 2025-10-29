@@ -1,3 +1,7 @@
+/* ============================================= */
+/* == ESTILOS DEL GESTOR ACADEMICO == */
+/* ============================================= */
+
 /* --- Layout Principal --- */
 main { display: flex; gap: 20px; padding: 20px; height: calc(100vh - 125px); }
 

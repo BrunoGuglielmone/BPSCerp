@@ -1,5 +1,4 @@
 <?php
-// api/gestionar_docentes.php
 include_once 'conexion.php';
 header('Content-Type: application/json; charset=utf-8');
 $method = $_SERVER['REQUEST_METHOD'];

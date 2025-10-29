@@ -6,7 +6,7 @@ header('Content-Type: application/json; charset=utf-8');
 $metodo = $_SERVER['REQUEST_METHOD'];
 
 if ($metodo == 'POST') {
-    // --- LÓGICA PARA GUARDAR/ACTUALIZAR LAS FECHAS ---
+    // --- GUARDAR/ACTUALIZAR LAS FECHAS ---
 
     // Obtener los datos enviados en el cuerpo de la petición
     $datos = json_decode(file_get_contents('php://input'), true);
@@ -28,7 +28,7 @@ if ($metodo == 'POST') {
         exit;
     }
 
-    $conn->begin_transaction(); // Iniciar transacción para asegurar que todo se guarde correctamente
+    $conn->begin_transaction(); 
 
     try {
         // Guardar cada una de las cuatro fechas
@@ -39,7 +39,7 @@ if ($metodo == 'POST') {
         $clave = 'semestre2_inicio'; $valor = $datos['inicioS2']; $stmt->execute();
         $clave = 'semestre2_fin';    $valor = $datos['finS2'];    $stmt->execute();
         
-        $conn->commit(); // Confirmar los cambios
+        $conn->commit(); // Confirmar cambios
         echo json_encode(['error' => false, 'mensaje' => 'Configuración de semestres guardada correctamente.']);
 
     } catch (mysqli_sql_exception $exception) {
@@ -57,7 +57,7 @@ if ($metodo == 'POST') {
     
     $configuracion = [];
     while ($row = $result->fetch_assoc()) {
-        // Crear un array asociativo como: ['semestre1_inicio' => '2025-03-10']
+        // Crear un array como: ['semestre1_inicio' => '2025-03-10']
         $configuracion[$row['clave']] = $row['valor'];
     }
     

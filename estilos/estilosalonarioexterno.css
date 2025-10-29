@@ -20,11 +20,25 @@ body::before {
     display: flex; justify-content: space-between; align-items: center;
     padding: 0 10px 20px 10px; max-width: 1400px; margin: 0 auto;
 }
-.logo-container img { height: 60px; display: block; }
+.logo-container img { margin-right: 20px; height: 60px; display: block; }
 .header-controls { display: flex; align-items: center; gap: 25px; }
 .reloj {
-    font-size: 1.8rem; font-weight: bold; font-family: 'Courier New', Courier, monospace;
-    color: #ccd6f6; letter-spacing: 1.5px;
+    font-family: 'SF Pro Display', 'Segoe UI', -apple-system, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  padding: 2px 14px;
+  border-radius: 12px;
+  display: inline-block;
+  min-width: 5ch;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 
+    0 4px 12px rgba(0,0,0,0.1),
+    0 1px 3px rgba(255,255,255,0.1);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  letter-spacing: 0.05em;
 }
 .main-container {
     max-width: 1400px; height: calc(100vh - 125px); margin: 0 auto;

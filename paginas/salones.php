@@ -1,5 +1,6 @@
 <?php 
 include_once("../api/verificar_sesion.php");
+$titulo_pagina = "Gestión de Salones";
 include_once("../Php/header.php"); 
 ?>
 <!DOCTYPE html>

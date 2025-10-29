@@ -1,5 +1,5 @@
 /* ============================================= */
-/* ==ESTILOS GLOBALES DE LA PÁGINA == */
+/* == ESTILOS DEL GESTOR ACADEMICO == */
 /* ============================================= */
 
 * {
@@ -48,15 +48,17 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px; /* espacio entre elementos del header */
   background-color: rgba(0, 25, 51, 0.6);
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   padding: 10px 20px;
   color: #fff;
+  position: relative; /* Ajuste adicional para el header para asegurar posicionamiento relativo */
 }
 
 .header-docentes .logo-container img {
   height: 28px;
-  display: block; /* Mejora el renderizado de la imagen */
+  display: block; 
 }
 
 .header-docentes .titulo-admin {
@@ -69,11 +71,23 @@ main {
   text-shadow: 0 2px 8px rgba(0,0,0,0.3);
   pointer-events: none; 
 }
-
 .reloj-container {
-  font-size: 1.5rem;
-  font-weight: bold;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'SF Pro Display', 'Segoe UI', -apple-system, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  padding: 2px 14px;
+  border-radius: 12px;
+  display: inline-block;
+  min-width: 5ch;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 
+    0 4px 12px rgba(0,0,0,0.1),
+    0 1px 3px rgba(255,255,255,0.1);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  letter-spacing: 0.05em;
 }
 
 .footer-docentes {
@@ -111,9 +125,13 @@ main {
 
 /* Estilo para el botón de menú */
 .menu-button {
+  position: relative; 
+  align-items: center;
+  display: inline-flex;
   height: 40px;
   padding: 0 20px;
   border-radius: 10px;
+  margin-left: 1100px; 
 }
 
 /* Botón animado reutilizable */
@@ -137,7 +155,7 @@ main {
   color: #fff;
   font-size: 1rem;
   font-weight: bold;
-  transition: color 0.3s 0.1s ease-in; /* Añadido pequeño retraso */
+  transition: color 0.3s 0.1s ease-in; 
 }
 
 .btn-animado:hover span {
@@ -173,4 +191,19 @@ main {
 .btn-animado:hover::before,
 .btn-animado:hover::after {
   width: 60%;
+}
+
+.titulo-pagina {
+  font-size: 1.5rem;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  padding: 0 20px;
+  font-weight: bold;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  background: #CFE7FA;
+  background: linear-gradient(to right, #CFE7FA 0%, #6393C1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

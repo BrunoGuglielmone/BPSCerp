@@ -21,16 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalCarrera = document.getElementById('modal-carrera');
     const formCarrera = document.getElementById('form-carrera');
     const modalCarreraTitulo = document.getElementById('modal-carrera-titulo');
-    // ELIMINADO: const cerrarModalCarreraBtn = document.getElementById('cerrar-modal-carrera');
     
     const modalAgregarAsignatura = document.getElementById('modal-agregar-asignatura');
     const formAgregarAsignatura = document.getElementById('form-agregar-asignatura');
-    // ELIMINADO: const cerrarModalAgregarAsignaturaBtn = document.getElementById('cerrar-modal-agregar-asignatura');
     
     const modalAsignarDocente = document.getElementById('modal-asignar-docente');
     const formAsignarDocente = document.getElementById('form-asignar-docente');
     const modalAsignarDocenteTitulo = document.getElementById('modal-asignar-docente-titulo');
-    // ELIMINADO: const cerrarModalAsignarDocenteBtn = document.getElementById('cerrar-modal-asignar-docente');
     
     const listaDocentesCheckboxesEl = document.getElementById('lista-docentes-checkboxes');
     const buscadorDocenteInput = document.getElementById('buscador-docente');
@@ -104,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const turnoTag = carrera.turno ? `<span class="tag-turno ${carrera.turno.toLowerCase()}">${carrera.turno}</span>` : '';
             
-            // NUEVO: Añadido wrapper para info y botón de eliminar
             li.innerHTML = `
                 <div class="carrera-info-wrapper">
                     <span>${carrera.nombre}</span>
@@ -115,9 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
             `;
             
-            // ELIMINADO: li.addEventListener('click', ...)
-            // Se usará delegación de eventos
-            
             listaCarrerasEl.appendChild(li);
         });
     }
@@ -127,13 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
         placeholderEl.style.display = 'none';
         detalleEl.style.display = 'block';
         
-        // El botón de editar se añade aquí
         planTituloEl.innerHTML = `${nombre} 
             <button id="btn-editar-carrera-activa" class="btn-icon" title="Editar Orientación">
                 <i class="fa fa-cog"></i>
             </button>`;
         
-        // El listener DEBE añadirse aquí, porque el botón se crea con innerHTML
         document.getElementById('btn-editar-carrera-activa').addEventListener('click', () => abrirModalCarrera(carrera));
         
         anosContainerEl.innerHTML = '<div class="loader"></div>';
@@ -170,9 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="ano-actions">
                              <button class="btn-icon btn-agregar-asignatura" data-ano="${i}" title="Agregar Asignatura">
                                  <i class="fa fa-plus-circle"></i>
-                            </button>
+                             </button>
                             <button class="btn-icon btn-limpiar-ano" data-ano="${i}" title="Limpiar todas las asignaturas">
-                                <i class="fa fa-trash-alt"></i>
+                                 <i class="fa fa-trash-alt"></i>
                             </button>
                         </div>
                     </div>
@@ -180,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 anosContainerEl.appendChild(anoCard);
             }
             
-            // Delegación de eventos para los botones dentro del plan
             anosContainerEl.querySelectorAll('.btn-agregar-asignatura').forEach(btn => btn.addEventListener('click', () => abrirModalAgregarAsignatura(btn.dataset.ano)));
             anosContainerEl.querySelectorAll('.btn-limpiar-ano').forEach(btn => btn.addEventListener('click', () => limpiarAno(btn.dataset.ano)));
             anosContainerEl.querySelectorAll('.btn-quitar-asignatura').forEach(btn => btn.addEventListener('click', () => quitarAsignaturaDePlan(btn.closest('.asignatura-item').dataset.asigId)));
@@ -193,10 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === LÓGICA DE ACCIONES ===
-
-    /**
-     * NUEVA: Función helper para recargar el plan de estudio activo.
-     */
     function refrescarPlanActivo() {
         const carrera = todasLasCarreras.find(c => c.id == carreraActivaId);
         if (carrera) {
@@ -204,27 +190,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * REFACTORIZADA: Devuelve el objeto JSON completo de la API o un objeto de error.
-     * Ya no muestra la notificación de éxito/error; eso se hace en la función que la llama.
-     */
     async function peticionAPI(data) {
         try {
             const response = await fetch(API_ACADEMICO, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
             const result = await response.json();
             if (!response.ok) throw new Error(result.message);
-            return result; // Devuelve el resultado completo
+            return result;
         } catch (error) {
             await mostrarNotificacion('Error de Conexión', error.message || 'No se pudo comunicar con el servidor.');
-            return { success: false, message: error.message }; // Devuelve un objeto de error estándar
+            return { success: false, message: error.message };
         }
     }
     
-    /**
-     * REFACTORIZADA: Lógica de guardado arreglada.
-     * Ya no llama a init(), sino que actualiza el estado local (todasLasCarreras)
-     * con la información devuelta por la API, y recarga solo los componentes necesarios.
-     */
+    
     async function guardarCarrera(e) {
         e.preventDefault();
         const formData = new FormData(formCarrera);
@@ -246,7 +224,27 @@ document.addEventListener('DOMContentLoaded', () => {
             cerrarModal(modalCarrera);
             const carreraGuardada = result.carrera; // Obtenemos la carrera desde la API
 
-            if (idOriginal) { // Estamos editando
+            
+            // Verificamos si la API devolvió el objeto 'carrera' como se esperaba
+            if (!carreraGuardada || typeof carreraGuardada.id === 'undefined') {
+                console.error("La API reportó éxito pero no devolvió el objeto 'carrera' completo.", result);
+                
+                try {
+                    const carrerasRes = await fetch(`${API_ACADEMICO}?accion=listar_carreras`);
+                    if (!carrerasRes.ok) throw new Error("Fallo al recargar carreras.");
+                    todasLasCarreras = await carrerasRes.json();
+                    renderizarListaCarreras();
+                    // Limpiamos la selección para forzar al usuario a elegir
+                    carreraActivaId = null;
+                    detalleEl.style.display = 'none';
+                    placeholderEl.style.display = 'flex';
+                } catch (error) {
+                    await mostrarNotificacion("Error", "No se pudo recargar la lista de carreras post-guardado. Por favor, recargue la página.");
+                }
+                return; 
+            }
+            
+            if (idOriginal) { 
                 const index = todasLasCarreras.findIndex(c => c.id == carreraGuardada.id);
                 if (index > -1) {
                     todasLasCarreras[index] = carreraGuardada;
@@ -255,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 todasLasCarreras.push(carreraGuardada);
             }
             
-            // Establecemos la carrera guardada (nueva o editada) como activa
+            // Esta línea (259) ahora es segura
             carreraActivaId = carreraGuardada.id;
             
             renderizarListaCarreras(); // Recarga la lista izquierda
@@ -263,9 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * NUEVA: Función para manejar la eliminación de una carrera.
-     */
     async function eliminarCarrera(id, nombre) {
         const confirmado = await mostrarNotificacion(
             'Confirmar Eliminación', 
@@ -279,25 +274,19 @@ document.addEventListener('DOMContentLoaded', () => {
         await mostrarNotificacion(result.success ? 'Eliminado' : 'Error', result.message);
 
         if (result.success) {
-            // Quitar del array local
             todasLasCarreras = todasLasCarreras.filter(c => c.id != id);
             
             if (carreraActivaId == id) {
-                // Si era la activa, limpiar panel derecho
                 carreraActivaId = null;
                 detalleEl.style.display = 'none';
-                placeholderEl.style.display = 'flex'; // Usar flex para centrar
+                placeholderEl.style.display = 'flex';
                 planTituloEl.innerHTML = '';
             }
-            // Renderizar la lista de carreras actualizada
             renderizarListaCarreras();
         }
     }
 
 
-    /**
-     * REFACTORIZADA: Usa la nueva lógica de peticionAPI y la función helper.
-     */
     async function limpiarAno(ano) {
         const confirmado = await mostrarNotificacion('Confirmar Acción', `¿Seguro que quieres eliminar TODAS las asignaturas de ${ano}º Año de este plan? Esta acción no se puede deshacer.`, 'confirmacion');
         if (!confirmado) return;
@@ -311,9 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * REFACTORIZADA: Usa la nueva lógica de peticionAPI y la función helper.
-     */
     async function agregarAsignaturaAPlan(e) {
         e.preventDefault();
         const formData = new FormData(formAgregarAsignatura);
@@ -332,9 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    /**
-     * REFACTORIZADA: Usa la nueva lógica de peticionAPI y la función helper.
-     */
     async function quitarAsignaturaDePlan(asignaturaId) {
         const confirmado = await mostrarNotificacion('Confirmar Acción', '¿Quitar esta asignatura del plan de estudios?', 'confirmacion');
         if (!confirmado) return;
@@ -348,9 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * REFACTORIZADA: Usa la nueva lógica de peticionAPI y la función helper.
-     */
     async function actualizarDocentesAsignatura(e) {
         e.preventDefault();
         const formData = new FormData(formAsignarDocente);
@@ -413,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const ano in planDeEstudioActivo) {
             const asig = planDeEstudioActivo[ano].find(a => a.asignatura_id == asignaturaId);
             if (asig) {
-                docentesAsignadosIds = asig.docentes.map(d => String(d.id)); // Convertir a string para comparación
+                docentesAsignadosIds = asig.docentes.map(d => String(d.id));
                 break;
             }
         }
@@ -498,49 +478,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === EVENT LISTENERS GLOBALES ===
-
-    /**
-     * NUEVO: Listener unificado para todos los botones de cerrar modal.
-     * Asegúrate de que tus botones de cerrar (la 'X') en el HTML tengan class="cerrar".
-     */
     document.querySelectorAll('.modal-dialog .cerrar').forEach(btn => {
         btn.addEventListener('click', () => {
             cerrarModal(btn.closest('.modal-overlay'));
         });
     });
     
-    /**
-     * NUEVO: Delegación de eventos para la lista de carreras.
-     * Maneja tanto la selección (clic en <li>) como la eliminación (clic en .btn-eliminar-carrera).
-     */
     listaCarrerasEl.addEventListener('click', e => {
         const li = e.target.closest('li[data-id]');
-        if (!li) return; // Clic fuera de un item
+        if (!li) return;
 
         const carreraId = li.dataset.id;
         const carrera = todasLasCarreras.find(c => c.id == carreraId);
         if (!carrera) return;
 
         if (e.target.closest('.btn-eliminar-carrera')) {
-            // Se hizo clic en el botón de eliminar
-            e.stopPropagation(); // Evita que se active el clic del li
+            e.stopPropagation();
             eliminarCarrera(carrera.id, carrera.nombre);
         } else {
-            // Se hizo clic en el li para seleccionarlo
             if (carreraActivaId !== carrera.id) {
                 carreraActivaId = carrera.id;
-                renderizarListaCarreras(); // Re-renderiza para marcar la activa
+                renderizarListaCarreras();
                 cargarPlanDeEstudio(carrera);
             }
         }
     });
 
     btnCrearCarrera.addEventListener('click', () => abrirModalCarrera());
-
-    // ELIMINADOS: Listeners individuales para cerrar modales
-    // cerrarModalCarreraBtn.addEventListener('click', () => cerrarModal(modalCarrera));
-    // cerrarModalAgregarAsignaturaBtn.addEventListener('click', () => cerrarModal(modalAgregarAsignatura));
-    // cerrarModalAsignarDocenteBtn.addEventListener('click', () => cerrarModal(modalAsignarDocente));
 
     formCarrera.addEventListener('submit', guardarCarrera);
     formAgregarAsignatura.addEventListener('submit', agregarAsignaturaAPlan);
