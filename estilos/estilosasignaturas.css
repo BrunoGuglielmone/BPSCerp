@@ -1,5 +1,5 @@
 /* ============================================= */
-/* ==  Estilos del gestor de docentes == */
+/* ==  Estilos del gestor de asignaturas == */
 /* ============================================= */
 
 /* --- Layout Principal --- */
@@ -82,12 +82,6 @@
     border-color: #64ffda;
 }
 
-.input-group input:disabled {
-    background-color: #233554;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
 .btn-guardar {
     width: 100%;
     padding: 12px;
@@ -107,9 +101,7 @@
     box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
 }
 
-/* --- Panel de la Lista de Docentes --- */
-
-
+/* --- Panel de la Lista --- */
 .lista-container {
     flex: 3;
     display: flex;
@@ -165,29 +157,28 @@
     overflow-x: auto;
 }
 
-#tabla-docentes {
+#tabla-asignaturas {
     width: 100%;
     border-collapse: collapse;
     color: #e6f1ff;
 }
 
-#tabla-docentes th,
-#tabla-docentes td {
+#tabla-asignaturas th,
+#tabla-asignaturas td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     white-space: nowrap;
 }
 
-#tabla-docentes thead {
+#tabla-asignaturas thead {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-#tabla-docentes tbody tr:hover {
+#tabla-asignaturas tbody tr:hover {
     background-color: rgba(100, 255, 218, 0.08);
 }
 
-/* - Estilos para los filtros de la tabla --- */
 .filtros-fila input.filtro-input {
     width: 100%;
     padding: 8px 10px;
@@ -222,7 +213,7 @@
 .btn-accion-fila.btn-eliminar:hover { color: #e34040; }
 
 
-/* --- Estilos para Modal --- */
+/* --- Estilos para Modales --- */
 .modal-overlay {
     position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px); z-index: 2000;
@@ -243,8 +234,8 @@
 .modal-dialog p { margin: 15px 0 25px 0; font-size: 1rem; color: #a8b2d1; line-height: 1.6; }
 .modal-actions { display: flex; gap: 15px; justify-content: center; }
 .modal-actions .btn { min-width: 120px; }
-.btn-primary { background-color: #64ffda; color: #0a192f; border-color: #64ffda; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.btn-secondary { background-color: #8892b0; color: #0a192f; border-color: #8892b0; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-primary { background-color: #64ffda; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-secondary { background-color: #8892b0; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
 /* --- Media Queries --- */
 @media (max-width: 992px) {

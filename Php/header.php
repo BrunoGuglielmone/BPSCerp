@@ -1,17 +1,23 @@
 <?php
 // Header común de la aplicación
+$paginaActual = basename($_SERVER['PHP_SELF']);
+$ocultarVolver = in_array($paginaActual, ['menuinteractivo.php', 'login.php']);
 ?>
 <header class="header-docentes">
     <div class="logo-container">
         <img src="../imagenes/logo_cerp_3d.png" alt="Logo Institución" style="height: 70px;">
     </div>
 
+    <?php if (!$ocultarVolver): ?>
+    <a href="../paginas/menuinteractivo.php" class="menu-button btn-animado">
+        <span>Volver</span>
+    </a>
+    <?php endif; ?>
+
     <div class="reloj-container">
         <span id="reloj"></span>
     </div>
-    <span class="titulo-admin">Administrador</span>
-
-
+    <h1 class="titulo-pagina"><?php echo isset($titulo_pagina) ? $titulo_pagina : ''; ?></h1>
 </header>
 
 <script>
@@ -28,7 +34,6 @@
     }
     setInterval(actualizarReloj, 1000);
     actualizarReloj();
-
 </script>
 
 

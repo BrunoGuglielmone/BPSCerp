@@ -1,8 +1,8 @@
 /* ============================================= */
-/* ==  Estilos del gestor de docentes == */
+/* ==  ESTILOS DEL salonario externo == */
 /* ============================================= */
 
-/* --- Layout Principal --- */
+/* --- Contenedor Principal --- */
 .main-container {
     display: flex;
     flex: 1;
@@ -66,7 +66,8 @@
     color: #a8b2d1;
 }
 
-.input-group input {
+.input-group input,
+.input-group select {
     width: 100%;
     padding: 12px;
     border: 1px solid #233554;
@@ -78,14 +79,21 @@
     transition: border-color 0.3s ease;
 }
 
-.input-group input:focus {
-    border-color: #64ffda;
+.input-group select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364ffda%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 15px top 50%;
+    background-size: .7em auto;
 }
 
-.input-group input:disabled {
-    background-color: #233554;
-    cursor: not-allowed;
-    opacity: 0.7;
+.input-group option {
+    background-color: #0a192f;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #64ffda;
 }
 
 .btn-guardar {
@@ -107,9 +115,7 @@
     box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
 }
 
-/* --- Panel de la Lista de Docentes --- */
-
-
+/* --- Panel de la Lista --- */
 .lista-container {
     flex: 3;
     display: flex;
@@ -165,30 +171,30 @@
     overflow-x: auto;
 }
 
-#tabla-docentes {
+#tabla-salones {
     width: 100%;
     border-collapse: collapse;
     color: #e6f1ff;
 }
 
-#tabla-docentes th,
-#tabla-docentes td {
+#tabla-salones th,
+#tabla-salones td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     white-space: nowrap;
 }
 
-#tabla-docentes thead {
+#tabla-salones thead {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-#tabla-docentes tbody tr:hover {
+#tabla-salones tbody tr:hover {
     background-color: rgba(100, 255, 218, 0.08);
 }
 
-/* - Estilos para los filtros de la tabla --- */
-.filtros-fila input.filtro-input {
+.filtros-fila input.filtro-input,
+.filtros-fila select.filtro-input {
     width: 100%;
     padding: 8px 10px;
     background-color: #112240;
@@ -200,14 +206,14 @@
 .filtros-fila input.filtro-input::placeholder {
     color: #8892b0;
 }
-.filtros-fila input.filtro-input:focus {
+.filtros-fila input.filtro-input:focus,
+.filtros-fila select.filtro-input:focus {
     outline: none;
     border-color: #64ffda;
 }
 .filtros-fila th {
     padding: 8px;
 }
-
 
 .acciones-celda {
     display: flex;
@@ -222,7 +228,7 @@
 .btn-accion-fila.btn-eliminar:hover { color: #e34040; }
 
 
-/* --- Estilos para Modal --- */
+/* --- Estilos para Modales --- */
 .modal-overlay {
     position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px); z-index: 2000;
@@ -243,8 +249,8 @@
 .modal-dialog p { margin: 15px 0 25px 0; font-size: 1rem; color: #a8b2d1; line-height: 1.6; }
 .modal-actions { display: flex; gap: 15px; justify-content: center; }
 .modal-actions .btn { min-width: 120px; }
-.btn-primary { background-color: #64ffda; color: #0a192f; border-color: #64ffda; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.btn-secondary { background-color: #8892b0; color: #0a192f; border-color: #8892b0; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-primary { background-color: #64ffda; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-secondary { background-color: #8892b0; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
 /* --- Media Queries --- */
 @media (max-width: 992px) {

@@ -1,39 +1,25 @@
-<?php include_once("../Php/header.php"); ?>
+<?php
+include_once("../api/verificar_sesion.php");
+$titulo_pagina = "Gestión de Docentes"; 
+include_once("../Php/header.php");
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8"> <!-- Define la codificación de caracteres para permitir acentos, ñ, etc. -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Hace que el sitio sea responsive en móviles -->
+    <meta charset="UTF-8">
     <title>Gestión de Docentes</title>
-    
-    <!-- Estilos generales y específicos de la página -->
     <link rel="stylesheet" href="../estilos/estilos.css">
     <link rel="stylesheet" href="../estilos/estilosdocentes.css">
-
-    <!-- Librería de iconos Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-
-    <!-- Contenedor principal: formulario a la izquierda y lista de docentes a la derecha -->
     <main class="main-container">
-
-        <!-- Panel lateral con el formulario de registro -->
         <aside class="formulario-container">
-            <!-- Botón que despliega/oculta el formulario -->
-            <button type="button" class="toggle-form-btn">
-                <i class="fa-solid fa-user-plus"></i> Registrar Nuevo Docente
-            </button>
-
-            <!-- Contenido del formulario -->
+            <button type="button" class="toggle-form-btn"><i class="fa-solid fa-user-plus"></i> Registrar Nuevo Docente</button>
             <div class="formulario-content">
                 <form id="registro-docente-form">
-                    <!-- Campo oculto para manejar la edición de docentes -->
                     <input type="hidden" id="docente_id" name="docente_id">
-                    
-                    <h3>Datos del Docente</h3>
-
-                    <!-- Cada input se organiza en un grupo con su etiqueta -->
+                    <h3 id="form-title">Datos del Docente</h3>
                     <div class="input-group">
                         <label for="nombre">Nombre</label>
                         <input type="text" id="nombre" name="nombre" required>
@@ -43,109 +29,75 @@
                         <input type="text" id="apellido" name="apellido" required>
                     </div>
                     <div class="input-group">
-                        <label for="asignatura">Asignatura</label>
-                        <input type="text" id="asignatura" name="asignatura" required>
+                        <label for="cedula">Cédula (8 dígitos, sin puntos ni guion)</label>
+                        <input type="text" id="cedula" name="cedula" required 
+                               maxlength="8" pattern="[0-9]{8}" title="Debe contener exactamente 8 números."
+                               inputmode="numeric">
                     </div>
                     <div class="input-group">
-                        <label for="ano_cursado">Año Cursado</label>
-                        <input type="number" id="ano_cursado" name="ano_cursado" min="1" max="4" required>
+                        <label for="telefono">Teléfono (hasta 15 dígitos)</label>
+                        <input type="tel" id="telefono" name="telefono" 
+                               maxlength="15" pattern="[0-9]+" title="Solo se permiten números."
+                               inputmode="numeric">
                     </div>
-                    <div class="input-group">
-                        <label for="cedula">Cédula</label>
-                        <input type="text" id="cedula" name="cedula">
-                    </div>
-                    <div class="input-group">
-                        <label for="telefono">Teléfono</label>
-                        <input type="tel" id="telefono" name="telefono">
-                    </div>
-
-                    <!-- Botón de guardar -->
-                    <button type="submit" class="btn-guardar">Guardar Docente</button>
+                    <button type="submit" class="btn-guardar" id="btn-guardar-texto">Guardar Docente</button>
                 </form>
             </div>
         </aside>
 
-        <!-- Sección con la tabla/lista de docentes -->
         <section class="lista-container">
-
-            <!-- Barra superior con buscador y botones de acción -->
             <div class="toolbar">
-                <!-- Barra de búsqueda -->
-                <div class="search-bar">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="busqueda" placeholder="Buscar profesor...">
-                </div>
-
-                <!-- Botones para editar/eliminar registros seleccionados -->
+                <h3>Lista de Docentes</h3>
                 <div class="actions">
-                    <button class="btn-accion btn-editar-seleccionado" disabled>
-                        <i class="fa-solid fa-pencil"></i> Editar
-                    </button>
-                    <button class="btn-accion btn-eliminar-seleccionado" disabled>
-                        <i class="fa-solid fa-trash"></i> Eliminar
-                    </button>
+                    <button class="btn-accion btn-editar-seleccionado" disabled><i class="fa-solid fa-pencil"></i> Editar</button>
+                    <button class="btn-accion btn-eliminar-seleccionado" disabled><i class="fa-solid fa-trash"></i> Eliminar</button>
                 </div>
             </div>
-
-            <!-- Tabla de docentes -->
             <div class="tabla-responsive">
                 <table id="tabla-docentes">
                     <thead>
                         <tr>
-                            <!-- Checkbox para seleccionar todos -->
                             <th><input type="checkbox" id="seleccionar-todos"></th>
-                            <th>
-                                <a href="#" data-sort="nombre">Nombre y Apellido 
-                                    <i class="fa-solid fa-sort"></i>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" data-sort="asignatura">Asignatura 
-                                    <i class="fa-solid fa-sort"></i>
-                                </a>
-                            </th>
-                            <th>
-                                <a href="#" data-sort="ano">Año 
-                                    <i class="fa-solid fa-sort"></i>
-                                </a>
-                            </th>
-                            <th>Otros Datos</th>
+                            <th>Nombre y Apellido</th>
+                            <th>Cédula</th>
+                            <th>Teléfono</th>
                             <th>Acciones</th>
+                        </tr>
+                        <tr class="filtros-fila">
+                            <th></th>
+                            <th><input type="text" placeholder="Filtrar por nombre..." data-columna="nombre_completo" class="filtro-input"></th>
+                            <th><input type="text" placeholder="Filtrar por cédula..." data-columna="cedula" class="filtro-input"></th>
+                            <th><input type="text" placeholder="Filtrar por teléfono..." data-columna="telefono" class="filtro-input"></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Aquí se insertarán las filas dinámicamente con JavaScript -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </section>
-
     </main>
 
+    <div id="modal-notificacion" class="modal-overlay">
+        <div class="modal-dialog">
+            <h3 id="notificacion-titulo"></h3>
+            <p id="notificacion-mensaje"></p>
+            <div class="modal-actions">
+                <button id="notificacion-btn-aceptar" class="btn btn-primary">Aceptar</button>
+                <button id="notificacion-btn-cancelar" class="btn btn-secondary" style="display:none;">Cancelar</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- Archivos JS al final para no bloquear la carga -->
     <script src="../js/docentes.js"></script>
     <script>
-        // --- Lógica para abrir/cerrar el formulario ---
-        const toggleBtn = document.querySelector('.toggle-form-btn');
-        const formContent = document.querySelector('.formulario-content');
-        
-        if(toggleBtn && formContent) {
-            toggleBtn.addEventListener('click', () => {
-                formContent.classList.toggle('abierto'); // Alterna la visibilidad
-                const icon = toggleBtn.querySelector('i');
-                // Cambia el ícono según el estado
-                if (formContent.classList.contains('abierto')) {
-                    icon.classList.remove('fa-user-plus');
-                    icon.classList.add('fa-chevron-up');
-                } else {
-                    icon.classList.remove('fa-chevron-up');
-                    icon.classList.add('fa-user-plus');
-                }
-            });
-        }
+        document.querySelector('.toggle-form-btn').addEventListener('click', e => {
+            document.querySelector('.formulario-content').classList.toggle('abierto');
+            const icon = e.currentTarget.querySelector('i');
+            icon.classList.toggle('fa-user-plus');
+            icon.classList.toggle('fa-chevron-up');
+        });
     </script>
-    
     <?php include_once("../Php/footer.php"); ?>
 </body>
 </html>

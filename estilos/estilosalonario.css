@@ -1,544 +1,230 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    color: #222;
-    overflow-y: auto;
-    font-size: 0.7rem;
+/* ============================================= */
+/* ==  ESTILOS DEL salonario == */
+/* ============================================= */
+/* --- Contenedor Principal --- */
+.main-container {
     display: flex;
-    flex-direction: column;
-    background-image: url("https://w.wallhaven.cc/full/j3/wallhaven-j3wqo5.png");
-    background-repeat: repeat;
-    background-position: center;
-    background-size: cover;
-    color: #fff;
-}
-
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: transparent;
-    backdrop-filter: blur(7px);
-    z-index: -1;
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    background-color: #d0e6ff;
-}
-
-header .logo {
-    font-size: 24px;
-    font-weight: bold;
-    color: #003366;
-}
-
-.logo-container img {
-    height: 40px;
-}
-
-.titulo-admin {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
-    letter-spacing: 2px;
-}
-
-.hora {
-    font-size: 18px;
-}
-
-main {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    padding: 30px;
-    justify-content: center;
-    align-items: flex-start;
     flex: 1;
-}
-
-.formulario {
-    background: rgba(255, 255, 255, 0.85);
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+    background: rgba(10, 25, 47, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 12px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-    padding: 24px 18px;
-    min-width: 260px;
-    max-width: 320px;
-    margin-right: 20px;
-}
-
-.formulario h2 {
-    margin-top: 0;
-    color: #003366;
-    font-size: 1.2rem;
-    cursor: pointer; /* Para indicar que es clicable */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 15px;
-}
-
-/* Estilos para el icono de flecha */
-.formulario h2 i {
-    transition: transform 0.3s ease;
-}
-
-.formulario h2.collapsed i {
-    transform: rotate(-90deg);
-}
-
-.contenido-formulario {
-    max-height: 500px; /* Altura máxima para mostrar el contenido */
+    backdrop-filter: blur(10px);
     overflow: hidden;
-    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-    padding-top: 0;
-    /* initial state hidden */
-    max-height: 0;
-    padding: 0;
 }
 
-.contenido-formulario.show {
-    max-height: 500px; /* Suficientemente grande para el contenido */
-    padding-top: 15px;
-}
-
-.formulario input,
-.formulario select {
-    width: 100%;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #bbb;
-    font-size: 1rem;
-    margin-bottom: 12px;
-    box-sizing: border-box; /* Asegura que el padding no afecte el width total */
-    color: #222; /* Texto visible */
-}
-
-.formulario button {
-    background: #003366;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-bottom: 10px;
-    transition: background 0.2s;
-    width: 100%;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease;
-    background-color: rgba(0, 86, 179, 0.5);
-}
-
-.formulario button:hover {
-    background-color: rgba(0, 68, 148, 0.9);
-}
-
-.lista-container {
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    order: 2;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 15px;
-}
-
-.toolbar {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.tabla-container {
-    flex: 1; /* Permitir que la tabla ocupe el espacio restante */
-    overflow-x: auto; /* Para scroll horizontal si la tabla es muy ancha */
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 15px;
-}
-
-#tablaHorarios {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background: transparent;
-    color: #fff;
-}
-
-#tablaHorarios th,
-#tablaHorarios td {
-    padding: 8px; /* Ajustado el padding */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Borde más sutil */
-    text-align: center;
-    color: #222; /* Texto oscuro para contraste */
-}
-
-#tablaHorarios th {
-    text-align: center; /* Centrar los encabezados de hora */
-    font-weight: bold;
-    background-color: #e0e0e0;
-    color: #003366; /* Color del texto del encabezado */
-}
-
-/* Colores para los casilleros */
-#tablaHorarios td.libre {
-    background-color: #d4edda; /* Verde claro para disponible */
-}
-
-#tablaHorarios td.ocupado {
-    background-color: #f8d7da; /* Rojo claro para ocupado */
-}
-
-#tablaHorarios tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Estilo para celda seleccionada */
-#tablaHorarios td.seleccionado {
-    border: 2px solid #0055aa; /* Borde azul más oscuro para selección */
-    box-shadow: 0 0 5px rgba(0, 85, 170, 0.5);
-}
-
-
-/* Botón X para quitar asignación */
-.btn-quitar {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    color: red;
-    cursor: pointer;
-    font-size: 12px;
-    user-select: none;
-}
-
-.plus {
-    font-size: 16px;
-    color: #0066cc;
-    pointer-events: none; /* evita doble clic */
-}
-
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background: #fff;
-    border-radius: 10px;
-    padding: 24px 18px;
-    min-width: 320px;
-    max-width: 400px;
-    margin: auto;
-    position: relative;
-    color: #222;
-}
-
-.cerrar {
-    position: absolute;
-    top: 10px;
-    right: 14px;
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-#listaProfesores {
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 15px;
-    text-align: left;
-    border: 1px solid #eee; /* Borde sutil para la lista de profesores */
-    padding: 5px;
-    background-color: #f9f9f9;
-}
-
-.prof-item {
-    padding: 8px 5px;
-    border-bottom: 1px solid #eee;
-    color: #003366;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.prof-item:last-child {
-    border-bottom: none;
-}
-
-.prof-item:hover,
-.prof-item.seleccionado {
-    background-color: #c8def9;
-}
-
-/* Filtros dentro del modal */
-.modal-filtros {
-    display: flex;
-    flex-wrap: wrap; /* Permite que los filtros se envuelvan en pantallas pequeñas */
-    gap: 10px;
-    margin-bottom: 15px;
-    justify-content: space-between;
-}
-
-.modal-filtros label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    color: #222;
-}
-
-.modal-filtros input,
-.modal-filtros select {
-    padding: 4px;
-    font-size: 13px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    color: #222;
-}
-
-/* Botones en el modal */
-#confirmarAsignacionBtn {
-    background-color: #0055aa;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    width: 100%;
-    transition: background-color 0.3s ease;
-}
-
-#confirmarAsignacionBtn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-#confirmarAsignacionBtn:hover:not(:disabled) {
-    background-color: #003366;
-}
-
-/* Sticky Headers y primera columna */
-
-table thead th {
-    position: sticky;
-    top: 0;
-    background-color: #d0e6ff;
-    z-index: 10;
-    border-bottom: 2px solid #aaa;
-    color: #003366;
-}
-
-table tbody td:first-child,
-table thead th:first-child {
-    position: sticky;
-    left: 0;
-    background-color: #eaf4ff;
-    z-index: 9;
-    border-right: 2px solid #aaa;
-    color: #003366;
-    font-weight: bold;
-}
-
-/* El cruce primera fila y columna */
-table thead th:first-child {
-    z-index: 11;
-}
-
-/* --- HEADER Y FOOTER adaptados del archivo proporcionado --- */
-
-/* --- Header --- */
-.header-docentes {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: rgba(0, 25, 51, 0.7);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 15px 20px;
-    color: #fff;
-    position: relative;
-    font-size: 0.8rem;
-}
-
-.header-docentes .logo-container img {
-    height: 28px;
-}
-
-.header-docentes .titulo-admin {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #fff;
-    letter-spacing: 2px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    pointer-events: none;
-}
-
-.reloj-container {
-    font-size: 1.5rem;
-    font-weight: bold;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-/* --- Footer --- */
-.footer-docentes {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    background-color: rgba(0, 25, 51, 0.7);
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 15px 20px;
-    color: #fff;
-    flex-wrap: wrap;
-    width: 100%;
-    font-size: 0.8rem;
-    position: static;
-    left: unset;
-    right: unset;
-    bottom: unset;
-}
-
-/* Para que el footer quede al fondo si el contenido es corto */
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    padding-bottom: 0;
-}
-
-main {
-    flex: 1;
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-    .main-container {
-        flex-direction: column;
-        gap: 10px;
-        padding: 10px;
-    }
-    .formulario-container,
-    .lista-container {
-        max-width: 100%;
-        min-width: 0;
-        margin-right: 0;
-    }
-    .modal-filtros {
-        flex-direction: column;
-    }
-}
-/* ... (todos los estilos anteriores) ... */
-
-/* Colores para los casilleros */
-#tablaHorarios td.libre {
-    background-color: #d4edda; /* Verde claro para disponible */
-}
-
-#tablaHorarios td.ocupado {
-    background-color: #f8d7da; /* Rojo claro para ocupado */
-    position: relative; /* ¡¡IMPORTANTE!! Para que la 'X' se posicione correctamente */
-    padding-top: 15px; /* Damos espacio para la 'X' */
-}
-
-#tablaHorarios tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* ... (resto de estilos de la tabla) ... */
-
-/* Botón X para quitar asignación */
-.btn-quitar {
-    position: absolute;
-    top: 2px;
-    right: 4px;
-    color: #dc3545; /* Un rojo más visible */
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: bold;
-    user-select: none;
-    transition: background-color 0.2s;
-}
-
-.btn-quitar:hover {
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #a01a27;
-}
-
-/* ================================== */
-/* == NUEVOS ESTILOS DE CALENDARIO == */
-/* ================================== */
+/* --- Barra de Controles Superior --- */
 .calendario-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(100, 255, 218, 0.3);
 }
 
-.calendario-container button {
-    padding: 8px 12px;
-    border: 1px solid rgba(255,255,255,0.5);
+.semana-botones {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.semana-botones button {
+    padding: 10px 18px;
+    border: 1px solid #64ffda;
+    background-color: transparent;
+    color: #64ffda;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: bold;
-    transition: background-color 0.3s ease;
-    background-color: rgba(0, 86, 179, 0.5);
-    color: #fff;
+    transition: all 0.3s ease;
 }
 
-.calendario-container button:hover {
-    background-color: rgba(0, 68, 148, 0.9);
+.semana-botones button:hover {
+    background-color: rgba(100, 255, 218, 0.1);
+}
+
+.semana-botones button.activo {
+    background-color: #64ffda;
+    color: #0a192f;
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
 }
 
 .fecha-especifica {
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.fecha-especifica label {
-    font-weight: bold;
+    color: #ccd6f6;
 }
 
 .fecha-especifica input[type="date"] {
-    padding: 6px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    color: #333;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #233554;
+    background-color: #112240;
+    color: #e6f1ff;
+    color-scheme: dark;
+}
+.fecha-especifica input[type="date"]:focus {
+    outline: none;
+    border-color: #64ffda;
 }
 
+.configuracion-semestre .btn-animado {
+    height: 42px;
+    padding: 0 20px;
+}
+
+/* --- Acciones de la Tabla --- */
 .acciones-tabla {
-    margin-bottom: 15px;
+    display: flex;
+    gap: 15px;
+    padding-bottom: 15px;
+    flex-wrap: wrap;
 }
 
-/* ... (resto de los estilos) ... */
+.acciones-tabla .btn-animado {
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 6px;
+}
+
+.acciones-tabla button:disabled {
+    border-color: #8892b0 !important;
+    cursor: not-allowed;
+}
+
+.acciones-tabla button:disabled span {
+    color: #8892b0 !important;
+}
+
+.acciones-tabla button:disabled:hover::before,
+.acciones-tabla button:disabled:hover::after {
+    width: 0 !important; /* Desactiva la animación */
+}
+
+/* --- Tabla de Horarios --- */
+.tabla-container {
+    flex: 1;
+    overflow: auto; 
+}
+/* Scrollbar personalizado */
+.tabla-container::-webkit-scrollbar { width: 8px; height: 8px; }
+.tabla-container::-webkit-scrollbar-track { background: transparent; }
+.tabla-container::-webkit-scrollbar-thumb { background: #8892b0; border-radius: 4px; }
+.tabla-container::-webkit-scrollbar-thumb:hover { background: #64ffda; }
+
+
+#tablaHorarios {
+    width: 100%;
+    border-collapse: collapse;
+    color: #e6f1ff;
+}
+
+#tablaHorarios th,
+#tablaHorarios td {
+    border: 1px solid rgba(136, 146, 176, 0.3);
+    text-align: center;
+    min-width: 140px;
+    padding: 10px;
+    transition: background-color 0.2s ease;
+}
+
+#tablaHorarios thead th {
+    position: sticky;
+    top: 0;
+    background-color: #0a192f;
+    color: #64ffda;
+    font-weight: bold;
+    z-index: 10;
+}
+
+#tablaHorarios tbody td:first-child,
+#tablaHorarios thead th:first-child {
+    position: sticky;
+    left: 0;
+    background-color: #0a192f;
+    font-weight: bold;
+    color: #ccd6f6;
+    min-width: 150px;
+    z-index: 9;
+}
+
+#tablaHorarios thead th:first-child { z-index: 11; }
+
+#tablaHorarios td.libre { background-color: rgba(100, 255, 218, 0.05); cursor: pointer; }
+#tablaHorarios td.libre:hover { background-color: rgba(100, 255, 218, 0.15); }
+#tablaHorarios td.libre .plus { color: #64ffda; font-size: 1.5rem; opacity: 0.5; transition: opacity 0.3s ease; }
+#tablaHorarios td.libre:hover .plus { opacity: 1; }
+#tablaHorarios td.ocupado { background-color: rgba(227, 64, 64, 0.1); position: relative; padding: 8px; }
+#tablaHorarios td.seleccionado { border: 2px solid #64ffda; background-color: rgba(100, 255, 218, 0.2); }
+
+/* Contenido de celda ocupada */
+.ocupado .asignatura-nombre { font-weight: bold; font-size: 0.9em; color: #ccd6f6; }
+.ocupado .docente-nombre { font-size: 0.8em; color: #8892b0; margin-top: 4px; }
+.ocupado .ano-cursado { font-size: 0.75em; font-weight: bold; color: #64ffda; margin-top: 5px; }
+
+.btn-quitar {
+    position: absolute; top: 4px; right: 4px; color: #e34040; background-color: rgba(227, 64, 64, 0.2);
+    border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; font-size: 16px; line-height: 20px; font-weight: bold;
+    transition: all 0.2s ease;
+}
+.btn-quitar:hover { background-color: #e34040; color: #fff; transform: scale(1.1); }
+
+/* --- Estilos para Modales --- */
+.modal-overlay {
+    position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 2000;
+    display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;
+}
+.modal-overlay.visible { display: flex; opacity: 1; }
+
+.modal-dialog {
+    background: #0a192f; color: #e6f1ff; padding: 25px 30px; border-radius: 12px;
+    border: 1px solid rgba(100, 255, 218, 0.3); width: 90%; max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.3s ease;
+    position: relative; display: flex; flex-direction: column;
+}
+.modal-overlay.visible .modal-dialog { transform: scale(1); }
+.modal-dialog h3 { margin-top: 0; font-size: 1.5rem; color: #64ffda; margin-bottom: 20px; text-align: center; }
+.modal-dialog .cerrar { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: #8892b0; cursor: pointer; transition: color 0.3s ease; }
+.modal-dialog .cerrar:hover { color: #e6f1ff; }
+
+/* Contenido de formularios en modales */
+.form-group, .form-semestre { margin-bottom: 18px; }
+.modal-dialog label, .modal-dialog legend { display: block; margin-bottom: 8px; font-weight: bold; color: #a8b2d1; text-align: left; }
+.modal-dialog input[type="date"], .modal-dialog select {
+    width: 100%; padding: 12px; border: 1px solid #233554; border-radius: 6px;
+    background: #112240; color: #e6f1ff; font-size: 1rem;
+}
+.modal-dialog fieldset { border: 1px solid #233554; border-radius: 8px; padding: 15px; margin-top: 10px; }
+.modal-dialog legend { padding: 0 10px; color: #64ffda; }
+.modal-dialog #info-celda { background: rgba(100, 255, 218, 0.1); padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 15px; color: #64ffda; }
+.modal-dialog button {
+    width: 100%; padding: 12px; border-radius: 6px; cursor: pointer;
+    font-size: 1rem; font-weight: bold; transition: all 0.3s ease; margin-top: 10px;
+    border: 1px solid #64ffda; background-color: #64ffda; color: #0a192f;
+}
+.modal-dialog button:hover:not(:disabled) { background-color: #a7ffeb; box-shadow: 0 0 15px rgba(100, 255, 218, 0.4); }
+.modal-dialog button:disabled { background: #8892b0; border-color: #8892b0; color: #0a192f; cursor: not-allowed; opacity: 0.7; }
+
+/* Modal de Notificación Genérico */
+#modal-notificacion .modal-dialog { text-align: center; }
+#modal-notificacion p { margin: 15px 0 25px 0; font-size: 1rem; color: #a8b2d1; line-height: 1.6; }
+.modal-actions { display: flex; gap: 15px; justify-content: center; }
+.modal-actions .btn-primary { background-color: #64ffda; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; min-width: 120px; }
+.modal-actions .btn-secondary { background-color: #8892b0; color: #0a192f; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; min-width: 120px;}
+
+/* Media Queries */
+@media (max-width: 900px) {
+    .main-container { padding: 10px; }
+}
+
+@media (max-width: 768px) {
+    .calendario-container { flex-direction: column; align-items: stretch; gap: 15px; }
+    .semana-botones, .fecha-especifica { justify-content: center; }
+}

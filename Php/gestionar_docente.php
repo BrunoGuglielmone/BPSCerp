@@ -10,8 +10,7 @@ if (!isset($_SESSION['usuario_id'])) {
 header('Content-Type: application/json');
 
 // Conexión a la base de datos
-require_once "BdB.php"; // este archivo debe devolver $conn ya conectado
-
+require_once "BdB.php"; 
 $accion = $_GET['accion'] ?? null;
 $response = ['success' => false, 'message' => 'Acción no válida.'];
 
