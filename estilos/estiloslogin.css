@@ -1,3 +1,7 @@
+/* ============================================= */
+/* ==  Estilo del login == */
+/* ============================================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -5,7 +9,7 @@
     font-family: 'poppins', sans-serif;
 }
 
-/* --- ESTRUCTURA PRINCIPAL Y FONDO --- */
+/* --- Estructura principal --- */
 body {
     display: flex;
     flex-direction: column;
@@ -23,7 +27,7 @@ main {
     flex: 1;
 }
 
-/* --- HEADER --- */
+/* --- Header --- */
 .header-docentes {
     display: flex;
     justify-content: space-between;

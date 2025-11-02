@@ -253,7 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 todasLasCarreras.push(carreraGuardada);
             }
             
-            // Esta línea (259) ahora es segura
             carreraActivaId = carreraGuardada.id;
             
             renderizarListaCarreras(); // Recarga la lista izquierda

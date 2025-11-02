@@ -7,7 +7,6 @@ session_start();
 $_SESSION = array();
 
 // 3. Destruir la sesión.
-// Esto elimina el archivo de sesión del servidor.
 session_destroy();
 
 // 4. Redirigir al usuario de vuelta a la página de login.

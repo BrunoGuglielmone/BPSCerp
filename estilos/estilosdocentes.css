@@ -1,6 +1,6 @@
-/* ==========================================================================
-   ESTILOS MEJORADOS PARA LA PÁGINA DE DOCENTES
-   ========================================================================== */
+/* ============================================= */
+/* ==  Estilos del gestor de docentes == */
+/* ============================================= */
 
 /* --- Layout Principal --- */
 .main-container {
@@ -108,6 +108,8 @@
 }
 
 /* --- Panel de la Lista de Docentes --- */
+
+
 .lista-container {
     flex: 3;
     display: flex;
@@ -185,7 +187,7 @@
     background-color: rgba(100, 255, 218, 0.08);
 }
 
-/* --- NUEVO: Estilos para los filtros de la tabla --- */
+/* - Estilos para los filtros de la tabla --- */
 .filtros-fila input.filtro-input {
     width: 100%;
     padding: 8px 10px;
@@ -220,7 +222,7 @@
 .btn-accion-fila.btn-eliminar:hover { color: #e34040; }
 
 
-/* --- NUEVO: Estilos para Modales --- */
+/* --- Estilos para Modal --- */
 .modal-overlay {
     position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px); z-index: 2000;

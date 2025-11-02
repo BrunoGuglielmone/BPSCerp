@@ -1,11 +1,10 @@
 <?php
 
-// 1. INCLUDES Y CONFIGURACIÓN INICIAL
 include_once __DIR__ . "/../api/conexion.php";
 include_once __DIR__ . "/../api/verificar_sesion.php";
 header_remove('Content-Type');
 
-// 2. OBTENCIÓN DE DATOS PARA LOS MENÚS DE FILTROS
+// OBTENCIÓN DE DATOS PARA LOS MENÚS DE FILTROS //
 $salones_list = $conn->query("SELECT id, nombre FROM salones ORDER BY id ASC")->fetch_all(MYSQLI_ASSOC);
 $anios_list_res = $conn->query("SELECT DISTINCT ano_cursado FROM carrera_asignatura WHERE ano_cursado IS NOT NULL ORDER BY ano_cursado ASC");
 $anios_list = $anios_list_res->fetch_all(MYSQLI_ASSOC);
@@ -13,7 +12,7 @@ $horarios_res = $conn->query("SELECT id, hora FROM horarios ORDER BY id ASC");
 $horarios = $horarios_res->fetch_all(MYSQLI_ASSOC); // <--- LISTA ÚNICA Y COMPLETA DE HORAS
 $carreras_list = $conn->query("SELECT id, nombre FROM carreras ORDER BY nombre ASC")->fetch_all(MYSQLI_ASSOC);
 
-// 3. MANEJO DE PARÁMETROS DE ENTRADA (FILTROS)
+// MANEJO DE PARÁMETROS DE ENTRADA (FILTROS) //
 $view = $_GET['view'] ?? 'diario';
 $filtro_fecha = $_GET['fecha'] ?? date("Y-m-d");
 $filtro_salon = $_GET['salon_id'] ?? '';
@@ -21,18 +20,19 @@ $filtro_anio = $_GET['ano_cursado'] ?? '';
 $filtro_semestre = $_GET['semestre'] ?? '';
 $filtro_carrera = $_GET['carrera_id'] ?? '';
 
-// Preparamos los parámetros para los enlaces de cambio de vista
+// Preparamos los parámetros para los enlaces de cambio de vista  //
 $get_params = $_GET;
 unset($get_params['view']);
 $query_string_filtros = http_build_query($get_params);
 
-// 4. LÓDICA DE CONSULTA A LA BASE DE DATOS
+// LÓDICA DE CONSULTA A LA BASE DE DATOS //
 $asignaciones_filtradas = [];
 $fecha_lunes = null;
 
-// Partes de la consulta basadas en filtros (para reutilizar)
+// Partes de la consulta basadas en filtros 
 $joins_carrera = "LEFT JOIN carrera_asignatura ca ON a.asignatura_id = ca.asignatura_id
                   LEFT JOIN carreras c ON ca.carrera_id = c.id";
+                  
 $sql_filter_joins = $joins_carrera;
 $sql_filter_where = "";
 $sql_filter_params = [""]; // Iniciar con el string de tipos
@@ -58,9 +58,8 @@ if ($view === 'semanal') {
     $fecha_lunes_str = $fecha_lunes->format('Y-m-d');
     $fecha_sabado_str = $fecha_sabado->format('Y-m-d');
 
-    // --- LÓGICA DE RANGO DINÁMICO ELIMINADA ---
-    // Ya no consultamos MIN/MAX horario_id ni filtramos la lista de horas.
-    // Usaremos $horarios (la lista completa) directamente.
+   
+    
 
     // Consulta principal
     $sql = "SELECT a.salon_id, a.horario_id, a.fecha, CONCAT(d.nombre, ' ', d.apellido) AS docente, asig.nombre AS asignatura_nombre, ca.ano_cursado, s.nombre AS salon_nombre
@@ -70,7 +69,7 @@ if ($view === 'semanal') {
             JOIN salones s ON a.salon_id = s.id
             $sql_filter_joins
             WHERE a.fecha BETWEEN ? AND ?
-            $sql_filter_where"; // Usar el string de WHERE construido
+            $sql_filter_where"; 
     
     $params = $sql_filter_params;
     array_splice($params, 1, 0, [$fecha_lunes_str, $fecha_sabado_str]);
@@ -231,7 +230,6 @@ $conn->close();
         const horasDB = <?php echo json_encode(array_column($horarios, 'hora')); ?>;
         const fechaMostrada = "<?php echo $filtro_fecha; ?>";
         const fechaHoy = "<?php echo date("Y-m-d"); ?>";
-        // Se mantiene la fecha del lunes para el botón de descarga
         const fechaLunesSemana = "<?php echo $fecha_lunes ? $fecha_lunes->format('Y-m-d') : $filtro_fecha; ?>";
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>

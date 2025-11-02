@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function actualizarReloj() {
         if (relojEl) {
             const ahora = new Date();
-            // MODIFICADO: Se añade hour12: false para forzar formato 24h sin AM/PM
             relojEl.textContent = ahora.toLocaleTimeString('es-UY', { 
                 hour: '2-digit', 
                 minute: '2-digit', 
@@ -41,19 +40,17 @@ document.addEventListener('DOMContentLoaded', () => {
         restringirFechaPorSemestre();
     }
 
-    // --- LÓGICA DE DESCARGA PDF (VISTA SEMANAL) ---
+    // --- LÓGICA DE DESCARGA PDF ---
     const downloadBtn = document.getElementById('downloadPdfBtn');
     if (downloadBtn) {
         downloadBtn.addEventListener('click', () => {
             
-            // CORREGIDO: Se comprueba 'window.jspdf' y 'html2canvas'
             if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
                 console.error("Librerías jsPDF o html2canvas no están cargadas.");
                 alert("Error: No se puede generar el PDF. Faltan librerías.");
                 return;
             }
 
-            // Ahora esta línea es segura
             const { jsPDF } = window.jspdf;
             const printableArea = document.getElementById('printable-area');
             if (!printableArea) return;

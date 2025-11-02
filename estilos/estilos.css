@@ -205,5 +205,6 @@ main {
   background: #CFE7FA;
   background: linear-gradient(to right, #CFE7FA 0%, #6393C1 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }

@@ -1,13 +1,13 @@
 <?php
 include_once("../api/verificar_sesion.php");
-$titulo_pagina = "Gestión Académica"; 
+$titulo_pagina = "Planes de Estudio"; 
 include_once("../Php/header.php");
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestión Académica</title>
+    <title>Planes de Estudio</title>
     <link rel="stylesheet" href="../estilos/estilos.css">
     <link rel="stylesheet" href="../estilos/estilosacademico.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -59,7 +59,6 @@ include_once("../Php/header.php");
                 <label for="carrera_ano">Duración (años):</label>
                 <input type="number" id="carrera_ano" name="ano" min="1" max="7" value="3" required>
             </div>
-            <!-- AÑADIDO: Selector de Turno -->
             <div class="form-group">
                 <label for="carrera_turno">Turno:</label>
                 <select id="carrera_turno" name="turno">
@@ -122,7 +121,6 @@ include_once("../Php/header.php");
             
             <p class="instruccion-texto">Selecciona los docentes habilitados para esta asignatura:</p>
             <div id="lista-docentes-checkboxes" class="results-list checkbox-list">
-                <!-- Checkboxes de docentes -->
             </div>
             
             <button type="submit" class="btn btn-primary">Guardar Cambios</button>

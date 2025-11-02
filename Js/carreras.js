@@ -1,4 +1,3 @@
-// Este archivo es una copia casi idéntica de asignaturas.js, solo cambian los nombres.
 document.addEventListener('DOMContentLoaded', () => {
     const API_URL = '../api/gestionar_carreras.php';
     const form = document.getElementById('registro-carrera-form');

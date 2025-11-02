@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- ESTADO DE LA APLICACIÓN ---
     let todasLasOrientaciones = [];
     let todasLasAsignaturas = [];
-    let todosLosDocentes = []; // Nuevo
+    let todosLosDocentes = []; 
 
     // --- LÓGICA PRINCIPAL ---
 
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const [orientacionesRes, asignaturasRes, docentesRes] = await Promise.all([
                 fetch('../api/gestionar_orientaciones.php'),
                 fetch('../api/gestionar_asignaturas.php'),
-                fetch('../api/gestionar_docentes.php') // Nuevo fetch
+                fetch('../api/gestionar_docentes.php') 
             ]);
 
             if (!orientacionesRes.ok || !asignaturasRes.ok || !docentesRes.ok) {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             todasLasOrientaciones = await orientacionesRes.json();
             todasLasAsignaturas = await asignaturasRes.json();
-            todosLosDocentes = await docentesRes.json(); // Nuevo
+            todosLosDocentes = await docentesRes.json(); 
             
             renderizarOrientaciones(todasLasOrientaciones);
             renderizarCheckboxesEnModal();
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             asignaturasContainerModal.appendChild(item);
         });
 
-        // Renderizar Docentes (Nuevo)
+        // Renderizar Docentes 
         docentesContainerModal.innerHTML = '';
         todosLosDocentes.forEach(docente => {
             const item = document.createElement('label');
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             chk.checked = asignaturasIds.includes(chk.value);
         });
 
-        // Marcar checkboxes de docentes (Nuevo)
+        // Marcar checkboxes de docentes 
         const docentesIds = orientacion.docentes.map(d => d.id.toString());
         docentesContainerModal.querySelectorAll('input[type="checkbox"]').forEach(chk => {
             chk.checked = docentesIds.includes(chk.value);
@@ -256,7 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- FUNCIONES AUXILIARES ---
-    // ... (Tu código existente para estas funciones) ...
 
     const getTextColor = (hex) => {
         const r = parseInt(hex.substr(1, 2), 16);

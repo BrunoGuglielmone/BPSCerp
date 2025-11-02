@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNCIONES PARA MODALES ---
     const mostrarNotificacion = (titulo, mensaje, tipo = 'alerta') => {
         notificacionTitulo.textContent = titulo;
-        notificacionMensaje.innerHTML = mensaje; // Usamos innerHTML para posibles <br>
+        notificacionMensaje.innerHTML = mensaje; 
         modalNotificacion.classList.add('visible');
         
         return new Promise(resolve => {
@@ -114,11 +114,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Si es un nuevo docente (no hay ID), verificar si la cédula ya existe
+        // Si es un nuevo docente, verificar si la cédula ya existe
         if (!hiddenDocenteId.value) {
             const cedulaExistente = docentesData.some(doc => doc.cedula === cedulaInput.value);
             if (cedulaExistente) {
-                await mostrarNotificacion('Error de Duplicidad', `La cédula ${cedulaInput.value} ya se encuentra registrada.`);
+                await mostrarNotificacion('Error', `La cédula ${cedulaInput.value} ya se encuentra registrada.`);
                 return;
             }
         }
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     toggleBtn.addEventListener('click', () => {
-        // Si el formulario se está abriendo (y no está ya abierto), resetealo.
+        // Si el formulario se está abriendo o no está ya abierto, reset.
         if (!formContent.classList.contains('abierto')) {
             resetearFormulario();
         }

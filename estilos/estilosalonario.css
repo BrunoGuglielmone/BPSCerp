@@ -1,7 +1,6 @@
-/* ==========================================================================
-   ESTILOS UNIFICADOS PARA LA PÁGINA DE SALONARIO
-   ========================================================================== */
-
+/* ============================================= */
+/* ==  ESTILOS DEL salonario == */
+/* ============================================= */
 /* --- Contenedor Principal --- */
 .main-container {
     display: flex;
@@ -111,7 +110,7 @@
 /* --- Tabla de Horarios --- */
 .tabla-container {
     flex: 1;
-    overflow: auto; /* Permite scroll */
+    overflow: auto; 
 }
 /* Scrollbar personalizado */
 .tabla-container::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -177,7 +176,7 @@
 }
 .btn-quitar:hover { background-color: #e34040; color: #fff; transform: scale(1.1); }
 
-/* --- Estilos Unificados para Modales --- */
+/* --- Estilos para Modales --- */
 .modal-overlay {
     position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 2000;
     display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;

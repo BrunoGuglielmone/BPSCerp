@@ -1,5 +1,4 @@
 <?php
-// Inicia la sesión para poder manejar mensajes de error.
 session_start();
 
 include_once("../Php/header.php"); 
