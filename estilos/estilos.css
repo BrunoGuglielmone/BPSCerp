@@ -46,9 +46,9 @@ main {
 
 .header-docentes {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  gap: 12px; /* espacio entre elementos del header */
+  gap: 20px;
   background-color: rgba(0, 25, 51, 0.6);
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   padding: 10px 20px;
@@ -88,6 +88,7 @@ main {
     0 1px 3px rgba(255,255,255,0.1);
   text-shadow: 0 2px 4px rgba(0,0,0,0.2);
   letter-spacing: 0.05em;
+  margin-left: auto; /* Empuja el reloj hacia la derecha */
 }
 
 .footer-docentes {
@@ -129,9 +130,13 @@ main {
   align-items: center;
   display: inline-flex;
   height: 40px;
-  padding: 0 20px;
-  border-radius: 10px;
-  margin-left: 1100px; 
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin: 0; 
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  cursor: pointer;
 }
 
 /* Botón animado reutilizable */
@@ -207,4 +212,5 @@ main {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  z-index: 1; /* Asegura que el título esté sobre otros elementos */
 }
