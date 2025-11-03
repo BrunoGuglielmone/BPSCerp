@@ -6,18 +6,47 @@
 main { display: flex; gap: 20px; padding: 20px; height: calc(100vh - 125px); }
 
 .carreras-panel, .plan-estudio-panel {
-    background: rgba(10, 25, 47, 0.85); border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px; padding: 20px; display: flex;
-    flex-direction: column; overflow: hidden; backdrop-filter: blur(10px);
+    background: rgba(10, 25, 47, 0.85); 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px; 
+    padding: 20px; 
+    display: flex;
+    flex-direction: column; 
+    overflow: hidden; 
+    backdrop-filter: blur(10px);
 }
 .carreras-panel { flex: 1; min-width: 320px; max-width: 400px; }
 .plan-estudio-panel { flex: 3; overflow-y: auto; }
 
-/* Scrollbar personalizado */
-.plan-estudio-panel::-webkit-scrollbar { width: 8px; }
-.plan-estudio-panel::-webkit-scrollbar-track { background: transparent; }
-.plan-estudio-panel::-webkit-scrollbar-thumb { background: #8892b0; border-radius: 4px; }
-.plan-estudio-panel::-webkit-scrollbar-thumb:hover { background: #64ffda; }
+/* --- Scrollbar personalizado --- */
+.plan-estudio-panel::-webkit-scrollbar,
+.results-list::-webkit-scrollbar,
+#lista-carreras::-webkit-scrollbar,
+.modal-dialog::-webkit-scrollbar { 
+    width: 8px; 
+}
+
+.plan-estudio-panel::-webkit-scrollbar-track,
+.results-list::-webkit-scrollbar-track,
+#lista-carreras::-webkit-scrollbar-track,
+.modal-dialog::-webkit-scrollbar-track { 
+    background: transparent; 
+}
+
+.plan-estudio-panel::-webkit-scrollbar-thumb,
+.results-list::-webkit-scrollbar-thumb,
+#lista-carreras::-webkit-scrollbar-thumb,
+.modal-dialog::-webkit-scrollbar-thumb { 
+    background: #8892b0; 
+    border-radius: 4px; 
+}
+
+.plan-estudio-panel::-webkit-scrollbar-thumb:hover,
+.results-list::-webkit-scrollbar-thumb:hover,
+#lista-carreras::-webkit-scrollbar-thumb:hover,
+.modal-dialog::-webkit-scrollbar-thumb:hover { 
+    background: #64ffda; 
+}
 
 
 /* --- Panel Izquierdo (Orientaciones) --- */
@@ -25,6 +54,7 @@ main { display: flex; gap: 20px; padding: 20px; height: calc(100vh - 125px); }
     color: #64ffda; margin-top: 0; margin-bottom: 15px; padding-bottom: 10px;
     border-bottom: 1px solid rgba(100, 255, 218, 0.3);
 }
+
 #lista-carreras { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex-grow: 1; }
 #lista-carreras li {
     padding: 15px; margin-bottom: 10px; border-radius: 6px;
@@ -224,4 +254,4 @@ main { display: flex; gap: 20px; padding: 20px; height: calc(100vh - 125px); }
 
 .tag-turno.matutino { background-color: #f1c40f; } 
 .tag-turno.vespertino { background-color: #e67e22; } 
-.tag-turno.nocturno { background-color: #3498db; } 
+.tag-turno.nocturno { background-color: #3498db; }
